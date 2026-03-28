@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<!--
+    HTML 文件声明
+    这是一个完整的 HTML5 文档，用于创建一个专业的作品集网站
+    包含了响应式设计、动画效果和现代前端技术
+-->
+<html class="dark" lang="zh-CN">
+
+<head>
+    <!-- 字符编码设置 -->
+    <meta charset="utf-8">
+
+    <!-- 响应式视口设置 -->
+    <!-- width=device-width: 让页面宽度跟随设备宽度 -->
+    <!-- initial-scale=1.0: 初始缩放比例为1 -->
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- 页面标题 -->
+    <title>PORTFOLIO | 作品集 | Elite Visual Designer</title>
+
+    <!-- 引入 Tailwind CSS (一种流行的 CSS 框架) -->
+    <!-- plugins=forms,container-queries: 加载表单和容器查询插件 -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- 引入 Google 字体 -->
+    <!-- Inter 字体: 现代无衬线字体，适合网页设计 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+
+    <!-- 引入 Material Icons 图标库 -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind 配置 -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            // 深色模式配置
+            darkMode: "class",
+            theme: {
+                extend: {
+                    // 自定义颜色变量
+                    colors: {
+                        "on-secondary-fixed-variant": "#5b5c5c",
+                        "on-surface-variant": "#acabaa",
+                        "on-tertiary-fixed": "#4d4300",
+                        "primary-fixed-dim": "#d4d4d4",
+                        "on-secondary": "#1f2021",
+                        "primary-dim": "#b8b9b9",
+                        "tertiary-container": "#fde987",
+                        "surface-dim": "#0e0e0e",
+                        "tertiary-dim": "#eeda7b",
+                        "surface-container": "#191a1a",
+                        "tertiary-fixed-dim": "#eeda7b",
+                        "on-primary-fixed": "#3e4040",
+                        "on-primary-fixed-variant": "#5a5c5c",
+                        "on-tertiary-fixed-variant": "#6d5f07",
+                        "primary-fixed": "#e2e2e2",
+                        "secondary-fixed-dim": "#d5d4d4",
+                        "on-error": "#490106",
+                        "on-primary-container": "#d0d0d0",
+                        "error-dim": "#bb5551",
+                        "on-tertiary": "#6b5d05",
+                        "on-background": "#e7e5e5",
+                        "surface-container-highest": "#252626",
+                        "surface-bright": "#2b2c2c",
+                        "inverse-surface": "#fcf9f8",
+                        "surface-container-low": "#131313",
+                        "on-primary": "#3f4041",
+                        "outline": "#767575",
+                        "primary": "#c6c6c7",
+                        "inverse-on-surface": "#565555",
+                        "on-tertiary-container": "#625500",
+                        "secondary-container": "#3a3c3c",
+                        "on-secondary-fixed": "#3e3f40",
+                        "surface": "#0e0e0e",
+                        "surface-container-lowest": "#000000",
+                        "outline-variant": "#484848",
+                        "surface-container-high": "#1f2020",
+                        "inverse-primary": "#5e5f60",
+                        "secondary-fixed": "#e3e2e2",
+                        "primary-container": "#454747",
+                        "surface-tint": "#c6c6c7",
+                        "tertiary-fixed": "#fde987",
+                        "surface-variant": "#252626",
+                        "error": "#ee7d77",
+                        "error-container": "#7f2927",
+                        "on-secondary-container": "#bfbfbf",
+                        "secondary": "#9e9e9e",
+                        "background": "#0e0e0e",
+                        "on-surface": "#e7e5e5",
+                        "tertiary": "#fff6db",
+                        "on-error-container": "#ff9993",
+                        "secondary-dim": "#9e9e9e"
+                    },
+                    // 自定义字体
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "mono": ["monospace"]
+                    },
+                    // 自定义圆角
+                    borderRadius: { "DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+
+    <!-- 自定义 CSS 样式 -->
+    <style>
+        /* 响应式字体大小设置 */
+        /* clamp() 函数: 最小值, 首选值, 最大值 */
+        html {
+            font-size: clamp(14px, 1.2vw, 18px);
+        }
+
+        /* 高分辨率屏幕适配 */
+        @media (min-width: 1920px) {
+            html {
+                font-size: clamp(16px, 1.1vw, 20px);
+            }
+        }
+
+        @media (min-width: 2560px) {
+            html {
+                font-size: clamp(18px, 1vw, 24px);
+            }
+        }
+
+        /* 小屏幕适配 */
+        @media (max-width: 1024px) {
+            html {
+                font-size: clamp(12px, 1.5vw, 16px);
+            }
+        }
+
+        /* 页面主体样式 */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #16181c 100%);
+            background-attachment: fixed;
+            /* 背景固定 */
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            color: #e7e5e5;
+            overflow-x: hidden;
+            /* 隐藏水平滚动条 */
+        }
+
+        /* Material Icons 配置 */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* 玻璃态导航栏 */
+        .glass-nav {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(20px);
+        }
+
+        /* 背景文字样式 */
+        .vanguard-bg-text {
+            font-size: clamp(15vw, 25vw, 30vw);
+        }
+
+        /* 滚动显示动画 */
+        .reveal {
+            opacity: 0;
+            /* 初始透明度为0 */
+            transform: translateY(30px);
+            /* 初始位置向下偏移30px */
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            /* 动画过渡 */
+            will-change: opacity, transform;
+            /* 性能优化 */
+        }
+
+        /* 滚动显示动画激活状态 */
+        .reveal.active {
+            opacity: 1;
+            /* 透明度变为1 */
+            transform: translateY(0);
+            /* 位置回到原位 */
+        }
+
+        /* 项目卡片样式 */
+        .brutalist-card {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+            will-change: opacity, transform;
+            cursor: pointer;
+            /* 鼠标悬停时显示手型 */
+        }
+
+        /* 项目卡片可见状态 */
+        .brutalist-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 项目图片容器 */
+        .project-img-container {
+            overflow: hidden;
+            /* 隐藏溢出内容 */
+            border-radius: 8px;
+            /* 圆角 */
+            position: relative;
+            /* 相对定位，为绝对定位的子元素提供参考 */
+        }
+
+        /* 项目图片悬停效果 */
+        .project-img-container img {
+            transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+            will-change: transform;
+        }
+
+        /* 项目图片覆盖层 */
+        .project-overlay {
+            background: rgba(0, 0, 0, 0.6);
+            transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* 鼠标悬停时的图片效果 */
+        .brutalist-card:hover .project-img-container img {
+            transform: scale(1.05);
+            /* 图片放大1.05倍 */
+        }
+
+        /* 鼠标悬停时的覆盖层效果 */
+        .brutalist-card:hover .project-overlay {
+            opacity: 0;
+            /* 覆盖层消失 */
+        }
+
+        /* 元线条样式 */
+        .meta-line {
+            width: 32px;
+            height: 1px;
+            background: #767575;
+            transition: width 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), background-color 0.6s ease;
+        }
+
+        /* 鼠标悬停时的元线条效果 */
+        .brutalist-card:hover .meta-line {
+            width: 64px;
+            /* 线条变长 */
+            background-color: #ffffff;
+            /* 线条变白 */
+        }
+
+        /* 项目标题描边效果 */
+        .project-title-stroke {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 1);
+            /* 文字描边 */
+            color: transparent;
+            /* 文字颜色透明，只显示描边 */
+            transition: color 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            line-height: 0.9;
+        }
+
+        /* 鼠标悬停时的标题效果 */
+        .brutalist-card:hover .project-title-stroke {
+            color: white;
+            /* 文字颜色变为白色 */
+        }
+
+        /* 档案展开逻辑 */
+        .archive-item {
+            transition: background-color 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        /* 档案内容包装器 */
+        .archive-content-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            /* 初始高度为0 */
+            transition: grid-template-rows 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+            overflow: hidden;
+        }
+
+        /* 档案项激活状态 */
+        .archive-item.is-active .archive-content-wrapper {
+            grid-template-rows: 1fr;
+        }
+
+        /* 高度变为1fr */
+
+        /* 档案详情 */
+        .archive-details {
+            min-height: 0;
+            opacity: 0;
+            padding: 0 1rem;
+            transition: opacity 0.5s ease, padding 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        /* 档案项激活时的详情效果 */
+        .archive-item.is-active .archive-details {
+            opacity: 1;
+            padding: 3rem 1rem 4rem 1rem;
+            transition-delay: 0.3s;
+        }
+
+        /* 切换图标旋转效果 */
+        .archive-item.is-active .toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        .toggle-icon {
+            transition: transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        /* 滚动条样式 */
+        .scroll-hide::-webkit-scrollbar {
+            height: 2px;
+        }
+
+        .scroll-hide::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .scroll-hide::-webkit-scrollbar-thumb {
+            background: #c6c6c7;
+        }
+
+        /* 代码流背景 */
+        .code-stream {
+            background: linear-gradient(to bottom, transparent, rgba(69, 71, 71, 0.1), transparent);
+        }
+
+        /* 文字揭示效果 */
+        .text-reveal {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        /* 双色调肖像效果 */
+        .duotone-portrait {
+            filter: grayscale(100%) contrast(120%) brightness(80%);
+            mix-blend-mode: luminosity;
+        }
+
+        /* 描边文字 */
+        .stroke-text {
+            -webkit-text-stroke: 1px rgba(198, 198, 199, 0.3);
+            color: transparent;
+        }
+
+        /* 背景文字 */
+        .vanguard-bg-text {
+            position: absolute;
+            font-size: 25vw;
+            line-height: 0.8;
+            font-weight: 900;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            /* 层级在底部 */
+            opacity: 0.03;
+            pointer-events: none;
+            /* 不响应鼠标事件 */
+            white-space: nowrap;
+        }
+
+        /* 覆盖默认样式 */
+        section {
+            background-color: transparent !important;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* 全屏模态框样式 */
+        #immersive-modal {
+            display: none;
+            transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* 模态框激活状态 */
+        #immersive-modal.active {
+            display: flex;
+        }
+
+        /* 画廊包装器 */
+        .gallery-wrapper {
+            transition: transform 0.1s linear, opacity 0.1s linear;
+            will-change: transform, opacity;
+        }
+
+        /* 文字遮罩 */
+        .mask-text {
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        /* 遮罩内容 */
+        .mask-inner {
+            transform: translateY(110%);
+            /* 初始位置在下方 */
+            transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+            will-change: transform;
+        }
+
+        /* 模态框内容激活状态 */
+        #immersive-modal.content-active .mask-inner {
+            transform: translateY(0%);
+            /* 位置回到原位 */
+        }
+
+        /* 画廊项目 */
+        .gallery-item {
+            flex-shrink: 0;
+            width: min(80vw, 1200px);
+            /* 宽度为视口的80%，最大1200px */
+            height: min(60vh, 700px);
+            /* 高度为视口的60%，最大700px */
+        }
+
+        /* 画廊卡片的遮罩揭示效果 */
+        .card-mask-container {
+            overflow: hidden;
+            display: block;
+        }
+
+        /* 卡片遮罩内容 */
+        .card-mask-content {
+            transform: translateY(110%);
+            transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+            will-change: transform;
+        }
+
+        /* 鼠标悬停时的卡片遮罩效果 */
+        .gallery-item:hover .card-mask-content {
+            transform: translateY(0%);
+        }
+
+        /* 描述遮罩延迟效果 */
+        .gallery-item .description-mask {
+            transition-delay: 100ms;
+        }
+    </style>
+
+    <!-- JavaScript 脚本 -->
+    <script>
+        // 当文档加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取所有需要滚动显示的元素
+            const reveals = document.querySelectorAll('.reveal');
+
+            // 滚动显示函数
+            const revealOnScroll = () => {
+                reveals.forEach(element => {
+                    const windowHeight = window.innerHeight; // 窗口高度
+                    const elementTop = element.getBoundingClientRect().top; // 元素顶部距离视口顶部的距离
+                    const elementVisible = 150; // 元素可见的阈值
+
+                    // 当元素进入视口时添加active类
+                    if (elementTop < windowHeight - elementVisible) {
+                        element.classList.add('active');
+                    }
+                });
+            };
+
+            // 监听滚动事件
+            window.addEventListener('scroll', revealOnScroll);
+            // 初始执行一次
+            revealOnScroll();
+
+            // 项目观察器（用于检测元素是否进入视口）
+            const projectObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.15 // 当元素15%进入视口时触发
+            });
+
+            // 观察所有项目卡片
+            document.querySelectorAll('.brutalist-card').forEach(card => {
+                projectObserver.observe(card);
+            });
+
+            // 沉浸式模态框逻辑
+            const modal = document.getElementById('immersive-modal');
+            const projectTriggers = document.querySelectorAll('.brutalist-card');
+            const closeModalBtn = document.getElementById('close-modal');
+            const galleryInner = document.getElementById('gallery-inner');
+            const galleryWrapper = document.querySelector('.gallery-wrapper');
+
+            // 滚动相关变量
+            let currentScroll = 0;
+            let targetScroll = 0;
+            let isDragging = false;
+            let animationFrameId = null;
+            let maxScroll = 0;
+
+            // 打开模态框函数
+            const openModal = () => {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // 禁止背景滚动
+                setTimeout(() => {
+                    modal.classList.add('content-active');
+                    modal.style.opacity = '1';
+                    maxScroll = galleryInner.scrollWidth - window.innerWidth; // 计算最大滚动距离
+                }, 50);
+                startLerp();
+            };
+
+            // 关闭模态框函数
+            const closeModal = () => {
+                modal.style.transition = 'all 1s cubic-bezier(0.165, 0.84, 0.44, 1)';
+                modal.style.opacity = '0';
+                modal.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    modal.classList.remove('active', 'content-active');
+                    modal.style.transform = '';
+                    document.body.style.overflow = ''; // 恢复背景滚动
+                    cancelAnimationFrame(animationFrameId);
+                    targetScroll = 0;
+                    currentScroll = 0;
+                    galleryInner.style.transform = `translateX(0px)`;
+                }, 1000);
+            };
+
+            // 平滑滚动函数
+            const startLerp = () => {
+                const step = () => {
+                    // 弹性阻力效果
+                    if (targetScroll > maxScroll) {
+                        targetScroll -= (targetScroll - maxScroll) * 0.1;
+                    }
+                    if (targetScroll < 0) {
+                        targetScroll -= targetScroll * 0.1;
+                    }
+
+                    // 平滑过渡
+                    currentScroll += (targetScroll - currentScroll) * 0.08;
+
+                    const overscroll = targetScroll - maxScroll;
+                    if (overscroll > 0) {
+                        const pullProgress = Math.min(overscroll / 800, 1);
+                        galleryWrapper.style.transition = 'none';
+                        galleryWrapper.style.transform = `translateX(${-overscroll * 0.3}px) scale(${1 - pullProgress * 0.08})`;
+                        galleryWrapper.style.opacity = `${1 - (pullProgress * 0.4)}`;
+
+                        // 拉动过度时关闭模态框
+                        if (pullProgress >= 1) {
+                            closeModal();
+                            return;
+                        }
+                    } else {
+                        galleryWrapper.style.transition = 'transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)';
+                        galleryWrapper.style.transform = `translateX(0px) scale(1)`;
+                        galleryWrapper.style.opacity = `1`;
+                    }
+
+                    // 应用滚动效果
+                    galleryInner.style.transform = `translateX(${-currentScroll}px)`;
+                    animationFrameId = requestAnimationFrame(step);
+                };
+                animationFrameId = requestAnimationFrame(step);
+            };
+
+            // 为所有项目卡片添加点击事件
+            projectTriggers.forEach(trigger => {
+                trigger.addEventListener('click', openModal);
+            });
+
+            // 为关闭按钮添加点击事件
+            closeModalBtn.addEventListener('click', closeModal);
+
+            // 监听鼠标滚轮事件（在模态框中）
+            window.addEventListener('wheel', (e) => {
+                if (!modal.classList.contains('active')) return;
+                e.preventDefault(); // 阻止默认滚动行为
+                targetScroll += e.deltaY; // 根据滚轮方向调整滚动目标
+            }, { passive: false });
+        });
+
+        // 档案切换函数
+        function toggleArchive(element) {
+            const item = element.closest('.archive-item'); // 获取当前点击的档案项
+            document.querySelectorAll('.archive-item').forEach(i => {
+                if (i !== item) i.classList.remove('is-active'); // 关闭其他档案项
+            });
+            item.classList.toggle('is-active'); // 切换当前档案项的状态
+        }
+    </script>
+
+    <!-- Tailwind 生成的样式 -->
+    <style>
+        *,
+        ::before,
+        ::after {
+            --tw-border-spacing-x: 0;
+            --tw-border-spacing-y: 0;
+            --tw-translate-x: 0;
+            --tw-translate-y: 0;
+            --tw-rotate: 0;
+            --tw-skew-x: 0;
+            --tw-skew-y: 0;
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+            --tw-pan-x: ;
+            --tw-pan-y: ;
+            --tw-pinch-zoom: ;
+            --tw-scroll-snap-strictness: proximity;
+            --tw-gradient-from-position: ;
+            --tw-gradient-via-position: ;
+            --tw-gradient-to-position: ;
+            --tw-ordinal: ;
+            --tw-slashed-zero: ;
+            --tw-numeric-figure: ;
+            --tw-numeric-spacing: ;
+            --tw-numeric-fraction: ;
+            --tw-ring-inset: ;
+            --tw-ring-offset-width: 0px;
+            --tw-ring-offset-color: #fff;
+            --tw-ring-color: rgb(59 130 246 / 0.5);
+            --tw-ring-offset-shadow: 0 0 #0000;
+            --tw-ring-shadow: 0 0 #0000;
+            --tw-shadow: 0 0 #0000;
+            --tw-shadow-colored: 0 0 #0000;
+            --tw-blur: ;
+            --tw-brightness: ;
+            --tw-contrast: ;
+            --tw-grayscale: ;
+            --tw-hue-rotate: ;
+            --tw-invert: ;
+            --tw-saturate: ;
+            --tw-sepia: ;
+            --tw-drop-shadow: ;
+            --tw-backdrop-blur: ;
+            --tw-backdrop-brightness: ;
+            --tw-backdrop-contrast: ;
+            --tw-backdrop-grayscale: ;
+            --tw-backdrop-hue-rotate: ;
+            --tw-backdrop-invert: ;
+            --tw-backdrop-opacity: ;
+            --tw-backdrop-saturate: ;
+            --tw-backdrop-sepia: ;
+            --tw-contain-size: ;
+            --tw-contain-layout: ;
+            --tw-contain-paint: ;
+            --tw-contain-style:
+        }
+
+        ::backdrop {
+            --tw-border-spacing-x: 0;
+            --tw-border-spacing-y: 0;
+            --tw-translate-x: 0;
+            --tw-translate-y: 0;
+            --tw-rotate: 0;
+            --tw-skew-x: 0;
+            --tw-skew-y: 0;
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+            --tw-pan-x: ;
+            --tw-pan-y: ;
+            --tw-pinch-zoom: ;
+            --tw-scroll-snap-strictness: proximity;
+            --tw-gradient-from-position: ;
+            --tw-gradient-via-position: ;
+            --tw-gradient-to-position: ;
+            --tw-ordinal: ;
+            --tw-slashed-zero: ;
+            --tw-numeric-figure: ;
+            --tw-numeric-spacing: ;
+            --tw-numeric-fraction: ;
+            --tw-ring-inset: ;
+            --tw-ring-offset-width: 0px;
+            --tw-ring-offset-color: #fff;
+            --tw-ring-color: rgb(59 130 246 / 0.5);
+            --tw-ring-offset-shadow: 0 0 #0000;
+            --tw-ring-shadow: 0 0 #0000;
+            --tw-shadow: 0 0 #0000;
+            --tw-shadow-colored: 0 0 #0000;
+            --tw-blur: ;
+            --tw-brightness: ;
+            --tw-contrast: ;
+            --tw-grayscale: ;
+            --tw-hue-rotate: ;
+            --tw-invert: ;
+            --tw-saturate: ;
+            --tw-sepia: ;
+            --tw-drop-shadow: ;
+            --tw-backdrop-blur: ;
+            --tw-backdrop-brightness: ;
+            --tw-backdrop-contrast: ;
+            --tw-backdrop-grayscale: ;
+            --tw-backdrop-hue-rotate: ;
+            --tw-backdrop-invert: ;
+            --tw-backdrop-opacity: ;
+            --tw-backdrop-saturate: ;
+            --tw-backdrop-sepia: ;
+            --tw-contain-size: ;
+            --tw-contain-layout: ;
+            --tw-contain-paint: ;
+            --tw-contain-style:
+        }
+    </style>
+</head>
+
+<body class="selection:bg-tertiary selection:text-on-tertiary" data-mode="connect">
+    <!-- 全屏沉浸式模态框 -->
+    <!-- 用于展示项目详情的弹出层 -->
+    <div class="fixed inset-0 z-[9999] bg-[#0a0a0a] flex-col items-center justify-center opacity-0 overflow-hidden"
+        id="immersive-modal" style="opacity: 0; transition: 1s cubic-bezier(0.165, 0.84, 0.44, 1);">
+        <!-- 关闭按钮 -->
+        <button class="absolute top-12 right-12 z-[10000] text-primary hover:text-white transition-colors"
+            id="close-modal">
+            <span class="material-symbols-outlined text-4xl">close</span>
+        </button>
+
+        <!-- 画廊包装器 -->
+        <div class="gallery-wrapper w-full h-full flex flex-col justify-center"
+            style="transition: none; transform: translateX(-10.0696px) scale(0.996643); opacity: 0.983217;">
+            <!-- 顶部信息 -->
+            <div class="px-12 lg:px-24 mb-8 lg:mb-16 w-full">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="h-[2px] w-12 bg-primary"></span>
+                    <p class="font-label text-[10px] uppercase tracking-[0.5em] text-on-surface-variant mask-text">
+                        <span class="mask-inner block">PROJECT ARCHIVE / 01</span>
+                    </p>
+                </div>
+                <h2 class="text-4xl lg:text-6xl font-black tracking-tighter uppercase mask-text">
+                    <span class="mask-inner block" style="transition-delay: 0.1s;">Immersive Visuals</span>
+                </h2>
+            </div>
+
+            <!-- 水平滚动内容 -->
+            <div class="flex items-center gap-12 px-12 lg:px-24 w-max h-[50vh] lg:h-[60vh]"
+                data-stitch-vh="h-[50vh]===h-[60vh]" id="gallery-inner" style="transform: translateX(0px);">
+                <!-- 画廊项目 1 -->
+                <div class="gallery-item bg-surface-container group/item relative">
+                    <img alt="Gallery 1"
+                        class="w-full h-full object-cover grayscale brightness-50 group-hover/item:grayscale-0 transition-all duration-700"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrRsobE0pj9FXF6eD973hl6dM8oH8tqei18c2AV2wUm93FmX7T6Vn_o8zpzYnYltqMMsK5-AqKNcioNfFHM-USICpIHtzh3R1dUPB8JGZUVG8VeyeG8GrwFFdpJeYakUzvCq_YljoI30tfwGEwSnvY3Opj_KFCdFe1pMROsUthPZYgYSBxCBpuehlVHLlozIy2aA1m2N2R7p83KEVkiYrohdwOeXTsbqZ0NEf837lLaOZW2tR2m80T4fnZ6F3h-a_Ak0cUGQgZVHEB">
+                    <div class="absolute bottom-12 left-12 right-12">
+                        <div class="card-mask-container">
+                            <h3
+                                class="card-mask-content text-3xl font-black tracking-tighter uppercase text-white mb-2 whitespace-nowrap">
+                                流动的空间 / FLUID SPACES</h3>
+                        </div>
+                        <div class="card-mask-container">
+                            <p
+                                class="card-mask-content description-mask text-sm text-white/70 font-medium tracking-wide">
+                                探索极简主义与大自然共生的建筑视觉。<br>
+                                (Exploring the architectural symbiosis of minimalism and nature.)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 画廊项目 2 -->
+                <div class="gallery-item bg-surface-container group/item relative">
+                    <img alt="Gallery 2"
+                        class="w-full h-full object-cover grayscale brightness-50 group-hover/item:grayscale-0 transition-all duration-700"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvp06dHXldOQmrxiBgwtqx7vnVsW9zH2vdsMCquVu3P4NokYbR2Y64AesZiuaAJE4Bs2jZIPMAi4oW3HjHDPaWA3QccxGA055szxvqwhslS0p4Qf9g8MEZrfNsIENzoZfisH9DdfnEwlW3DU9akN28mBiFEpiyxWyHrhUiziWu133L78lLukLKlL6YAj7Czr59cwFkv_loBo95bZBcu-FvO9RpIDINumCDBYkiLLTgz17saREgEy975N4sUtfvMLzCnXoVLncQHlzZ">
+                    <div class="absolute bottom-12 left-12 right-12">
+                        <div class="card-mask-container">
+                            <h3
+                                class="card-mask-content text-3xl font-black tracking-tighter uppercase text-white mb-2 whitespace-nowrap">
+                                数字遗迹 / DIGITAL RELICS</h3>
+                        </div>
+                        <div class="card-mask-container">
+                            <p
+                                class="card-mask-content description-mask text-sm text-white/70 font-medium tracking-wide">
+                                在赛博废墟中重构经典比例的平衡。<br>
+                                (Reconstructing the balance of classical proportions in cyber ruins.)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 画廊项目 3 -->
+                <div class="gallery-item bg-surface-container group/item relative">
+                    <img alt="Gallery 3"
+                        class="w-full h-full object-cover grayscale brightness-50 group-hover/item:grayscale-0 transition-all duration-700"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqGHhGOrzw-9TKxvCs5PvY17ekXcqPtkCOnP-oTjMVjQI-cdYobQgPJ0_92iw8LAIYz32l5mLJw625QAFhK8ylUPipBNZkZ0196U-z9fHNBNdzAsJxRqtBWBFr534kadaH3jVNuYhxcnu6pqLbIsxUYrmkOsFOuR39IXPAZ7nLe9xOXvJoE_K05t37HdqkPsD8ARhI3JfRqRB7k47pyg3GSdtNmHiIwj8GpH7QYUqSI_MI-nMIkTdJIRAlGvkplhSocJGA-YspzBYY">
+                    <div class="absolute bottom-12 left-12 right-12">
+                        <div class="card-mask-container">
+                            <h3
+                                class="card-mask-content text-3xl font-black tracking-tighter uppercase text-white mb-2 whitespace-nowrap">
+                                先锋意志 / VANGUARD WILL</h3>
+                        </div>
+                        <div class="card-mask-container">
+                            <p
+                                class="card-mask-content description-mask text-sm text-white/70 font-medium tracking-wide">
+                                跨媒介交互定义的未来触感体验。<br>
+                                (Futuristic haptic experiences defined by cross-media interaction.)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 滚动提示 -->
+            <div class="absolute bottom-12 left-24">
+                <p class="font-label text-[10px] uppercase tracking-[0.5em] text-on-surface-variant mask-text">
+                    <span class="mask-inner block" style="transition-delay: 0.3s;">Scroll to the end to exit</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <nav
+        class="fixed top-0 w-full z-[100] flex justify-between items-center px-12 py-8 transition-all duration-200 ease-in-out glass-nav">
+        <div class="text-xl font-black tracking-tighter text-[#c6c6c7] mix-blend-difference">PORTFOLIO | 作品集</div>
+
+        <!-- 桌面端导航链接 -->
+        <div class="hidden md:flex gap-12">
+            <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#ffffff] border-b border-[#ffffff] pb-1 transition-colors duration-200"
+                href="#">作品 / PROJECTS</a>
+            <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#acabaa] hover:text-[#ffffff] transition-colors duration-200"
+                href="#">履历 / ARCHIVE</a>
+            <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#acabaa] hover:text-[#ffffff] transition-colors duration-200"
+                href="#">实验 / AI LAB</a>
+            <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#acabaa] hover:text-[#ffffff] transition-colors duration-200"
+                href="#">联络 / CONNECT</a>
+        </div>
+
+        <!-- 移动端菜单按钮 -->
+        <div class="md:hidden">
+            <span class="material-symbols-outlined text-primary">menu</span>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main>
+        <!-- 模块 1: 英雄区域 -->
+        <section class="reveal relative min-h-screen flex flex-col justify-center pt-20 active">
+            <!-- 背景文字 -->
+            <div class="vanguard-bg-text">PORTFOLIO</div>
+
+            <!-- 英雄区域文字内容 - 统一10%偏移并保持h2在h1下方 -->
+            <div class="absolute left-[5%] w-[90%] space-y-0 top-[17vh]">
+                <!-- 🔧 主标题全局排版总控台：(已转换为严格的视距比例 vw，在 1080p 也能完美保持 4K 的留白高级感！) -->
+                <div
+                    class="relative text-[clamp(2rem,10vw,15rem)] font-black leading-[0.85] tracking-[10px] uppercase mb-[1vh]">
+
+                    <!-- 第1层 (底层 z-0)：深埋的实体浅灰色基底 -->
+                    <h1 class="absolute top-0 left-0 z-0 text-[#e7e5e5]">
+                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>作品集</span>
+                    </h1>
+
+                    <!-- 第2层 (中层 z-5)：新增的黑色描边镂空点缀层，夹在底字和图片之间 -->
+                    <!-- [-webkit-text-stroke:1px_black] 使用 1px 极细线包裹，叠上 opacity-30 后视觉上更加内敛高级 -->
+                    <h1 class="absolute top-0 left-0 z-[5] text-transparent [-webkit-text-stroke:1px_black] opacity-10 pointer-events-none"
+                        aria-hidden="true">
+                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>作品集</span>
+                    </h1>
+
+                    <!-- 第3层 (顶层 z-20)：原有的亮色镂空层，漂浮在跨页图片的最前方 -->
+                    <!-- 这个 h1 使用了 relative 属性，它的主要作用是“撑起”整个父容器的自然高度，所以万万不可删除 relative 哦 -->
+                    <h1 class="relative z-20 stroke-text pointer-events-none" aria-hidden="true">
+                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>作品集</span>
+                    </h1>
+                </div>
+
+                <!-- 🔧 大副标题字距校准区：PORTFOLIO -->
+                <h2
+                    class="relative z-20 text-[clamp(1.5rem,6vw,10rem)] font-black leading-[0.85] tracking-[-0.05em] uppercase stroke-text !mt-[2vh]">
+                    PORTFOLIO</h2>
+
+                <div class="relative z-20 mt-[4vh] lg:mt-[7vh] max-w-[90%] lg:max-w-[35vw]">
+                    <!-- 🔧 中文短横幅字距调控：“平面设计师...” (0px 代表系统默认间距，想拉宽可填 tracking-[2px]) -->
+                    <p
+                        class="text-[clamp(14px,1.5vw,60px)] font-[700] leading-tight text-on-surface mt-[2vh] mb-[2vh] border-l-[0.2vw] border-primary pl-[1.2vw] py-[1vh] tracking-[0px]">
+                        平面设计师&amp;摄影摄像师&amp;剪辑师<br>
+
+                        <!-- 🔧 英文标语字距调控：已将之前的 tracking-widest 揭秘转换为明确的数字 tracking-[0.1em] -->
+                        <span
+                            class="text-[clamp(10px,0.6vw,16px)] font-normal text-on-surface-variant uppercase tracking-[0.1em]">Graphic
+                            Designer, Photographer &amp; Videographer, and Editor</span>
+                    </p>
+
+                    <!-- 🔧 中文段落字距调控：原本文本太紧，我为你加了 1px 的舒适间距。感觉太稀疏可改回 tracking-[0px] -->
+                    <p
+                        class="mt-[2vh] text-[clamp(12px,0.6vw,20px)] text-on-surface-variant leading-relaxed opacity-60 tracking-[1px]">
+                        通过巨石般的字体设计与严谨的档案式精确性，定义高端机构的视觉语言。我们不是在设计，而是在构建持久的数字纪念碑。
+                    </p>
+                </div>
+            </div>
+
+            <!-- ✨ 终极隐形触发墙：完全剥离在任何容器之外，用 z-50 锁定全屏绝对无可争议的右侧 30% -->
+            <!-- 它的 peer 身份能从前端最底层“隔山打牛”控制下方的独立展示组，不再受层级遮挡气气！ -->
+            <div class="fixed top-0 right-0 w-[35vw] h-screen z-50 peer pointer-events-auto" style="cursor: pointer;">
+            </div>
+
+            <!-- 右侧展示组：完全抛弃自己的交互，专心做被控端 -->
+            <div
+                class="absolute right-0 top-1/2 -translate-y-1/2 w-[50vw] z-10 hidden lg:block pointer-events-none peer-hover:[&_.aida-overlay]:opacity-100">
+
+                <div class="grid w-full items-end justify-items-end">
+
+                    <img alt="Artist Portrait - Dark Base"
+                        class="col-start-1 row-start-1 w-full h-auto object-right-bottom block" src="./1.png">
+
+                    <!-- 状态 2：亮色图层。你的所有完美校准参数 (1.07倍等) 我已经替你原封不动地保留了！ -->
+                    <!-- 唯一机制变动：去掉了失效的 group-hover，换成专属识别码 aida-overlay 供外层巨型玻璃板遥控 -->
+                    <img alt="Artist Portrait - Light Overlay"
+                        class="aida-overlay col-start-1 row-start-1 w-full h-auto object-right-bottom block opacity-0 origin-bottom-right translate-x-[10px] translate-y-[25px] scale-[1.07] transition-all duration-[2000ms] ease-in-out will-change-transform will-change-opacity"
+                        src="./2.png">
+                </div>
+            </div>
+
+            <!-- 占位容器 - 保持布局平衡 -->
+            <div class="container mx-auto px-12 grid grid-cols-12 items-center gap-0 lg:gap-12 relative z-10">
+                <!-- 左侧文字内容 - 占位用 -->
+                <div class="col-span-12 lg:col-span-7 order-2 lg:order-1 mt-12 lg:mt-0">
+                    <div class="h-[calc(clamp(4rem,12vw,12rem)+clamp(3rem,8vw,8rem))]"></div>
+                </div>
+
+                <!-- 右侧占位 - 移动端显示图片 -->
+                <div class="col-span-12 lg:col-span-5 order-1 lg:order-2 flex justify-end relative h-[40vh] lg:hidden">
+                    <div class="relative w-full h-full group overflow-hidden">
+                        <img alt="Artist Portrait"
+                            class="duotone-portrait w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-105"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvjYTOoVOQ6feKXabYxz9nF1Q4Ekj-3ZzCtOBeDwBjm7mVVTKxXZ-2ZLGqBXZM521Uje8ZECzE43P5ZTzFqUcrIdLawPO8Ew0xepZsGzhwoFuxxhKtdeBzmXH6q-ypRVlFgZwOCE20KuCL23pAKGz8BVztf4ib1d1bd0rpkMqqNFmEVu7SFLymOJrXTrhZNB1bUT5bkkryzfVc72P1vtKKBx_a26DHfwTyO52GTTpJ0b4VRJr2CvGQS3kYoLtwr0UAj_ABpkWx_Ta8">
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-transparent to-transparent">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 滚动提示 -->
+            <div
+                class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-40 animate-bounce">
+                <span
+                    class="text-[10px] uppercase tracking-[0.4em] font-label transform rotate-90 whitespace-nowrap mb-8">Scroll
+                    to Explore</span>
+                <div class="w-[1px] h-12 bg-primary"></div>
+            </div>
+        </section>
+
+        <!-- 模块 2: 优质案例研究 -->
+        <section class="py-24 lg:py-48 px-6 lg:px-12 relative" id="projects-section">
+            <div class="mb-16 lg:mb-32">
+                <span class="font-label text-xs uppercase tracking-[0.3em] text-tertiary">核心商业案例 / SELECTED WORKS</span>
+                <h2 class="text-3xl lg:text-5xl font-bold tracking-tighter mt-4">奢华酒店视觉策划 (Luxury Hospitality)</h2>
+            </div>
+
+            <div class="flex flex-col gap-16" id="projects-grid">
+                <!-- 项目 1 (JW Marriott) -->
+                <div
+                    class="brutalist-card grid grid-cols-1 lg:grid-cols-10 items-center gap-12 lg:gap-24 group border-b border-outline-variant/20 pb-16 visible">
+                    <div class="lg:col-span-6">
+                        <div class="project-img-container aspect-video relative">
+                            <img alt="JW Marriott Project" class="w-full h-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrRsobE0pj9FXF6eD973hl6dM8oH8tqei18c2AV2wUm93FmX7T6Vn_o8zpzYnYltqMMsK5-AqKNcioNfFHM-USICpIHtzh3R1dUPB8JGZUVG8VeyeG8GrwFFdpJeYakUzvCq_YljoI30tfwGEwSnvY3Opj_KFCdFe1pMROsUthPZYgYSBxCBpuehlVHLlozIy2aA1m2N2R7p83KEVkiYrohdwOeXTsbqZ0NEf837lLaOZW2tR2m80T4fnZ6F3h-a_Ak0cUGQgZVHEB">
+                            <div class="project-overlay absolute inset-0"></div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-4 flex flex-col h-full justify-between">
+                        <div class="flex flex-col gap-4">
+                            <div
+                                class="flex items-center gap-4 text-on-surface-variant font-mono text-[11px] tracking-widest uppercase">
+                                <span>01</span>
+                                <span class="meta-line"></span>
+                                <span>Branding &amp; Strategy</span>
+                            </div>
+                            <h3
+                                class="project-title-stroke text-[clamp(3rem,5vw,5rem)] font-black tracking-tighter uppercase mt-6 whitespace-nowrap">
+                                JW Marriott<br>
+                                ETHEREAL
+                            </h3>
+                        </div>
+                        <div class="mt-8">
+                            <p class="text-on-surface-variant text-sm max-w-md leading-relaxed">
+                                全面视觉识别重新设计，专注于传承与现代极简奢华的融合。针对万豪旗下 JW 品牌进行的视觉系统全案重构。
+                            </p>
+                            <button class="mt-10 flex items-center gap-4 group/btn">
+                                <span class="font-label text-[10px] uppercase tracking-[0.3em] text-on-surface">View
+                                    Details</span>
+                                <span
+                                    class="material-symbols-outlined text-sm group-hover/btn:translate-x-2 transition-transform">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 项目 2 (Ritz-Carlton) -->
+                <div
+                    class="brutalist-card grid grid-cols-1 lg:grid-cols-10 items-center gap-12 lg:gap-24 group border-b border-outline-variant/20 pb-16 visible">
+                    <div class="lg:col-span-6">
+                        <div class="project-img-container aspect-video relative">
+                            <img alt="Ritz-Carlton Project" class="w-full h-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvp06dHXldOQmrxiBgwtqx7vnVsW9zH2vdsMCquVu3P4NokYbR2Y64AesZiuaAJE4Bs2jZIPMAi4oW3HjHDPaWA3QccxGA055szxvqwhslS0p4Qf9g8MEZrfNsIENzoZfisH9DdfnEwlW3DU9akN28mBiFEpiyxWyHrhUiziWu133L78lLukLKlL6YAj7Czr59cwFkv_loBo95bZBcu-FvO9RpIDINumCDBYkiLLTgz17saREgEy975N4sUtfvMLzCnXoVLncQHlzZ">
+                            <div class="project-overlay absolute inset-0"></div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-4 flex flex-col h-full justify-between">
+                        <div class="flex flex-col gap-4">
+                            <div
+                                class="flex items-center gap-4 text-on-surface-variant font-mono text-[11px] tracking-widest uppercase">
+                                <span>02</span>
+                                <span class="meta-line"></span>
+                                <span>Editorial Design</span>
+                            </div>
+                            <h3
+                                class="project-title-stroke text-[clamp(3rem,5vw,5rem)] font-black tracking-tighter uppercase mt-6 whitespace-nowrap">
+                                Ritz-Carlton<br>
+                                LEGACY
+                            </h3>
+                        </div>
+                        <div class="mt-8">
+                            <p class="text-on-surface-variant text-sm max-w-md leading-relaxed">
+                                针对历史悠久的欧洲资产组合进行的全球传播策略与编辑设计。重新定义顶级奢华的叙事方式。
+                            </p>
+                            <button class="mt-10 flex items-center gap-4 group/btn">
+                                <span class="font-label text-[10px] uppercase tracking-[0.3em] text-on-surface">View
+                                    Details</span>
+                                <span
+                                    class="material-symbols-outlined text-sm group-hover/btn:translate-x-2 transition-transform">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 项目 3 (AI Synthesis Lab Visuals) -->
+                <div
+                    class="brutalist-card grid grid-cols-1 lg:grid-cols-10 items-center gap-12 lg:gap-24 group border-b border-outline-variant/20 pb-16 visible">
+                    <div class="lg:col-span-6">
+                        <div class="project-img-container aspect-video relative">
+                            <img alt="AI Visual Project" class="w-full h-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqGHhGOrzw-9TKxvCs5PvY17ekXcqPtkCOnP-oTjMVjQI-cdYobQgPJ0_92iw8LAIYz32l5mLJw625QAFhK8ylUPipBNZkZ0196U-z9fHNBNdzAsJxRqtBWBFr534kadaH3jVNuYhxcnu6pqLbIsxUYrmkOsFOuR39IXPAZ7nLe9xOXvJoE_K05t37HdqkPsD8ARhI3JfRqRB7k47pyg3GSdtNmHiIwj8GpH7QYUqSI_MI-nMIkTdJIRAlGvkplhSocJGA-YspzBYY">
+                            <div class="project-overlay absolute inset-0"></div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-4 flex flex-col h-full justify-between">
+                        <div class="flex flex-col gap-4">
+                            <div
+                                class="flex items-center gap-4 text-on-surface-variant font-mono text-[11px] tracking-widest uppercase">
+                                <span>03</span>
+                                <span class="meta-line"></span>
+                                <span>Generative Identity</span>
+                            </div>
+                            <h3
+                                class="project-title-stroke text-[clamp(3rem,5vw,5rem)] font-black tracking-tighter uppercase mt-6 whitespace-nowrap">
+                                HYBRID<br>
+                                INTELLIGENCE
+                            </h3>
+                        </div>
+                        <div class="mt-8">
+                            <p class="text-on-surface-variant text-sm max-w-md leading-relaxed">
+                                基于生成式AI工作流的未来品牌探索。打破传统设计的边界，通过算法创造无限可能的视觉延展。
+                            </p>
+                            <button class="mt-10 flex items-center gap-4 group/btn">
+                                <span class="font-label text-[10px] uppercase tracking-[0.3em] text-on-surface">View
+                                    Details</span>
+                                <span
+                                    class="material-symbols-outlined text-sm group-hover/btn:translate-x-2 transition-transform">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模块 3: 档案体验 -->
+        <section class="reveal py-24 lg:py-48 px-6 lg:px-12 active">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 lg:mb-24 gap-4 lg:gap-8">
+                    <div>
+                        <span
+                            class="font-label text-xs uppercase tracking-[0.3em] text-on-surface-variant">Timeline</span>
+                        <h2 class="text-3xl lg:text-5xl font-bold tracking-tighter mt-2 lg:mt-4 uppercase">工作经历 /
+                            ARCHIVE</h2>
+                    </div>
+                    <div class="text-on-surface-variant font-label text-xs tracking-widest uppercase">展示近期作品 (Showing
+                        Selective Archive)</div>
+                </div>
+
+                <div class="border-t border-outline-variant/30">
+                    <!-- 档案项 1 -->
+                    <div class="archive-item group border-b border-outline-variant/30 overflow-hidden">
+                        <div class="py-10 px-4 grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors"
+                            onclick="toggleArchive(this)">
+                            <div class="col-span-2 text-on-surface-variant font-label text-xs">2023</div>
+                            <div class="col-span-6 text-2xl font-medium text-primary group-hover:text-on-surface">
+                                声学字体探索
+                                <span class="block text-sm opacity-60 font-normal mt-1">Sonic Typography
+                                    Exploration</span>
+                            </div>
+                            <div class="col-span-3 text-on-surface-variant text-sm hidden md:block">交互设计 (Interactive
+                                Design)</div>
+                            <div class="col-span-1 text-right">
+                                <span class="material-symbols-outlined text-outline toggle-icon">add</span>
+                            </div>
+                        </div>
+                        <div class="archive-content-wrapper">
+                            <div class="archive-details">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                                    <div class="space-y-4">
+                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">项目背景 /
+                                            CONTEXT</h4>
+                                        <p class="text-on-surface-variant leading-relaxed">
+                                            该项目探索了声音波形与动态排版之间的同步性。通过生成算法，将声学参数转化为流动的视觉构架。</p>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">核心职责 /
+                                            IMPACT</h4>
+                                        <ul class="text-on-surface-variant space-y-2 list-disc list-inside">
+                                            <li>开发实时音频响应排版引擎</li>
+                                            <li>视觉系统与数字界面的整合</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 档案项 2 -->
+                    <div class="archive-item group border-b border-outline-variant/30 overflow-hidden">
+                        <div class="py-10 px-4 grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors"
+                            onclick="toggleArchive(this)">
+                            <div class="col-span-2 text-on-surface-variant font-label text-xs">2022</div>
+                            <div class="col-span-6 text-2xl font-medium text-primary group-hover:text-on-surface">
+                                柏林时装周形象识别
+                                <span class="block text-sm opacity-60 font-normal mt-1">Berlin Fashion Week
+                                    Identity</span>
+                            </div>
+                            <div class="col-span-3 text-on-surface-variant text-sm hidden md:block">品牌设计 (Branding)
+                            </div>
+                            <div class="col-span-1 text-right">
+                                <span class="material-symbols-outlined text-outline toggle-icon">add</span>
+                            </div>
+                        </div>
+                        <div class="archive-content-wrapper">
+                            <div class="archive-details">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                                    <div class="space-y-4">
+                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">项目背景 /
+                                            CONTEXT</h4>
+                                        <p class="text-on-surface-variant leading-relaxed">
+                                            为柏林时装周设计的全新品牌系统，平衡工业感与现代时尚的精致。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模块 4: AI 实验室模块 -->
+        <section class="reveal relative py-24 lg:py-48 px-6 lg:px-12 overflow-hidden active">
+            <!-- 代码流背景 -->
+            <div
+                class="absolute inset-0 opacity-10 font-mono text-[8px] lg:text-[10px] leading-tight select-none pointer-events-none code-stream p-4 overflow-hidden">
+                <div class="animate-pulse">
+                    const AI_WORKFLOW = { prompt: "hyper-realistic brutalist architecture", model: "Midjourney v6"
+                    };<br>
+                    while (evolving) { analyze_pixel_density(); refine_composition(); }<br>
+                    // Visual Overstep Protocol Active<br>
+                    [0.44, 0.12, 0.99, 0.51, 0.22, 0.87, 0.12, 0.44]
+                </div>
+            </div>
+
+            <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+                <div>
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 text-primary font-label text-[10px] tracking-[0.2em] uppercase mb-8">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+                        AI 实验室 / AI LAB: VISUAL OVERSTEP
+                    </div>
+                    <h2 class="text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-6 lg:mb-8 leading-none">
+                        生成式综合体 <br><span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-surface-bright">(GENERATIVE
+                            SYNTHESIS)</span></h2>
+                    <p class="text-on-surface-variant text-lg leading-relaxed mb-12 max-w-md">
+                        利用 AI 的混沌潜力突破视觉边界。我将 Midjourney 和自定义大语言模型 (LLM) 工作流整合到专业制作管线中。
+                    </p>
+                    <div class="flex flex-wrap gap-8">
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-on-surface">95%</span>
+                            <span class="text-xs uppercase tracking-widest text-on-surface-variant">效率提升 (Efficiency
+                                Gain)</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-on-surface">∞</span>
+                            <span class="text-xs uppercase tracking-widest text-on-surface-variant">创意范畴 (Creative
+                                Scope)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="aspect-square bg-white/5 relative p-1">
+                        <img alt="AI Visualization" class="w-full h-full object-cover grayscale brightness-75"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqGHhGOrzw-9TKxvCs5PvY17ekXcqPtkCOnP-oTjMVjQI-cdYobQgPJ0_92iw8LAIYz32l5mLJw625QAFhK8ylUPipBNZkZ0196U-z9fHNBNdzAsJxRqtBWBFr534kadaH3jVNuYhxcnu6pqLbIsxUYrmkOsFOuR39IXPAZ7nLe9xOXvJoE_K05t37HdqkPsD8ARhI3JfRqRB7k47pyg3GSdtNmHiIwj8GpH7QYUqSI_MI-nMIkTdJIRAlGvkplhSocJGA-YspzBYY">
+                        <div class="absolute inset-0 border border-primary/20 pointer-events-none"></div>
+                        <div class="absolute -top-12 -right-12 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模块 5: 页脚和联系信息 -->
+        <footer class="reveal w-full py-12 lg:py-24 px-6 lg:px-12 active">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8 lg:gap-12">
+                <div class="w-full md:w-1/2">
+                    <div class="text-base lg:text-lg font-bold text-[#c6c6c7] mb-4 lg:mb-8 uppercase tracking-widest">联络
+                        / CONTACT</div>
+                    <div class="flex flex-col gap-4">
+                        <button
+                            class="w-full md:w-auto px-6 lg:px-12 py-4 lg:py-6 bg-[#fff6db] text-[#6b5d05] text-base lg:text-xl font-bold tracking-tight uppercase hover:bg-[#eeda7b] transition-all duration-300">
+                            下载完整简历 (DOWNLOAD RESUME)
+                        </button>
+                        <button
+                            class="w-full md:w-auto px-6 lg:px-12 py-4 lg:py-6 bg-transparent border border-[#767575]/40 text-[#c6c6c7] text-base lg:text-xl font-bold tracking-tight uppercase hover:text-[#ffffff] hover:border-[#ffffff] transition-all duration-300">
+                            邮件邀约 (EMAIL ME)
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-8 md:text-right w-full md:w-1/3">
+                    <a class="font-['Inter'] text-[1rem] leading-relaxed text-[#acabaa] hover:text-[#ffffff] transition-opacity duration-300"
+                        href="#">商务合作咨询 (Business Inquiry)</a>
+                    <div class="flex md:justify-end gap-6">
+                        <span class="material-symbols-outlined text-[#acabaa]">public</span>
+                        <span class="material-symbols-outlined text-[#acabaa]">alternate_email</span>
+                        <span class="material-symbols-outlined text-[#acabaa]">share</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto mt-24 pt-12 border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-[#acabaa] text-xs uppercase tracking-[0.2em]">© 2024 Editorial Vanguard. 版权所有 / ALL
+                    RIGHTS RESERVED.</div>
+                <div class="text-[#acabaa] text-xs uppercase tracking-[0.2em] flex gap-8">
+                    <a class="hover:text-on-surface" href="#">隐私政策 / PRIVACY</a>
+                    <a class="hover:text-on-surface" href="#">法律声明 / LEGAL</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+</body>
+
+</html>
