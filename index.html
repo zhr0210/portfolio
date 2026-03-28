@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--
-    HTML 鏂囦欢澹版槑
-    杩欐槸涓€涓畬鏁寸殑 HTML5 鏂囨。锛岀敤浜庡垱寤轰竴涓笓涓氱殑浣滃搧闆嗙綉绔?
-    鍖呭惈浜嗗搷搴斿紡璁捐銆佸姩鐢绘晥鏋滃拰鐜颁唬鍓嶇鎶€鏈?
+    HTML 文件声明
+    这是一个完整的 HTML5 文档，用于创建一个专业的作品集网站
+    包含了响应式设计、动画效果和现代前端技术
 -->
 <html class="dark" lang="zh-CN">
 
 <head>
-    <!-- 瀛楃缂栫爜璁剧疆 -->
+    <!-- 字符编码设置 -->
     <meta charset="utf-8">
 
-    <!-- 鍝嶅簲寮忚鍙ｈ缃?-->
-    <!-- width=device-width: 璁╅〉闈㈠搴﹁窡闅忚澶囧搴?-->
-    <!-- initial-scale=1.0: 鍒濆缂╂斁姣斾緥涓? -->
+    <!-- 响应式视口设置 -->
+    <!-- width=device-width: 让页面宽度跟随设备宽度 -->
+    <!-- initial-scale=1.0: 初始缩放比例为1 -->
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <!-- 椤甸潰鏍囬 -->
-    <title>PORTFOLIO | 浣滃搧闆?| Elite Visual Designer</title>
+    <!-- 页面标题 -->
+    <title>PORTFOLIO | 作品集 | Elite Visual Designer</title>
 
-    <!-- 寮曞叆 Tailwind CSS (涓€绉嶆祦琛岀殑 CSS 妗嗘灦) -->
-    <!-- plugins=forms,container-queries: 鍔犺浇琛ㄥ崟鍜屽鍣ㄦ煡璇㈡彃浠?-->
+    <!-- 引入 Tailwind CSS (一种流行的 CSS 框架) -->
+    <!-- plugins=forms,container-queries: 加载表单和容器查询插件 -->
     <script src="assets/tailwind.js"></script>
 <link href="assets/fonts.css" rel="stylesheet">
 
-    <!-- Tailwind 閰嶇疆 -->
+    <!-- Tailwind 配置 -->
     <script id="tailwind-config">
         tailwind.config = {
-            // 娣辫壊妯″紡閰嶇疆
+            // 深色模式配置
             darkMode: "class",
             theme: {
                 extend: {
-                    // 鑷畾涔夐鑹插彉閲?
+                    // 自定义颜色变量
                     colors: {
                         "on-secondary-fixed-variant": "#5b5c5c",
                         "on-surface-variant": "#acabaa",
@@ -84,29 +84,29 @@
                         "on-error-container": "#ff9993",
                         "secondary-dim": "#9e9e9e"
                     },
-                    // 鑷畾涔夊瓧浣?
+                    // 自定义字体
                     fontFamily: {
                         "headline": ["Inter", "sans-serif"],
                         "body": ["Inter", "sans-serif"],
                         "label": ["Inter", "sans-serif"],
                         "mono": ["monospace"]
                     },
-                    // 鑷畾涔夊渾瑙?
+                    // 自定义圆角
                     borderRadius: { "DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px" },
                 },
             },
         }
     </script>
 
-    <!-- 鑷畾涔?CSS 鏍峰紡 -->
+    <!-- 自定义 CSS 样式 -->
     <style>
-        /* 鍝嶅簲寮忓瓧浣撳ぇ灏忚缃?*/
-        /* clamp() 鍑芥暟: 鏈€灏忓€? 棣栭€夊€? 鏈€澶у€?*/
+        /* 响应式字体大小设置 */
+        /* clamp() 函数: 最小值, 首选值, 最大值 */
         html {
             font-size: clamp(14px, 1.2vw, 18px);
         }
 
-        /* 楂樺垎杈ㄧ巼灞忓箷閫傞厤 */
+        /* 高分辨率屏幕适配 */
         @media (min-width: 1920px) {
             html {
                 font-size: clamp(16px, 1.1vw, 20px);
@@ -119,111 +119,111 @@
             }
         }
 
-        /* 灏忓睆骞曢€傞厤 */
+        /* 小屏幕适配 */
         @media (max-width: 1024px) {
             html {
                 font-size: clamp(12px, 1.5vw, 16px);
             }
         }
 
-        /* 椤甸潰涓讳綋鏍峰紡 */
+        /* 页面主体样式 */
         body {
             background: linear-gradient(135deg, #0a0a0a 0%, #16181c 100%);
             background-attachment: fixed;
-            /* 鑳屾櫙鍥哄畾 */
+            /* 背景固定 */
             font-family: 'Inter', 'Noto Sans SC', sans-serif;
             color: #e7e5e5;
             overflow-x: hidden;
-            /* 闅愯棌姘村钩婊氬姩鏉?*/
+            /* 隐藏水平滚动条 */
         }
 
-        /* Material Icons 閰嶇疆 */
+        /* Material Icons 配置 */
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
-        /* 鐜荤拑鎬佸鑸爮 */
+        /* 玻璃态导航栏 */
         .glass-nav {
             background: rgba(10, 10, 10, 0.6);
             backdrop-filter: blur(20px);
         }
 
-        /* 鑳屾櫙鏂囧瓧鏍峰紡 */
+        /* 背景文字样式 */
         .vanguard-bg-text {
             font-size: clamp(15vw, 25vw, 30vw);
         }
 
-        /* 婊氬姩鏄剧ず鍔ㄧ敾 */
+        /* 滚动显示动画 */
         .reveal {
             opacity: 0;
-            /* 鍒濆閫忔槑搴︿负0 */
+            /* 初始透明度为0 */
             transform: translateY(30px);
-            /* 鍒濆浣嶇疆鍚戜笅鍋忕Щ30px */
+            /* 初始位置向下偏移30px */
             transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-            /* 鍔ㄧ敾杩囨浮 */
+            /* 动画过渡 */
             will-change: opacity, transform;
-            /* 鎬ц兘浼樺寲 */
+            /* 性能优化 */
         }
 
-        /* 婊氬姩鏄剧ず鍔ㄧ敾婵€娲荤姸鎬?*/
+        /* 滚动显示动画激活状态 */
         .reveal.active {
             opacity: 1;
-            /* 閫忔槑搴﹀彉涓? */
+            /* 透明度变为1 */
             transform: translateY(0);
-            /* 浣嶇疆鍥炲埌鍘熶綅 */
+            /* 位置回到原位 */
         }
 
-        /* 椤圭洰鍗＄墖鏍峰紡 */
+        /* 项目卡片样式 */
         .brutalist-card {
             opacity: 0;
             transform: translateY(60px);
             transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
             will-change: opacity, transform;
             cursor: pointer;
-            /* 榧犳爣鎮仠鏃舵樉绀烘墜鍨?*/
+            /* 鼠标悬停时显示手型 */
         }
 
-        /* 椤圭洰鍗＄墖鍙鐘舵€?*/
+        /* 项目卡片可见状态 */
         .brutalist-card.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* 椤圭洰鍥剧墖瀹瑰櫒 */
+        /* 项目图片容器 */
         .project-img-container {
             overflow: hidden;
-            /* 闅愯棌婧㈠嚭鍐呭 */
+            /* 隐藏溢出内容 */
             border-radius: 8px;
-            /* 鍦嗚 */
+            /* 圆角 */
             position: relative;
-            /* 鐩稿瀹氫綅锛屼负缁濆瀹氫綅鐨勫瓙鍏冪礌鎻愪緵鍙傝€?*/
+            /* 相对定位，为绝对定位的子元素提供参考 */
         }
 
-        /* 椤圭洰鍥剧墖鎮仠鏁堟灉 */
+        /* 项目图片悬停效果 */
         .project-img-container img {
             transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
             will-change: transform;
         }
 
-        /* 椤圭洰鍥剧墖瑕嗙洊灞?*/
+        /* 项目图片覆盖层 */
         .project-overlay {
             background: rgba(0, 0, 0, 0.6);
             transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        /* 榧犳爣鎮仠鏃剁殑鍥剧墖鏁堟灉 */
+        /* 鼠标悬停时的图片效果 */
         .brutalist-card:hover .project-img-container img {
             transform: scale(1.05);
-            /* 鍥剧墖鏀惧ぇ1.05鍊?*/
+            /* 图片放大1.05倍 */
         }
 
-        /* 榧犳爣鎮仠鏃剁殑瑕嗙洊灞傛晥鏋?*/
+        /* 鼠标悬停时的覆盖层效果 */
         .brutalist-card:hover .project-overlay {
             opacity: 0;
-            /* 瑕嗙洊灞傛秷澶?*/
+            /* 覆盖层消失 */
         }
 
-        /* 鍏冪嚎鏉℃牱寮?*/
+        /* 元线条样式 */
         .meta-line {
             width: 32px;
             height: 1px;
@@ -231,52 +231,52 @@
             transition: width 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), background-color 0.6s ease;
         }
 
-        /* 榧犳爣鎮仠鏃剁殑鍏冪嚎鏉℃晥鏋?*/
+        /* 鼠标悬停时的元线条效果 */
         .brutalist-card:hover .meta-line {
             width: 64px;
-            /* 绾挎潯鍙橀暱 */
+            /* 线条变长 */
             background-color: #ffffff;
-            /* 绾挎潯鍙樼櫧 */
+            /* 线条变白 */
         }
 
-        /* 椤圭洰鏍囬鎻忚竟鏁堟灉 */
+        /* 项目标题描边效果 */
         .project-title-stroke {
             -webkit-text-stroke: 1px rgba(255, 255, 255, 1);
-            /* 鏂囧瓧鎻忚竟 */
+            /* 文字描边 */
             color: transparent;
-            /* 鏂囧瓧棰滆壊閫忔槑锛屽彧鏄剧ず鎻忚竟 */
+            /* 文字颜色透明，只显示描边 */
             transition: color 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
             line-height: 0.9;
         }
 
-        /* 榧犳爣鎮仠鏃剁殑鏍囬鏁堟灉 */
+        /* 鼠标悬停时的标题效果 */
         .brutalist-card:hover .project-title-stroke {
             color: white;
-            /* 鏂囧瓧棰滆壊鍙樹负鐧借壊 */
+            /* 文字颜色变为白色 */
         }
 
-        /* 妗ｆ灞曞紑閫昏緫 */
+        /* 档案展开逻辑 */
         .archive-item {
             transition: background-color 0.4s cubic-bezier(0.7, 0, 0.3, 1);
         }
 
-        /* 妗ｆ鍐呭鍖呰鍣?*/
+        /* 档案内容包装器 */
         .archive-content-wrapper {
             display: grid;
             grid-template-rows: 0fr;
-            /* 鍒濆楂樺害涓? */
+            /* 初始高度为0 */
             transition: grid-template-rows 0.8s cubic-bezier(0.7, 0, 0.3, 1);
             overflow: hidden;
         }
 
-        /* 妗ｆ椤规縺娲荤姸鎬?*/
+        /* 档案项激活状态 */
         .archive-item.is-active .archive-content-wrapper {
             grid-template-rows: 1fr;
         }
 
-        /* 楂樺害鍙樹负1fr */
+        /* 高度变为1fr */
 
-        /* 妗ｆ璇︽儏 */
+        /* 档案详情 */
         .archive-details {
             min-height: 0;
             opacity: 0;
@@ -284,14 +284,14 @@
             transition: opacity 0.5s ease, padding 0.8s cubic-bezier(0.7, 0, 0.3, 1);
         }
 
-        /* 妗ｆ椤规縺娲绘椂鐨勮鎯呮晥鏋?*/
+        /* 档案项激活时的详情效果 */
         .archive-item.is-active .archive-details {
             opacity: 1;
             padding: 3rem 1rem 4rem 1rem;
             transition-delay: 0.3s;
         }
 
-        /* 鍒囨崲鍥炬爣鏃嬭浆鏁堟灉 */
+        /* 切换图标旋转效果 */
         .archive-item.is-active .toggle-icon {
             transform: rotate(45deg);
         }
@@ -300,7 +300,7 @@
             transition: transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
         }
 
-        /* 婊氬姩鏉℃牱寮?*/
+        /* 滚动条样式 */
         .scroll-hide::-webkit-scrollbar {
             height: 2px;
         }
@@ -313,29 +313,29 @@
             background: #c6c6c7;
         }
 
-        /* 浠ｇ爜娴佽儗鏅?*/
+        /* 代码流背景 */
         .code-stream {
             background: linear-gradient(to bottom, transparent, rgba(69, 71, 71, 0.1), transparent);
         }
 
-        /* 鏂囧瓧鎻ず鏁堟灉 */
+        /* 文字揭示效果 */
         .text-reveal {
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
         }
 
-        /* 鍙岃壊璋冭倴鍍忔晥鏋?*/
+        /* 双色调肖像效果 */
         .duotone-portrait {
             filter: grayscale(100%) contrast(120%) brightness(80%);
             mix-blend-mode: luminosity;
         }
 
-        /* 鎻忚竟鏂囧瓧 */
+        /* 描边文字 */
         .stroke-text {
             -webkit-text-stroke: 1px rgba(198, 198, 199, 0.3);
             color: transparent;
         }
 
-        /* 鑳屾櫙鏂囧瓧 */
+        /* 背景文字 */
         .vanguard-bg-text {
             position: absolute;
             font-size: 25vw;
@@ -345,14 +345,14 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: -1;
-            /* 灞傜骇鍦ㄥ簳閮?*/
+            /* 层级在底部 */
             opacity: 0.03;
             pointer-events: none;
-            /* 涓嶅搷搴旈紶鏍囦簨浠?*/
+            /* 不响应鼠标事件 */
             white-space: nowrap;
         }
 
-        /* 瑕嗙洊榛樿鏍峰紡 */
+        /* 覆盖默认样式 */
         section {
             background-color: transparent !important;
         }
@@ -361,103 +361,103 @@
             background: rgba(0, 0, 0, 0.5) !important;
         }
 
-        /* 鍏ㄥ睆妯℃€佹鏍峰紡 */
+        /* 全屏模态框样式 */
         #immersive-modal {
             display: none;
             transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        /* 妯℃€佹婵€娲荤姸鎬?*/
+        /* 模态框激活状态 */
         #immersive-modal.active {
             display: flex;
         }
 
-        /* 鐢诲粖鍖呰鍣?*/
+        /* 画廊包装器 */
         .gallery-wrapper {
             transition: transform 0.1s linear, opacity 0.1s linear;
             will-change: transform, opacity;
         }
 
-        /* 鏂囧瓧閬僵 */
+        /* 文字遮罩 */
         .mask-text {
             overflow: hidden;
             display: inline-block;
         }
 
-        /* 閬僵鍐呭 */
+        /* 遮罩内容 */
         .mask-inner {
             transform: translateY(110%);
-            /* 鍒濆浣嶇疆鍦ㄤ笅鏂?*/
+            /* 初始位置在下方 */
             transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
             will-change: transform;
         }
 
-        /* 妯℃€佹鍐呭婵€娲荤姸鎬?*/
+        /* 模态框内容激活状态 */
         #immersive-modal.content-active .mask-inner {
             transform: translateY(0%);
-            /* 浣嶇疆鍥炲埌鍘熶綅 */
+            /* 位置回到原位 */
         }
 
-        /* 鐢诲粖椤圭洰 */
+        /* 画廊项目 */
         .gallery-item {
             flex-shrink: 0;
             width: min(80vw, 1200px);
-            /* 瀹藉害涓鸿鍙ｇ殑80%锛屾渶澶?200px */
+            /* 宽度为视口的80%，最大1200px */
             height: min(60vh, 700px);
-            /* 楂樺害涓鸿鍙ｇ殑60%锛屾渶澶?00px */
+            /* 高度为视口的60%，最大700px */
         }
 
-        /* 鐢诲粖鍗＄墖鐨勯伄缃╂彮绀烘晥鏋?*/
+        /* 画廊卡片的遮罩揭示效果 */
         .card-mask-container {
             overflow: hidden;
             display: block;
         }
 
-        /* 鍗＄墖閬僵鍐呭 */
+        /* 卡片遮罩内容 */
         .card-mask-content {
             transform: translateY(110%);
             transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
             will-change: transform;
         }
 
-        /* 榧犳爣鎮仠鏃剁殑鍗＄墖閬僵鏁堟灉 */
+        /* 鼠标悬停时的卡片遮罩效果 */
         .gallery-item:hover .card-mask-content {
             transform: translateY(0%);
         }
 
-        /* 鎻忚堪閬僵寤惰繜鏁堟灉 */
+        /* 描述遮罩延迟效果 */
         .gallery-item .description-mask {
             transition-delay: 100ms;
         }
     </style>
 
-    <!-- JavaScript 鑴氭湰 -->
+    <!-- JavaScript 脚本 -->
     <script>
-        // 褰撴枃妗ｅ姞杞藉畬鎴愬悗鎵ц
+        // 当文档加载完成后执行
         document.addEventListener('DOMContentLoaded', () => {
-            // 鑾峰彇鎵€鏈夐渶瑕佹粴鍔ㄦ樉绀虹殑鍏冪礌
+            // 获取所有需要滚动显示的元素
             const reveals = document.querySelectorAll('.reveal');
 
-            // 婊氬姩鏄剧ず鍑芥暟
+            // 滚动显示函数
             const revealOnScroll = () => {
                 reveals.forEach(element => {
-                    const windowHeight = window.innerHeight; // 绐楀彛楂樺害
-                    const elementTop = element.getBoundingClientRect().top; // 鍏冪礌椤堕儴璺濈瑙嗗彛椤堕儴鐨勮窛绂?
-                    const elementVisible = 150; // 鍏冪礌鍙鐨勯槇鍊?
+                    const windowHeight = window.innerHeight; // 窗口高度
+                    const elementTop = element.getBoundingClientRect().top; // 元素顶部距离视口顶部的距离
+                    const elementVisible = 150; // 元素可见的阈值
 
-                    // 褰撳厓绱犺繘鍏ヨ鍙ｆ椂娣诲姞active绫?
+                    // 当元素进入视口时添加active类
                     if (elementTop < windowHeight - elementVisible) {
                         element.classList.add('active');
                     }
                 });
             };
 
-            // 鐩戝惉婊氬姩浜嬩欢
+            // 监听滚动事件
             window.addEventListener('scroll', revealOnScroll);
-            // 鍒濆鎵ц涓€娆?
+            // 初始执行一次
             revealOnScroll();
 
-            // 椤圭洰瑙傚療鍣紙鐢ㄤ簬妫€娴嬪厓绱犳槸鍚﹁繘鍏ヨ鍙ｏ級
+            // 项目观察器（用于检测元素是否进入视口）
             const projectObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -465,41 +465,41 @@
                     }
                 });
             }, {
-                threshold: 0.15 // 褰撳厓绱?5%杩涘叆瑙嗗彛鏃惰Е鍙?
+                threshold: 0.15 // 当元素15%进入视口时触发
             });
 
-            // 瑙傚療鎵€鏈夐」鐩崱鐗?
+            // 观察所有项目卡片
             document.querySelectorAll('.brutalist-card').forEach(card => {
                 projectObserver.observe(card);
             });
 
-            // 娌夋蹈寮忔ā鎬佹閫昏緫
+            // 沉浸式模态框逻辑
             const modal = document.getElementById('immersive-modal');
             const projectTriggers = document.querySelectorAll('.brutalist-card');
             const closeModalBtn = document.getElementById('close-modal');
             const galleryInner = document.getElementById('gallery-inner');
             const galleryWrapper = document.querySelector('.gallery-wrapper');
 
-            // 婊氬姩鐩稿叧鍙橀噺
+            // 滚动相关变量
             let currentScroll = 0;
             let targetScroll = 0;
             let isDragging = false;
             let animationFrameId = null;
             let maxScroll = 0;
 
-            // 鎵撳紑妯℃€佹鍑芥暟
+            // 打开模态框函数
             const openModal = () => {
                 modal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // 绂佹鑳屾櫙婊氬姩
+                document.body.style.overflow = 'hidden'; // 禁止背景滚动
                 setTimeout(() => {
                     modal.classList.add('content-active');
                     modal.style.opacity = '1';
-                    maxScroll = galleryInner.scrollWidth - window.innerWidth; // 璁＄畻鏈€澶ф粴鍔ㄨ窛绂?
+                    maxScroll = galleryInner.scrollWidth - window.innerWidth; // 计算最大滚动距离
                 }, 50);
                 startLerp();
             };
 
-            // 鍏抽棴妯℃€佹鍑芥暟
+            // 关闭模态框函数
             const closeModal = () => {
                 modal.style.transition = 'all 1s cubic-bezier(0.165, 0.84, 0.44, 1)';
                 modal.style.opacity = '0';
@@ -507,7 +507,7 @@
                 setTimeout(() => {
                     modal.classList.remove('active', 'content-active');
                     modal.style.transform = '';
-                    document.body.style.overflow = ''; // 鎭㈠鑳屾櫙婊氬姩
+                    document.body.style.overflow = ''; // 恢复背景滚动
                     cancelAnimationFrame(animationFrameId);
                     targetScroll = 0;
                     currentScroll = 0;
@@ -515,10 +515,10 @@
                 }, 1000);
             };
 
-            // 骞虫粦婊氬姩鍑芥暟
+            // 平滑滚动函数
             const startLerp = () => {
                 const step = () => {
-                    // 寮规€ч樆鍔涙晥鏋?
+                    // 弹性阻力效果
                     if (targetScroll > maxScroll) {
                         targetScroll -= (targetScroll - maxScroll) * 0.1;
                     }
@@ -526,7 +526,7 @@
                         targetScroll -= targetScroll * 0.1;
                     }
 
-                    // 骞虫粦杩囨浮
+                    // 平滑过渡
                     currentScroll += (targetScroll - currentScroll) * 0.08;
 
                     const overscroll = targetScroll - maxScroll;
@@ -536,7 +536,7 @@
                         galleryWrapper.style.transform = `translateX(${-overscroll * 0.3}px) scale(${1 - pullProgress * 0.08})`;
                         galleryWrapper.style.opacity = `${1 - (pullProgress * 0.4)}`;
 
-                        // 鎷夊姩杩囧害鏃跺叧闂ā鎬佹
+                        // 拉动过度时关闭模态框
                         if (pullProgress >= 1) {
                             closeModal();
                             return;
@@ -547,40 +547,40 @@
                         galleryWrapper.style.opacity = `1`;
                     }
 
-                    // 搴旂敤婊氬姩鏁堟灉
+                    // 应用滚动效果
                     galleryInner.style.transform = `translateX(${-currentScroll}px)`;
                     animationFrameId = requestAnimationFrame(step);
                 };
                 animationFrameId = requestAnimationFrame(step);
             };
 
-            // 涓烘墍鏈夐」鐩崱鐗囨坊鍔犵偣鍑讳簨浠?
+            // 为所有项目卡片添加点击事件
             projectTriggers.forEach(trigger => {
                 trigger.addEventListener('click', openModal);
             });
 
-            // 涓哄叧闂寜閽坊鍔犵偣鍑讳簨浠?
+            // 为关闭按钮添加点击事件
             closeModalBtn.addEventListener('click', closeModal);
 
-            // 鐩戝惉榧犳爣婊氳疆浜嬩欢锛堝湪妯℃€佹涓級
+            // 监听鼠标滚轮事件（在模态框中）
             window.addEventListener('wheel', (e) => {
                 if (!modal.classList.contains('active')) return;
-                e.preventDefault(); // 闃绘榛樿婊氬姩琛屼负
-                targetScroll += e.deltaY; // 鏍规嵁婊氳疆鏂瑰悜璋冩暣婊氬姩鐩爣
+                e.preventDefault(); // 阻止默认滚动行为
+                targetScroll += e.deltaY; // 根据滚轮方向调整滚动目标
             }, { passive: false });
         });
 
-        // 妗ｆ鍒囨崲鍑芥暟
+        // 档案切换函数
         function toggleArchive(element) {
-            const item = element.closest('.archive-item'); // 鑾峰彇褰撳墠鐐瑰嚮鐨勬。妗堥」
+            const item = element.closest('.archive-item'); // 获取当前点击的档案项
             document.querySelectorAll('.archive-item').forEach(i => {
-                if (i !== item) i.classList.remove('is-active'); // 鍏抽棴鍏朵粬妗ｆ椤?
+                if (i !== item) i.classList.remove('is-active'); // 关闭其他档案项
             });
-            item.classList.toggle('is-active'); // 鍒囨崲褰撳墠妗ｆ椤圭殑鐘舵€?
+            item.classList.toggle('is-active'); // 切换当前档案项的状态
         }
     </script>
 
-    <!-- Tailwind 鐢熸垚鐨勬牱寮?-->
+    <!-- Tailwind 生成的样式 -->
     <style>
         *,
         ::before,
@@ -695,20 +695,20 @@
 </head>
 
 <body class="selection:bg-tertiary selection:text-on-tertiary" data-mode="connect">
-    <!-- 鍏ㄥ睆娌夋蹈寮忔ā鎬佹 -->
-    <!-- 鐢ㄤ簬灞曠ず椤圭洰璇︽儏鐨勫脊鍑哄眰 -->
+    <!-- 全屏沉浸式模态框 -->
+    <!-- 用于展示项目详情的弹出层 -->
     <div class="fixed inset-0 z-[9999] bg-[#0a0a0a] flex-col items-center justify-center opacity-0 overflow-hidden"
         id="immersive-modal" style="opacity: 0; transition: 1s cubic-bezier(0.165, 0.84, 0.44, 1);">
-        <!-- 鍏抽棴鎸夐挳 -->
+        <!-- 关闭按钮 -->
         <button class="absolute top-12 right-12 z-[10000] text-primary hover:text-white transition-colors"
             id="close-modal">
             <span class="material-symbols-outlined text-4xl">close</span>
         </button>
 
-        <!-- 鐢诲粖鍖呰鍣?-->
+        <!-- 画廊包装器 -->
         <div class="gallery-wrapper w-full h-full flex flex-col justify-center"
             style="transition: none; transform: translateX(-10.0696px) scale(0.996643); opacity: 0.983217;">
-            <!-- 椤堕儴淇℃伅 -->
+            <!-- 顶部信息 -->
             <div class="px-12 lg:px-24 mb-8 lg:mb-16 w-full">
                 <div class="flex items-center gap-4 mb-4">
                     <span class="h-[2px] w-12 bg-primary"></span>
@@ -721,10 +721,10 @@
                 </h2>
             </div>
 
-            <!-- 姘村钩婊氬姩鍐呭 -->
+            <!-- 水平滚动内容 -->
             <div class="flex items-center gap-12 px-12 lg:px-24 w-max h-[50vh] lg:h-[60vh]"
                 data-stitch-vh="h-[50vh]===h-[60vh]" id="gallery-inner" style="transform: translateX(0px);">
-                <!-- 鐢诲粖椤圭洰 1 -->
+                <!-- 画廊项目 1 -->
                 <div class="gallery-item bg-surface-container group/item relative">
                     <img alt="Gallery 1"
                         class="w-full h-full object-cover grayscale brightness-50 group-hover/item:grayscale-0 transition-all duration-700"
@@ -733,19 +733,19 @@
                         <div class="card-mask-container">
                             <h3
                                 class="card-mask-content text-3xl font-black tracking-tighter uppercase text-white mb-2 whitespace-nowrap">
-                                娴佸姩鐨勭┖闂?/ FLUID SPACES</h3>
+                                流动的空间 / FLUID SPACES</h3>
                         </div>
                         <div class="card-mask-container">
                             <p
                                 class="card-mask-content description-mask text-sm text-white/70 font-medium tracking-wide">
-                                鎺㈢储鏋佺畝涓讳箟涓庡ぇ鑷劧鍏辩敓鐨勫缓绛戣瑙夈€?br>
+                                探索极简主义与大自然共生的建筑视觉。<br>
                                 (Exploring the architectural symbiosis of minimalism and nature.)
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 鐢诲粖椤圭洰 2 -->
+                <!-- 画廊项目 2 -->
                 <div class="gallery-item bg-surface-container group/item relative">
                     <img alt="Gallery 2"
                         class="w-full h-full object-cover grayscale brightness-50 group-hover/item:grayscale-0 transition-all duration-700"
@@ -754,19 +754,19 @@
                         <div class="card-mask-container">
                             <h3
                                 class="card-mask-content text-3xl font-black tracking-tighter uppercase text-white mb-2 whitespace-nowrap">
-                                鏁板瓧閬楄抗 / DIGITAL RELICS</h3>
+                                数字遗迹 / DIGITAL RELICS</h3>
                         </div>
                         <div class="card-mask-container">
                             <p
                                 class="card-mask-content description-mask text-sm text-white/70 font-medium tracking-wide">
-                                鍦ㄨ禌鍗氬簾澧熶腑閲嶆瀯缁忓吀姣斾緥鐨勫钩琛°€?br>
+                                在赛博废墟中重构经典比例的平衡。<br>
                                 (Reconstructing the balance of classical proportions in cyber ruins.)
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 鐢诲粖椤圭洰 3 -->
+                <!-- 画廊项目 3 -->
                 <div class="gallery-item bg-surface-container group/item relative">
                     <img alt="Gallery 3"
                         class="w-full h-full object-cover grayscale brightness-50 group-hover/item:grayscale-0 transition-all duration-700"
@@ -775,12 +775,12 @@
                         <div class="card-mask-container">
                             <h3
                                 class="card-mask-content text-3xl font-black tracking-tighter uppercase text-white mb-2 whitespace-nowrap">
-                                鍏堥攱鎰忓織 / VANGUARD WILL</h3>
+                                先锋意志 / VANGUARD WILL</h3>
                         </div>
                         <div class="card-mask-container">
                             <p
                                 class="card-mask-content description-mask text-sm text-white/70 font-medium tracking-wide">
-                                璺ㄥ獟浠嬩氦浜掑畾涔夌殑鏈潵瑙︽劅浣撻獙銆?br>
+                                跨媒介交互定义的未来触感体验。<br>
                                 (Futuristic haptic experiences defined by cross-media interaction.)
                             </p>
                         </div>
@@ -788,7 +788,7 @@
                 </div>
             </div>
 
-            <!-- 婊氬姩鎻愮ず -->
+            <!-- 滚动提示 -->
             <div class="absolute bottom-12 left-24">
                 <p class="font-label text-[10px] uppercase tracking-[0.5em] text-on-surface-variant mask-text">
                     <span class="mask-inner block" style="transition-delay: 0.3s;">Scroll to the end to exit</span>
@@ -797,92 +797,92 @@
         </div>
     </div>
 
-    <!-- 椤堕儴瀵艰埅鏍?-->
+    <!-- 顶部导航栏 -->
     <nav
         class="fixed top-0 w-full z-[100] flex justify-between items-center px-12 py-8 transition-all duration-200 ease-in-out glass-nav">
-        <div class="text-xl font-black tracking-tighter text-[#c6c6c7] mix-blend-difference">PORTFOLIO | 浣滃搧闆?/div>
+        <div class="text-xl font-black tracking-tighter text-[#c6c6c7] mix-blend-difference">PORTFOLIO | 作品集</div>
 
-        <!-- 妗岄潰绔鑸摼鎺?-->
+        <!-- 桌面端导航链接 -->
         <div class="hidden md:flex gap-12">
             <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#ffffff] border-b border-[#ffffff] pb-1 transition-colors duration-200"
-                href="#">浣滃搧 / PROJECTS</a>
+                href="#">作品 / PROJECTS</a>
             <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#acabaa] hover:text-[#ffffff] transition-colors duration-200"
-                href="#">灞ュ巻 / ARCHIVE</a>
+                href="#">履历 / ARCHIVE</a>
             <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#acabaa] hover:text-[#ffffff] transition-colors duration-200"
-                href="#">瀹為獙 / AI LAB</a>
+                href="#">实验 / AI LAB</a>
             <a class="font-['Inter'] uppercase tracking-[0.1em] text-[0.75rem] font-medium text-[#acabaa] hover:text-[#ffffff] transition-colors duration-200"
-                href="#">鑱旂粶 / CONNECT</a>
+                href="#">联络 / CONNECT</a>
         </div>
 
-        <!-- 绉诲姩绔彍鍗曟寜閽?-->
+        <!-- 移动端菜单按钮 -->
         <div class="md:hidden">
             <span class="material-symbols-outlined text-primary">menu</span>
         </div>
     </nav>
 
-    <!-- 涓诲唴瀹瑰尯鍩?-->
+    <!-- 主内容区域 -->
     <main>
-        <!-- 妯″潡 1: 鑻遍泟鍖哄煙 -->
+        <!-- 模块 1: 英雄区域 -->
         <section class="reveal relative min-h-screen flex flex-col justify-center pt-20 active">
-            <!-- 鑳屾櫙鏂囧瓧 -->
+            <!-- 背景文字 -->
             <div class="vanguard-bg-text">PORTFOLIO</div>
 
-            <!-- 鑻遍泟鍖哄煙鏂囧瓧鍐呭 - 缁熶竴10%鍋忕Щ骞朵繚鎸乭2鍦╤1涓嬫柟 -->
+            <!-- 英雄区域文字内容 - 统一10%偏移并保持h2在h1下方 -->
             <div class="absolute left-[5%] w-[90%] space-y-0 top-[17vh]">
-                <!-- 馃敡 涓绘爣棰樺叏灞€鎺掔増鎬绘帶鍙帮細(宸茶浆鎹负涓ユ牸鐨勮璺濇瘮渚?vw锛屽湪 1080p 涔熻兘瀹岀編淇濇寔 4K 鐨勭暀鐧介珮绾ф劅锛? -->
+                <!-- 🔧 主标题全局排版总控台：(已转换为严格的视距比例 vw，在 1080p 也能完美保持 4K 的留白高级感！) -->
                 <div
                     class="relative text-[clamp(2rem,10vw,15rem)] font-black leading-[0.85] tracking-[10px] uppercase mb-[1vh]">
 
-                    <!-- 绗?灞?(搴曞眰 z-0)锛氭繁鍩嬬殑瀹炰綋娴呯伆鑹插熀搴?-->
+                    <!-- 第1层 (底层 z-0)：深埋的实体浅灰色基底 -->
                     <h1 class="absolute top-0 left-0 z-0 text-[#e7e5e5]">
-                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>浣滃搧闆?/span>
+                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>作品集</span>
                     </h1>
 
-                    <!-- 绗?灞?(涓眰 z-5)锛氭柊澧炵殑榛戣壊鎻忚竟闀傜┖鐐圭紑灞傦紝澶瑰湪搴曞瓧鍜屽浘鐗囦箣闂?-->
-                    <!-- [-webkit-text-stroke:1px_black] 浣跨敤 1px 鏋佺粏绾垮寘瑁癸紝鍙犱笂 opacity-30 鍚庤瑙変笂鏇村姞鍐呮暃楂樼骇 -->
+                    <!-- 第2层 (中层 z-5)：新增的黑色描边镂空点缀层，夹在底字和图片之间 -->
+                    <!-- [-webkit-text-stroke:1px_black] 使用 1px 极细线包裹，叠上 opacity-30 后视觉上更加内敛高级 -->
                     <h1 class="absolute top-0 left-0 z-[5] text-transparent [-webkit-text-stroke:1px_black] opacity-10 pointer-events-none"
                         aria-hidden="true">
-                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>浣滃搧闆?/span>
+                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>作品集</span>
                     </h1>
 
-                    <!-- 绗?灞?(椤跺眰 z-20)锛氬師鏈夌殑浜壊闀傜┖灞傦紝婕傛诞鍦ㄨ法椤靛浘鐗囩殑鏈€鍓嶆柟 -->
-                    <!-- 杩欎釜 h1 浣跨敤浜?relative 灞炴€э紝瀹冪殑涓昏浣滅敤鏄€滄拺璧封€濇暣涓埗瀹瑰櫒鐨勮嚜鐒堕珮搴︼紝鎵€浠ヤ竾涓囦笉鍙垹闄?relative 鍝?-->
+                    <!-- 第3层 (顶层 z-20)：原有的亮色镂空层，漂浮在跨页图片的最前方 -->
+                    <!-- 这个 h1 使用了 relative 属性，它的主要作用是“撑起”整个父容器的自然高度，所以万万不可删除 relative 哦 -->
                     <h1 class="relative z-20 stroke-text pointer-events-none" aria-hidden="true">
-                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>浣滃搧闆?/span>
+                        KILIAN<span class="ml-[18vh]">ZHOU</span><br><span>作品集</span>
                     </h1>
                 </div>
 
-                <!-- 馃敡 澶у壇鏍囬瀛楄窛鏍″噯鍖猴細PORTFOLIO -->
+                <!-- 🔧 大副标题字距校准区：PORTFOLIO -->
                 <h2
                     class="relative z-20 text-[clamp(1.5rem,6vw,10rem)] font-black leading-[0.85] tracking-[-0.05em] uppercase stroke-text !mt-[2vh]">
                     PORTFOLIO</h2>
 
                 <div class="relative z-20 mt-[4vh] lg:mt-[7vh] max-w-[90%] lg:max-w-[35vw]">
-                    <!-- 馃敡 涓枃鐭í骞呭瓧璺濊皟鎺э細鈥滃钩闈㈣璁″笀...鈥?(0px 浠ｈ〃绯荤粺榛樿闂磋窛锛屾兂鎷夊鍙～ tracking-[2px]) -->
+                    <!-- 🔧 中文短横幅字距调控：“平面设计师...” (0px 代表系统默认间距，想拉宽可填 tracking-[2px]) -->
                     <p
                         class="text-[clamp(14px,1.5vw,60px)] font-[700] leading-tight text-on-surface mt-[2vh] mb-[2vh] border-l-[0.2vw] border-primary pl-[1.2vw] py-[1vh] tracking-[0px]">
-                        骞抽潰璁捐甯?amp;鎽勫奖鎽勫儚甯?amp;鍓緫甯?br>
+                        平面设计师&amp;摄影摄像师&amp;剪辑师<br>
 
-                        <!-- 馃敡 鑻辨枃鏍囪瀛楄窛璋冩帶锛氬凡灏嗕箣鍓嶇殑 tracking-widest 鎻杞崲涓烘槑纭殑鏁板瓧 tracking-[0.1em] -->
+                        <!-- 🔧 英文标语字距调控：已将之前的 tracking-widest 揭秘转换为明确的数字 tracking-[0.1em] -->
                         <span
                             class="text-[clamp(10px,0.6vw,16px)] font-normal text-on-surface-variant uppercase tracking-[0.1em]">Graphic
                             Designer, Photographer &amp; Videographer, and Editor</span>
                     </p>
 
-                    <!-- 馃敡 涓枃娈佃惤瀛楄窛璋冩帶锛氬師鏈枃鏈お绱э紝鎴戜负浣犲姞浜?1px 鐨勮垝閫傞棿璺濄€傛劅瑙夊お绋€鐤忓彲鏀瑰洖 tracking-[0px] -->
+                    <!-- 🔧 中文段落字距调控：原本文本太紧，我为你加了 1px 的舒适间距。感觉太稀疏可改回 tracking-[0px] -->
                     <p
                         class="mt-[2vh] text-[clamp(12px,0.6vw,20px)] text-on-surface-variant leading-relaxed opacity-60 tracking-[1px]">
-                        閫氳繃宸ㄧ煶鑸殑瀛椾綋璁捐涓庝弗璋ㄧ殑妗ｆ寮忕簿纭€э紝瀹氫箟楂樼鏈烘瀯鐨勮瑙夎瑷€銆傛垜浠笉鏄湪璁捐锛岃€屾槸鍦ㄦ瀯寤烘寔涔呯殑鏁板瓧绾康纰戙€?
+                        通过巨石般的字体设计与严谨的档案式精确性，定义高端机构的视觉语言。我们不是在设计，而是在构建持久的数字纪念碑。
                     </p>
                 </div>
             </div>
 
-            <!-- 鉁?缁堟瀬闅愬舰瑙﹀彂澧欙細瀹屽叏鍓ョ鍦ㄤ换浣曞鍣ㄤ箣澶栵紝鐢?z-50 閿佸畾鍏ㄥ睆缁濆鏃犲彲浜夎鐨勫彸渚?30% -->
-            <!-- 瀹冪殑 peer 韬唤鑳戒粠鍓嶇鏈€搴曞眰鈥滈殧灞辨墦鐗涒€濇帶鍒朵笅鏂圭殑鐙珛灞曠ず缁勶紝涓嶅啀鍙楀眰绾ч伄鎸℃皵姘旓紒 -->
+            <!-- ✨ 终极隐形触发墙：完全剥离在任何容器之外，用 z-50 锁定全屏绝对无可争议的右侧 30% -->
+            <!-- 它的 peer 身份能从前端最底层“隔山打牛”控制下方的独立展示组，不再受层级遮挡气气！ -->
             <div class="fixed top-0 right-0 w-[35vw] h-screen z-50 peer pointer-events-auto" style="cursor: pointer;">
             </div>
 
-            <!-- 鍙充晶灞曠ず缁勶細瀹屽叏鎶涘純鑷繁鐨勪氦浜掞紝涓撳績鍋氳鎺х -->
+            <!-- 右侧展示组：完全抛弃自己的交互，专心做被控端 -->
             <div
                 class="absolute right-0 top-1/2 -translate-y-1/2 w-[50vw] z-10 hidden lg:block pointer-events-none peer-hover:[&_.aida-overlay]:opacity-100">
 
@@ -891,22 +891,22 @@
                     <img alt="Artist Portrait - Dark Base"
                         class="col-start-1 row-start-1 w-full h-auto object-right-bottom block" src="./1.png">
 
-                    <!-- 鐘舵€?2锛氫寒鑹插浘灞傘€備綘鐨勬墍鏈夊畬缇庢牎鍑嗗弬鏁?(1.07鍊嶇瓑) 鎴戝凡缁忔浛浣犲師灏佷笉鍔ㄥ湴淇濈暀浜嗭紒 -->
-                    <!-- 鍞竴鏈哄埗鍙樺姩锛氬幓鎺変簡澶辨晥鐨?group-hover锛屾崲鎴愪笓灞炶瘑鍒爜 aida-overlay 渚涘灞傚法鍨嬬幓鐠冩澘閬ユ帶 -->
+                    <!-- 状态 2：亮色图层。你的所有完美校准参数 (1.07倍等) 我已经替你原封不动地保留了！ -->
+                    <!-- 唯一机制变动：去掉了失效的 group-hover，换成专属识别码 aida-overlay 供外层巨型玻璃板遥控 -->
                     <img alt="Artist Portrait - Light Overlay"
                         class="aida-overlay col-start-1 row-start-1 w-full h-auto object-right-bottom block opacity-0 origin-bottom-right translate-x-[10px] translate-y-[25px] scale-[1.07] transition-all duration-[2000ms] ease-in-out will-change-transform will-change-opacity"
                         src="./2.png">
                 </div>
             </div>
 
-            <!-- 鍗犱綅瀹瑰櫒 - 淇濇寔甯冨眬骞宠　 -->
+            <!-- 占位容器 - 保持布局平衡 -->
             <div class="container mx-auto px-12 grid grid-cols-12 items-center gap-0 lg:gap-12 relative z-10">
-                <!-- 宸︿晶鏂囧瓧鍐呭 - 鍗犱綅鐢?-->
+                <!-- 左侧文字内容 - 占位用 -->
                 <div class="col-span-12 lg:col-span-7 order-2 lg:order-1 mt-12 lg:mt-0">
                     <div class="h-[calc(clamp(4rem,12vw,12rem)+clamp(3rem,8vw,8rem))]"></div>
                 </div>
 
-                <!-- 鍙充晶鍗犱綅 - 绉诲姩绔樉绀哄浘鐗?-->
+                <!-- 右侧占位 - 移动端显示图片 -->
                 <div class="col-span-12 lg:col-span-5 order-1 lg:order-2 flex justify-end relative h-[40vh] lg:hidden">
                     <div class="relative w-full h-full group overflow-hidden">
                         <img alt="Artist Portrait"
@@ -920,7 +920,7 @@
                 </div>
             </div>
 
-            <!-- 婊氬姩鎻愮ず -->
+            <!-- 滚动提示 -->
             <div
                 class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-40 animate-bounce">
                 <span
@@ -930,15 +930,15 @@
             </div>
         </section>
 
-        <!-- 妯″潡 2: 浼樿川妗堜緥鐮旂┒ -->
+        <!-- 模块 2: 优质案例研究 -->
         <section class="py-24 lg:py-48 px-6 lg:px-12 relative" id="projects-section">
             <div class="mb-16 lg:mb-32">
-                <span class="font-label text-xs uppercase tracking-[0.3em] text-tertiary">鏍稿績鍟嗕笟妗堜緥 / SELECTED WORKS</span>
-                <h2 class="text-3xl lg:text-5xl font-bold tracking-tighter mt-4">濂㈠崕閰掑簵瑙嗚绛栧垝 (Luxury Hospitality)</h2>
+                <span class="font-label text-xs uppercase tracking-[0.3em] text-tertiary">核心商业案例 / SELECTED WORKS</span>
+                <h2 class="text-3xl lg:text-5xl font-bold tracking-tighter mt-4">奢华酒店视觉策划 (Luxury Hospitality)</h2>
             </div>
 
             <div class="flex flex-col gap-16" id="projects-grid">
-                <!-- 椤圭洰 1 (JW Marriott) -->
+                <!-- 项目 1 (JW Marriott) -->
                 <div
                     class="brutalist-card grid grid-cols-1 lg:grid-cols-10 items-center gap-12 lg:gap-24 group border-b border-outline-variant/20 pb-16 visible">
                     <div class="lg:col-span-6">
@@ -964,7 +964,7 @@
                         </div>
                         <div class="mt-8">
                             <p class="text-on-surface-variant text-sm max-w-md leading-relaxed">
-                                鍏ㄩ潰瑙嗚璇嗗埆閲嶆柊璁捐锛屼笓娉ㄤ簬浼犳壙涓庣幇浠ｆ瀬绠€濂㈠崕鐨勮瀺鍚堛€傞拡瀵逛竾璞棗涓?JW 鍝佺墝杩涜鐨勮瑙夌郴缁熷叏妗堥噸鏋勩€?
+                                全面视觉识别重新设计，专注于传承与现代极简奢华的融合。针对万豪旗下 JW 品牌进行的视觉系统全案重构。
                             </p>
                             <button class="mt-10 flex items-center gap-4 group/btn">
                                 <span class="font-label text-[10px] uppercase tracking-[0.3em] text-on-surface">View
@@ -976,7 +976,7 @@
                     </div>
                 </div>
 
-                <!-- 椤圭洰 2 (Ritz-Carlton) -->
+                <!-- 项目 2 (Ritz-Carlton) -->
                 <div
                     class="brutalist-card grid grid-cols-1 lg:grid-cols-10 items-center gap-12 lg:gap-24 group border-b border-outline-variant/20 pb-16 visible">
                     <div class="lg:col-span-6">
@@ -1002,7 +1002,7 @@
                         </div>
                         <div class="mt-8">
                             <p class="text-on-surface-variant text-sm max-w-md leading-relaxed">
-                                閽堝鍘嗗彶鎮犱箙鐨勬娲茶祫浜х粍鍚堣繘琛岀殑鍏ㄧ悆浼犳挱绛栫暐涓庣紪杈戣璁°€傞噸鏂板畾涔夐《绾уア鍗庣殑鍙欎簨鏂瑰紡銆?
+                                针对历史悠久的欧洲资产组合进行的全球传播策略与编辑设计。重新定义顶级奢华的叙事方式。
                             </p>
                             <button class="mt-10 flex items-center gap-4 group/btn">
                                 <span class="font-label text-[10px] uppercase tracking-[0.3em] text-on-surface">View
@@ -1014,7 +1014,7 @@
                     </div>
                 </div>
 
-                <!-- 椤圭洰 3 (AI Synthesis Lab Visuals) -->
+                <!-- 项目 3 (AI Synthesis Lab Visuals) -->
                 <div
                     class="brutalist-card grid grid-cols-1 lg:grid-cols-10 items-center gap-12 lg:gap-24 group border-b border-outline-variant/20 pb-16 visible">
                     <div class="lg:col-span-6">
@@ -1040,7 +1040,7 @@
                         </div>
                         <div class="mt-8">
                             <p class="text-on-surface-variant text-sm max-w-md leading-relaxed">
-                                鍩轰簬鐢熸垚寮廇I宸ヤ綔娴佺殑鏈潵鍝佺墝鎺㈢储銆傛墦鐮翠紶缁熻璁＄殑杈圭晫锛岄€氳繃绠楁硶鍒涢€犳棤闄愬彲鑳界殑瑙嗚寤跺睍銆?
+                                基于生成式AI工作流的未来品牌探索。打破传统设计的边界，通过算法创造无限可能的视觉延展。
                             </p>
                             <button class="mt-10 flex items-center gap-4 group/btn">
                                 <span class="font-label text-[10px] uppercase tracking-[0.3em] text-on-surface">View
@@ -1054,32 +1054,32 @@
             </div>
         </section>
 
-        <!-- 妯″潡 3: 妗ｆ浣撻獙 -->
+        <!-- 模块 3: 档案体验 -->
         <section class="reveal py-24 lg:py-48 px-6 lg:px-12 active">
             <div class="max-w-7xl mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-end mb-16 lg:mb-24 gap-4 lg:gap-8">
                     <div>
                         <span
                             class="font-label text-xs uppercase tracking-[0.3em] text-on-surface-variant">Timeline</span>
-                        <h2 class="text-3xl lg:text-5xl font-bold tracking-tighter mt-2 lg:mt-4 uppercase">宸ヤ綔缁忓巻 /
+                        <h2 class="text-3xl lg:text-5xl font-bold tracking-tighter mt-2 lg:mt-4 uppercase">工作经历 /
                             ARCHIVE</h2>
                     </div>
-                    <div class="text-on-surface-variant font-label text-xs tracking-widest uppercase">灞曠ず杩戞湡浣滃搧 (Showing
+                    <div class="text-on-surface-variant font-label text-xs tracking-widest uppercase">展示近期作品 (Showing
                         Selective Archive)</div>
                 </div>
 
                 <div class="border-t border-outline-variant/30">
-                    <!-- 妗ｆ椤?1 -->
+                    <!-- 档案项 1 -->
                     <div class="archive-item group border-b border-outline-variant/30 overflow-hidden">
                         <div class="py-10 px-4 grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors"
                             onclick="toggleArchive(this)">
                             <div class="col-span-2 text-on-surface-variant font-label text-xs">2023</div>
                             <div class="col-span-6 text-2xl font-medium text-primary group-hover:text-on-surface">
-                                澹板瀛椾綋鎺㈢储
+                                声学字体探索
                                 <span class="block text-sm opacity-60 font-normal mt-1">Sonic Typography
                                     Exploration</span>
                             </div>
-                            <div class="col-span-3 text-on-surface-variant text-sm hidden md:block">浜や簰璁捐 (Interactive
+                            <div class="col-span-3 text-on-surface-variant text-sm hidden md:block">交互设计 (Interactive
                                 Design)</div>
                             <div class="col-span-1 text-right">
                                 <span class="material-symbols-outlined text-outline toggle-icon">add</span>
@@ -1089,17 +1089,17 @@
                             <div class="archive-details">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
                                     <div class="space-y-4">
-                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">椤圭洰鑳屾櫙 /
+                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">项目背景 /
                                             CONTEXT</h4>
                                         <p class="text-on-surface-variant leading-relaxed">
-                                            璇ラ」鐩帰绱簡澹伴煶娉㈠舰涓庡姩鎬佹帓鐗堜箣闂寸殑鍚屾鎬с€傞€氳繃鐢熸垚绠楁硶锛屽皢澹板鍙傛暟杞寲涓烘祦鍔ㄧ殑瑙嗚鏋勬灦銆?/p>
+                                            该项目探索了声音波形与动态排版之间的同步性。通过生成算法，将声学参数转化为流动的视觉构架。</p>
                                     </div>
                                     <div class="space-y-4">
-                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">鏍稿績鑱岃矗 /
+                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">核心职责 /
                                             IMPACT</h4>
                                         <ul class="text-on-surface-variant space-y-2 list-disc list-inside">
-                                            <li>寮€鍙戝疄鏃堕煶棰戝搷搴旀帓鐗堝紩鎿?/li>
-                                            <li>瑙嗚绯荤粺涓庢暟瀛楃晫闈㈢殑鏁村悎</li>
+                                            <li>开发实时音频响应排版引擎</li>
+                                            <li>视觉系统与数字界面的整合</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -1107,17 +1107,17 @@
                         </div>
                     </div>
 
-                    <!-- 妗ｆ椤?2 -->
+                    <!-- 档案项 2 -->
                     <div class="archive-item group border-b border-outline-variant/30 overflow-hidden">
                         <div class="py-10 px-4 grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors"
                             onclick="toggleArchive(this)">
                             <div class="col-span-2 text-on-surface-variant font-label text-xs">2022</div>
                             <div class="col-span-6 text-2xl font-medium text-primary group-hover:text-on-surface">
-                                鏌忔灄鏃惰鍛ㄥ舰璞¤瘑鍒?
+                                柏林时装周形象识别
                                 <span class="block text-sm opacity-60 font-normal mt-1">Berlin Fashion Week
                                     Identity</span>
                             </div>
-                            <div class="col-span-3 text-on-surface-variant text-sm hidden md:block">鍝佺墝璁捐 (Branding)
+                            <div class="col-span-3 text-on-surface-variant text-sm hidden md:block">品牌设计 (Branding)
                             </div>
                             <div class="col-span-1 text-right">
                                 <span class="material-symbols-outlined text-outline toggle-icon">add</span>
@@ -1127,10 +1127,10 @@
                             <div class="archive-details">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
                                     <div class="space-y-4">
-                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">椤圭洰鑳屾櫙 /
+                                        <h4 class="text-lg font-bold text-tertiary uppercase tracking-widest">项目背景 /
                                             CONTEXT</h4>
                                         <p class="text-on-surface-variant leading-relaxed">
-                                            涓烘煆鏋楁椂瑁呭懆璁捐鐨勫叏鏂板搧鐗岀郴缁燂紝骞宠　宸ヤ笟鎰熶笌鐜颁唬鏃跺皻鐨勭簿鑷淬€?/p>
+                                            为柏林时装周设计的全新品牌系统，平衡工业感与现代时尚的精致。</p>
                                     </div>
                                 </div>
                             </div>
@@ -1140,9 +1140,9 @@
             </div>
         </section>
 
-        <!-- 妯″潡 4: AI 瀹為獙瀹ゆā鍧?-->
+        <!-- 模块 4: AI 实验室模块 -->
         <section class="reveal relative py-24 lg:py-48 px-6 lg:px-12 overflow-hidden active">
-            <!-- 浠ｇ爜娴佽儗鏅?-->
+            <!-- 代码流背景 -->
             <div
                 class="absolute inset-0 opacity-10 font-mono text-[8px] lg:text-[10px] leading-tight select-none pointer-events-none code-stream p-4 overflow-hidden">
                 <div class="animate-pulse">
@@ -1159,24 +1159,24 @@
                     <div
                         class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 text-primary font-label text-[10px] tracking-[0.2em] uppercase mb-8">
                         <span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
-                        AI 瀹為獙瀹?/ AI LAB: VISUAL OVERSTEP
+                        AI 实验室 / AI LAB: VISUAL OVERSTEP
                     </div>
                     <h2 class="text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-6 lg:mb-8 leading-none">
-                        鐢熸垚寮忕患鍚堜綋 <br><span
+                        生成式综合体 <br><span
                             class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-surface-bright">(GENERATIVE
                             SYNTHESIS)</span></h2>
                     <p class="text-on-surface-variant text-lg leading-relaxed mb-12 max-w-md">
-                        鍒╃敤 AI 鐨勬贩娌屾綔鍔涚獊鐮磋瑙夎竟鐣屻€傛垜灏?Midjourney 鍜岃嚜瀹氫箟澶ц瑷€妯″瀷 (LLM) 宸ヤ綔娴佹暣鍚堝埌涓撲笟鍒朵綔绠＄嚎涓€?
+                        利用 AI 的混沌潜力突破视觉边界。我将 Midjourney 和自定义大语言模型 (LLM) 工作流整合到专业制作管线中。
                     </p>
                     <div class="flex flex-wrap gap-8">
                         <div class="flex flex-col">
                             <span class="text-2xl font-bold text-on-surface">95%</span>
-                            <span class="text-xs uppercase tracking-widest text-on-surface-variant">鏁堢巼鎻愬崌 (Efficiency
+                            <span class="text-xs uppercase tracking-widest text-on-surface-variant">效率提升 (Efficiency
                                 Gain)</span>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-on-surface">鈭?/span>
-                            <span class="text-xs uppercase tracking-widest text-on-surface-variant">鍒涙剰鑼冪暣 (Creative
+                            <span class="text-2xl font-bold text-on-surface">∞</span>
+                            <span class="text-xs uppercase tracking-widest text-on-surface-variant">创意范畴 (Creative
                                 Scope)</span>
                         </div>
                     </div>
@@ -1192,26 +1192,26 @@
             </div>
         </section>
 
-        <!-- 妯″潡 5: 椤佃剼鍜岃仈绯讳俊鎭?-->
+        <!-- 模块 5: 页脚和联系信息 -->
         <footer class="reveal w-full py-12 lg:py-24 px-6 lg:px-12 active">
             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8 lg:gap-12">
                 <div class="w-full md:w-1/2">
-                    <div class="text-base lg:text-lg font-bold text-[#c6c6c7] mb-4 lg:mb-8 uppercase tracking-widest">鑱旂粶
+                    <div class="text-base lg:text-lg font-bold text-[#c6c6c7] mb-4 lg:mb-8 uppercase tracking-widest">联络
                         / CONTACT</div>
                     <div class="flex flex-col gap-4">
                         <button
                             class="w-full md:w-auto px-6 lg:px-12 py-4 lg:py-6 bg-[#fff6db] text-[#6b5d05] text-base lg:text-xl font-bold tracking-tight uppercase hover:bg-[#eeda7b] transition-all duration-300">
-                            涓嬭浇瀹屾暣绠€鍘?(DOWNLOAD RESUME)
+                            下载完整简历 (DOWNLOAD RESUME)
                         </button>
                         <button
                             class="w-full md:w-auto px-6 lg:px-12 py-4 lg:py-6 bg-transparent border border-[#767575]/40 text-[#c6c6c7] text-base lg:text-xl font-bold tracking-tight uppercase hover:text-[#ffffff] hover:border-[#ffffff] transition-all duration-300">
-                            閭欢閭€绾?(EMAIL ME)
+                            邮件邀约 (EMAIL ME)
                         </button>
                     </div>
                 </div>
                 <div class="flex flex-col gap-8 md:text-right w-full md:w-1/3">
                     <a class="font-['Inter'] text-[1rem] leading-relaxed text-[#acabaa] hover:text-[#ffffff] transition-opacity duration-300"
-                        href="#">鍟嗗姟鍚堜綔鍜ㄨ (Business Inquiry)</a>
+                        href="#">商务合作咨询 (Business Inquiry)</a>
                     <div class="flex md:justify-end gap-6">
                         <span class="material-symbols-outlined text-[#acabaa]">public</span>
                         <span class="material-symbols-outlined text-[#acabaa]">alternate_email</span>
@@ -1221,11 +1221,11 @@
             </div>
             <div
                 class="max-w-7xl mx-auto mt-24 pt-12 border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-8">
-                <div class="text-[#acabaa] text-xs uppercase tracking-[0.2em]">漏 2024 Editorial Vanguard. 鐗堟潈鎵€鏈?/ ALL
+                <div class="text-[#acabaa] text-xs uppercase tracking-[0.2em]">© 2024 Editorial Vanguard. 版权所有 / ALL
                     RIGHTS RESERVED.</div>
                 <div class="text-[#acabaa] text-xs uppercase tracking-[0.2em] flex gap-8">
-                    <a class="hover:text-on-surface" href="#">闅愮鏀跨瓥 / PRIVACY</a>
-                    <a class="hover:text-on-surface" href="#">娉曞緥澹版槑 / LEGAL</a>
+                    <a class="hover:text-on-surface" href="#">隐私政策 / PRIVACY</a>
+                    <a class="hover:text-on-surface" href="#">法律声明 / LEGAL</a>
                 </div>
             </div>
         </footer>
