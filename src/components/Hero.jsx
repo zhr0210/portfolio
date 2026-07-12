@@ -1,7 +1,7 @@
 import React from "react";
-import image1 from "../assets/1.png";
-import image2 from "../assets/2.png";
-import mobilePortrait from "../assets/无底色亮色肖像.png";
+const image1 = "/images/hero/project-1.png";
+const image2 = "/images/hero/project-2.png";
+const mobilePortrait = "/images/hero/portrait-light.png";
 
 const Hero = () => {
     return (
