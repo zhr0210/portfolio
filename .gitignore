@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .vite/
+.next/
+.wrangler/
 active_tunnel.log
 cloudflared.exe
 tmp/
