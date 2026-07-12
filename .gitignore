@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vite/
+active_tunnel.log
+cloudflared.exe
+tmp/
+backups/
+test-repo/
+*.7z
