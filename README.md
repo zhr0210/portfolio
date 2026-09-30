@@ -52,7 +52,7 @@ TypeScript 严格检查新增入口、调参文件和全景生命周期。继承
 
 `archive/continuum-5-build/` 保存已退休的 Python 打包器、模块表、页面模板和重复 React 运行时，供追溯使用；它们不参与构建。原始可运行源码在 Git 提交 `145625d`，完整迁移前副本在 `G:\zuopingji\Portfolio-before-vite-20260930`。
 
-`experiments/ai-video/` 保存未完成的 AI 视频节点实验及必要素材，启动方式见其中的 README。它独立于主站，也不会复制到 `dist/`。
+`experiments/ai-video/` 保存纵向视频展示实验及必要素材：实拍采用两侧相机，AI 采用参考画面与流光连线。启动和调参方式见其中的 README。它独立于主站，也不会复制到 `dist/`。
 
 其他完整本地副本：
 
