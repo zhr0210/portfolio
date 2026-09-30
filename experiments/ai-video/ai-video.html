@@ -1,16 +1,37 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AI 视频 · 节点画布 — Kilian Zhou</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="ai-video-nodes-v2.css">
-  <style>html,body{margin:0;width:100%;height:100%;background:#0c0d0c}body{overflow:hidden}#ai-node-study{width:100%;height:100dvh}</style>
-</head>
-<body>
-  <main id="ai-node-study"></main>
-  <script src="ai-video-nodes-v2.js"></script>
-  <script>const study=new AIVideoNodes(document.getElementById('ai-node-study'),{standalone:true});study.setActive(true);</script>
-  <script src="motion-audit.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AI 视频 · 节点画布 — Kilian Zhou</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="ai-video-nodes-v2.css?rev=6" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #0c0d0c;
+      }
+      body {
+        overflow: hidden;
+      }
+      #ai-node-study {
+        width: 100%;
+        height: 100dvh;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="ai-node-study"></main>
+    <script src="ai-video-nodes-v2.js?rev=6"></script>
+    <script>
+      const study = new AIVideoNodes(document.getElementById('ai-node-study'), {
+        standalone: true,
+      });
+      study.setActive(true);
+    </script>
+    <script src="motion-audit.js"></script>
+  </body>
 </html>
