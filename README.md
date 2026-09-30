@@ -1,34 +1,54 @@
-# Kilian Zhou · Continuum
+# Kilian Zhou · Continuum 5.1
 
-此目录已接入 2026-09-29 轻量包的 **Continuum 5.0 主站**。首页、关于我、作品全景和七个商业案例与压缩包内 `site/` 的效果一致。原压缩包中的 AI 视频节点实验页尚在修改，未合入主站。
+主站采用 React 19 + Vite + TypeScript，保留 Continuum 5.0 的视觉、七件完整作品、矢量字体开场、滚动叙事和玻璃详情页。GSAP 管理空间切换，全景采用与现有设计一致的定制 WebGL 镜头投影，并提供 Canvas 与图文列表兼容路径。
 
 ## 本地运行
 
-需要 Python 3.8+。在本目录执行：
+需要 Node.js 22.12+，推荐当前 LTS。首次安装后运行：
 
 ```powershell
+npm ci
+npm run dev
+```
+
+浏览 http://127.0.0.1:4173/。修改源码会更新预览。开发依赖在 `node_modules/`，不提交、不上传到网站。
+
+```powershell
+npm test
 npm run build
 npm run preview
 ```
 
-也可以只用 Python：
+`build` 先检查 TypeScript 再生成 `dist/`；仅发布 `dist/`。默认使用相对资源路径，适用于域名根目录和 `/portfolio/` 子目录。指定部署路径时设置环境变量 `PORTFOLIO_BASE` 再构建。路由采用 hash，无需服务器重写。
 
-```powershell
-python build.py
-python -m http.server 4173 --bind 127.0.0.1 --directory dist
-```
+## 修改内容和参数
 
-浏览 `http://127.0.0.1:4173/`。`npm run dev` 会先构建再启动同一预览服务。构建无需安装 npm 依赖或联网；`dist/` 是唯一发布目录。
+- `src/config/site.ts`：中文注释的调参入口，控制字号、间距、动效、长图阅读、镜头和渲染质量；详见 [调参说明](docs/CUSTOMIZATION.md)。
+- `src/data/projects.js`、`profile.js`：作品、分类、介绍、联系方式与简历地址。
+- `src/components/`：React 界面。`src/hooks/`：页面切换与全景生命周期。
+- `src/features/continuum/`：滚动叙事；`gallery/`：镜头投影与 WebGL / Canvas 渲染；`detail/`：玻璃色场与长图自动阅读。
+- `src/legacy.css`、`dual-space.css`、`continuum.css`：现有设计的样式与响应式规则；保持它们的加载顺序。
+- `public/`：完整作品和预览素材。`index.html`：入口。
 
-## 源码和导入范围
+TypeScript 严格检查新增入口、调参文件和全景生命周期。继承的页面及渲染器已转换为 ES 模块和 JSX，目前仍是 JavaScript；后续可按模块补类型。
 
-- `src/` 是 React 页面、交互和样式源码；`vendor/` 是包内的 React 浏览器运行时代码；`modules.json` 确定打包顺序。
-- `public/` 保存作品素材；`index.template.html` 是输出页面模板；`build.py` 生成 `dist/`。
-- 保留本地原有的 `.edgeone/` 和 `.openai/` 项目关联信息。本次没有发布线上版本。
-- 压缩包中的 `site/prototype-directions/`、`research/`、`validation/`、`remotion/`、实验视频及交接记录未导入。它们属于进行中的实验、验证或独立渲染材料。
+## 全景结构与性能
 
-## 独立实验页
+镜头投影提供可无限拖动的二维作品场。CPU 命中检测与 Canvas 渲染共享 `projection.mjs`，逆向公式与 GLSL 一致。替换成通用三维场景会改变现有设计，本次整理渲染结构并保留投影。
 
-2026-09-30 为 GitHub 源码备份新增 `experiments/ai-video/`，保存随后修改的 AI 视频节点实验页及其必要素材。此目录不参与主站构建；启动方法见 `experiments/ai-video/README.md`。发布仍只使用 `dist/`。
+全景渲染器进入作品空间后才加载。静止、非作品空间和后台页面停止动画帧；操作、筛选和时间轴变化重新唤醒。桌面图集每格保持 768px，手机为 512px。跨断点重建复用已加载图片，过期异步任务不会覆盖新图集，退出时释放纹理及事件。
 
-合入前的本地项目完整副本位于 `G:\zuopingji\Portfolio-pre-continuum-20260929\Editorial Vanguard\code`，包括当时未提交的修改、依赖和构建结果。更早的优化前副本仍位于 `G:\zuopingji\Portfolio-before-optimization-20260911`。
+## 历史代码与实验
+
+`archive/legacy-parameters/` 保留旧版详情页和作品列表原始配置。适用的字号、间距、阅读和拖动参数已适配到 `site.ts`，取值保持新版设计。旧滚筒及手风琴列表属于不同设计，其参数保留供后续参考。
+
+`archive/continuum-5-build/` 保存已退休的 Python 打包器、模块表、页面模板和重复 React 运行时，供追溯使用；它们不参与构建。原始可运行源码在 Git 提交 `145625d`，完整迁移前副本在 `G:\zuopingji\Portfolio-before-vite-20260930`。
+
+`experiments/ai-video/` 保存未完成的 AI 视频节点实验及必要素材，启动方式见其中的 README。它独立于主站，也不会复制到 `dist/`。
+
+其他完整本地副本：
+
+- `G:\zuopingji\Portfolio-pre-continuum-20260929\Editorial Vanguard\code`
+- `G:\zuopingji\Portfolio-before-optimization-20260911`
+
+保留 `.edgeone/` 和 `.openai/` 项目关联信息。配置、归档与实验源码均不作为网站发布文件。

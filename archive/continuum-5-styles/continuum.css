@@ -222,6 +222,9 @@ body,
   filter: saturate(0.14) contrast(1.1) brightness(0.81);
   transform-origin: 50% 50%;
 }
+.ct-record-photo {
+  filter: saturate(0.12) contrast(1.08) brightness(0.87);
+}
 .ct-proof-photo {
   object-position: top;
   filter: saturate(0.76) brightness(0.92);
@@ -751,6 +754,20 @@ body,
   height: 1px;
   left: 0;
   pointer-events: none;
+}
+.ct-stage-footer {
+  position: absolute;
+  right: 6%;
+  bottom: 5%;
+  font:
+    8px ui-monospace,
+    monospace;
+  letter-spacing: 0.12em;
+  color: #6d7766;
+  pointer-events: none;
+}
+.ct-mobile-hint {
+  display: none;
 }
 /* No blur on content in its reading zone. Only narrow peripheral diffusion remains. */
 .dual-edition .flow-edge-diffusion {
