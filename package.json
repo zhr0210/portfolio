@@ -1,42 +1,12 @@
 {
-  "name": "editorial-vanguard-portfolio",
-  "version": "1.1.0",
+  "name": "kilian-continuum",
+  "version": "5.0.0",
   "private": true,
-  "engines": {
-    "node": ">=22.13.0"
-  },
-  "type": "module",
+  "description": "Kilian Zhou Continuum portfolio static site",
   "scripts": {
-    "dev": "vinext dev",
-    "build": "vinext build",
-    "start": "vinext start"
-  },
-  "dependencies": {
-    "@react-hook/resize-observer": "^2.0.2",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.38.0",
-    "gsap": "^3.12.5",
-    "lucide-react": "^0.454.0",
-    "next": "16.2.6",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
-  },
-  "devDependencies": {
-    "@cloudflare/vite-plugin": "1.37.1",
-    "@types/node": "22.19.19",
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3",
-    "@vitejs/plugin-react": "6.0.2",
-    "@vitejs/plugin-rsc": "0.5.26",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17",
-    "react-server-dom-webpack": "19.2.6",
-    "typescript": "5.9.3",
-    "vinext": "0.0.50",
-    "vite": "8.0.13",
-    "wrangler": "4.92.0"
+    "build": "python build.py",
+    "dev": "python build.py && python -m http.server 4173 --bind 127.0.0.1 --directory dist",
+    "preview": "python -m http.server 4173 --bind 127.0.0.1 --directory dist",
+    "start": "python -m http.server 4173 --bind 127.0.0.1 --directory dist"
   }
 }

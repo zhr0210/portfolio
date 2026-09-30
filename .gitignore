@@ -1,11 +1,9 @@
 node_modules/
 dist/
-.vite/
-.next/
+__pycache__/
+*.pyc
+.env*
+.edgeone/
+.tef_dist/
 .wrangler/
-active_tunnel.log
-cloudflared.exe
-tmp/
-backups/
-test-repo/
-*.7z
+*.log
