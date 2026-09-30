@@ -15,8 +15,15 @@ function svgNode(name, attrs = {}) {
   for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
   return el;
 }
-function crop(el, rect) {
+function crop(el, rect, W, H) {
   el.style.backgroundImage = `url("${new URL(sheet.src, import.meta.url)}")`;
+  if (W && H) {
+    // 先覆盖展示区，再居中取原图区域，窄屏裁切也不拉伸人物和设备。
+    const scale = Math.max(W / rect[2], H / rect[3]);
+    el.style.backgroundSize = `${sheet.width * scale}px ${sheet.height * scale}px`;
+    el.style.backgroundPosition = `${-rect[0] * scale + (W - rect[2] * scale) / 2}px ${-rect[1] * scale + (H - rect[3] * scale) / 2}px`;
+    return;
+  }
   el.style.backgroundSize = `${(sheet.width / rect[2]) * 100}% ${(sheet.height / rect[3]) * 100}%`;
   el.style.backgroundPosition = `${(rect[0] / (sheet.width - rect[2])) * 100}% ${(rect[1] / (sheet.height - rect[3])) * 100}%`;
 }
@@ -271,7 +278,6 @@ export class VideoReel {
     if (work.video) {
       scene.source = new URL(work.video, import.meta.url).href;
       video.src = scene.source;
-      frame.classList.add('has-video');
     }
     this.world.append(el);
     return scene;
@@ -280,32 +286,44 @@ export class VideoReel {
     const W = this.root.clientWidth,
       H = this.root.clientHeight;
     if (!W || !H) return;
-    this.scenes.forEach((scene) => {
+    const layouts = this.scenes.map((scene) => {
       const aspect = scene.video.videoWidth / scene.video.videoHeight || filmCrop[2] / filmCrop[3];
-      const g = (scene.geo = reelLayout(W, H, reelConfig, aspect));
+      return reelLayout(W, H, reelConfig, aspect);
+    });
+    // 所有影片共享同一段空间行程，混合横片与竖片也不会在交接时互相穿过。
+    const travel =
+      Math.max(...layouts.map((g) => g.frame.h)) +
+      Math.max(H * reelConfig.sceneGap, reelConfig.minimumSceneGap);
+    this.root.classList.toggle('is-mobile', layouts[0].mobile);
+    this.scenes.forEach((scene, index) => {
+      const g = (scene.geo = layouts[index]);
+      g.travel = travel;
       const f = g.frame;
       box(scene.frame, f);
+      crop(scene.poster, filmCrop, f.w, f.h);
       scene.title.style.left = Math.max(18, f.x - W * (g.mobile ? 0.025 : 0.042)) + 'px';
-      scene.title.style.top = f.y - (g.mobile ? 64 : Math.max(64, H * 0.073)) + 'px';
+      scene.title.style.top = Math.max(12, f.y - (g.mobile ? 64 : Math.max(64, H * 0.073))) + 'px';
       scene.params.style.right = Math.max(18, f.x - g.W * 0.052) + 'px';
       scene.params.style.top = f.y + f.h + (g.mobile ? 16 : 20) + 'px';
       scene.params.style.transformOrigin = 'right top';
       scene.el.style.setProperty('--title-size', clamp(W * 0.026, 27, 56) + 'px');
       scene.el.style.setProperty('--parameter-size', clamp(W * 0.014, 12, 28) + 'px');
       scene.cameras.forEach((camera, i) => {
-        const w = W * (g.mobile ? 0.235 : 0.17),
+        const w = f.h * (g.mobile ? 0.31 : 0.48),
           h = (w * cameraCrops[i][3]) / cameraCrops[i][2];
         box(camera, {
           x: i === 0 ? -W * 0.018 : W - w * 0.83,
-          y: H * (i === 0 ? (g.mobile ? 0.69 : 0.67) : g.mobile ? 0.18 : 0.18),
+          y: g.mobile ? (i === 0 ? f.y + f.h + 38 : f.y - h * 0.8) : H * (i === 0 ? 0.67 : 0.18),
           w,
           h,
         });
+        crop(camera, cameraCrops[i], w, h);
       });
       scene.svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       scene.refs.forEach((n, i) => {
-        n.rect = referenceRect(n.ref, i, g);
+        n.rect = referenceRect(n.ref, i, g, reelConfig);
         box(n.node, n.rect);
+        if (!n.ref.src && !n.ref.video) crop(n.image, filmCrop, n.rect.w, n.rect.h);
         for (const [k, v] of Object.entries({ x: -W, y: -H, width: W * 3, height: H * 3 }))
           n.mask.setAttribute(k, v);
       });
@@ -342,7 +360,8 @@ export class VideoReel {
         const extra = (1 - p.referenceOpacity) * (i % 3) * 12;
         const y = p.referenceY + extra;
         move(n.node, 0, y, `rotate(${n.rect.tilt}deg)`);
-        n.node.style.opacity = p.referenceOpacity;
+        n.node.style.opacity =
+          p.referenceOpacity * (n.ref.opacity ?? 1) * reelConfig.referenceOpacity;
         move(
           n.image,
           clamp(p.r, -1, 1) * n.rect.w * 0.07 * (i % 2 ? 1 : -1),
@@ -354,12 +373,18 @@ export class VideoReel {
         const left = n.ref.side === 'left',
           theta = (n.rect.tilt * Math.PI) / 180,
           sign = left ? 1 : -1;
-        const ax = n.rect.x + n.rect.w / 2 + (sign * Math.cos(theta) * n.rect.w) / 2,
-          ay = n.rect.y + y + n.rect.h / 2 + (sign * Math.sin(theta) * n.rect.w) / 2;
-        const bx = left ? f.x : f.x + f.w,
-          by = f.y + p.y + f.h * (0.22 + (i % 6) * 0.11),
-          bend = Math.abs(bx - ax) * 0.52;
-        const d = `M${ax} ${ay} C${ax + (left ? bend : -bend)} ${ay} ${bx + (left ? -bend : bend)} ${by} ${bx} ${by}`;
+        const dx = g.mobile ? 0 : (sign * n.rect.w) / 2;
+        const dy = g.mobile ? (sign * n.rect.h) / 2 : 0;
+        const ax = n.rect.x + n.rect.w / 2 + Math.cos(theta) * dx - Math.sin(theta) * dy;
+        const ay = n.rect.y + y + n.rect.h / 2 + Math.sin(theta) * dx + Math.cos(theta) * dy;
+        const bx = g.mobile ? f.x + f.w * (0.1 + (i % 6) * 0.16) : left ? f.x : f.x + f.w;
+        const by = g.mobile
+          ? f.y + p.y + (left ? 0 : f.h)
+          : f.y + p.y + f.h * (0.22 + (i % 6) * 0.11);
+        const bend = Math.abs(g.mobile ? by - ay : bx - ax) * 0.52;
+        const d = g.mobile
+          ? `M${ax} ${ay} C${ax} ${ay + sign * bend} ${bx} ${by - sign * bend} ${bx} ${by}`
+          : `M${ax} ${ay} C${ax + sign * bend} ${ay} ${bx - sign * bend} ${by} ${bx} ${by}`;
         for (const path of [...n.paths, n.reveal]) path.setAttribute('d', d);
         n.reveal.setAttribute('stroke-dashoffset', String((1 - p.connection) * 1000));
       });
@@ -385,6 +410,10 @@ export class VideoReel {
       if (next) this.play(next);
     }
     this.count.textContent = `0${nearest + 1} / 0${this.works.length}`;
+    this.root.style.setProperty(
+      '--frame-left',
+      Math.max(24, this.scenes[nearest].geo.frame.x + 4) + 'px',
+    );
     for (const scene of this.scenes)
       for (const n of scene.refs) {
         if (!n.video) continue;

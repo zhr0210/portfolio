@@ -16,6 +16,14 @@
 .video-reel * {
   box-sizing: border-box;
 }
+.video-reel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: linear-gradient(#0009, transparent 16%, transparent 84%, #000a);
+}
 .video-reel [hidden] {
   display: none !important;
 }
@@ -88,7 +96,8 @@
 .reel-parameters {
   position: absolute;
   will-change: transform;
-  z-index: 4;
+  z-index: 7;
+  text-shadow: 0 2px 18px #000b;
 }
 .reel-title span {
   display: block;
@@ -116,11 +125,13 @@
 }
 .reel-camera {
   position: absolute;
+  z-index: 2;
   background-repeat: no-repeat;
   will-change: transform;
 }
 .reel-reference {
   position: absolute;
+  z-index: 2;
   overflow: hidden;
   will-change: transform;
   transform-origin: center;
@@ -133,11 +144,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.77) saturate(0.72);
+  filter: brightness(0.88) saturate(0.72);
 }
 .reel-wires {
   overflow: visible;
-  z-index: 0;
+  z-index: 2;
 }
 .reel-wires path {
   fill: none;
@@ -239,7 +250,7 @@
 .reel-footer {
   position: absolute;
   bottom: 25px;
-  left: 22%;
+  left: var(--frame-left, 22%);
   right: 4%;
   z-index: 8;
   display: flex;
