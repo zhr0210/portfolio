@@ -21,6 +21,14 @@ npm run preview
 
 `build` 先检查 TypeScript 再生成 `dist/`；仅发布 `dist/`。默认使用相对资源路径，适用于域名根目录和 `/portfolio/` 子目录。指定部署路径时设置环境变量 `PORTFOLIO_BASE` 再构建。路由采用 hash，无需服务器重写。
 
+Windows 与 macOS 使用相同的 npm 命令，主站不再依赖 Python 构建。
+
+## 编辑与代码同步
+
+远程仓库为 `https://github.com/zhr0210/portfolio`，当前协作分支为 `master`。每次完成修改并验证后，提交相关文件并推送到 GitHub；开始编辑前先检查远程更新。后续编辑遵循根目录 `AGENTS.md` 的同步规则。
+
+代码推送不代表网站已经发布；网站发布结果需单独确认。
+
 ## 修改内容和参数
 
 - `src/config/site.ts`：中文注释的调参入口，控制字号、间距、动效、长图阅读、镜头和渲染质量；详见 [调参说明](docs/CUSTOMIZATION.md)。

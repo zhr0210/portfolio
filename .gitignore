@@ -8,3 +8,4 @@ __pycache__/
 .wrangler/
 *.log
 .playwright-cli/
+.DS_Store
