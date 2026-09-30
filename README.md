@@ -20,6 +20,19 @@ python -m http.server 4173 --bind 127.0.0.1 --directory dist
 
 浏览 `http://127.0.0.1:4173/`。`npm run dev` 会先构建再启动同一预览服务。构建无需安装 npm 依赖或联网；`dist/` 是唯一发布目录。
 
+macOS 使用系统 Python 3 时可执行：
+
+```sh
+python3 build.py
+python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
+```
+
+## 编辑与代码同步
+
+远程仓库为 `https://github.com/zhr0210/portfolio`，当前协作分支为 `master`。每次完成修改并验证后，提交相关文件并推送到 GitHub；开始编辑前先检查远程更新。后续编辑遵循根目录 `AGENTS.md` 的同步规则。
+
+代码推送不代表网站已经发布；网站发布结果需单独确认。
+
 ## 源码和导入范围
 
 - `src/` 是 React 页面、交互和样式源码；`vendor/` 是包内的 React 浏览器运行时代码；`modules.json` 确定打包顺序。
