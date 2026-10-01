@@ -55,6 +55,10 @@ test('Narrowing a desktop window preserves height-led film and reference sizes u
   assert.equal(layouts[0].frame.h, layouts[2].frame.h);
   const widths = layouts.map((g) => referenceRect(referenceFrames[1], 1, g, reelConfig).w);
   assert.equal(widths[0], widths[2]);
+  const offsets = layouts.map(
+    (g) => referenceRect(referenceFrames[1], 1, g, reelConfig).x - g.W / 2,
+  );
+  assert.ok(Math.abs(offsets[0] - offsets[2]) < 1e-8, 'References stay in the same composition');
   const narrow = reelLayout(820, 1200, reelConfig, aspect);
   assert.equal(
     narrow.frame.h,
@@ -64,10 +68,7 @@ test('Narrowing a desktop window preserves height-led film and reference sizes u
   assert.ok(narrow.frame.x >= 24 && narrow.frame.x + narrow.frame.w <= 796);
   assert.ok(narrow.frame.w < layouts[0].frame.w, 'The side limit must constrain the width');
   const ref = referenceRect(referenceFrames[1], 1, narrow, reelConfig);
-  assert.ok(
-    ref.x + ref.w > narrow.frame.x && ref.y + ref.h > narrow.frame.y,
-    'Narrow desktop photos can overlap the film instead of being shrunk to avoid it',
-  );
+  assert.ok(ref.x < 0, 'References can leave the window instead of following its side boundary');
   assert.ok(ref.w / narrow.W > widths[0] / layouts[0].W);
 });
 
@@ -76,6 +77,11 @@ test('Phone side boundaries preserve the medium film height while limiting the w
   assert.equal(g.frame.h, 844 * reelConfig.videoHeight);
   assert.ok(g.frame.x >= 16 && g.frame.x + g.frame.w <= 374);
   assert.ok(g.frame.h / g.H < 0.45, 'The phone film should retain the restored medium size');
+  const narrower = reelLayout(260, 844, reelConfig, filmCrop[2] / filmCrop[3]);
+  const wideRef = referenceRect(referenceFrames[1], 1, g, reelConfig),
+    narrowRef = referenceRect(referenceFrames[1], 1, narrower, reelConfig);
+  assert.equal(wideRef.w, narrowRef.w, 'Narrow phones crop the nodes without shrinking them');
+  assert.ok(Math.abs(wideRef.x - g.W / 2 - (narrowRef.x - narrower.W / 2)) < 1e-8);
 });
 
 test('Portrait phones place reference groups above and below the video', () => {

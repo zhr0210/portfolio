@@ -14,7 +14,9 @@ export const reelConfig = {
   metadataParallax: 0.08,
   referenceParallax: 0.78,
   referenceWidth: 0.22,
-  mobileReferenceWidth: 0.44,
+  // 参考构图宽高比。缩窄窗口时保留节点分布，超出窗口的部分自然裁切。
+  referenceCanvasAspect: 1.28,
+  mobileReferenceCanvasAspect: 0.46,
   referenceOpacity: 0.82,
 };
 
@@ -48,7 +50,7 @@ export const reelWorks = [
   },
 ];
 
-// scale 调整大小，opacity 调整透明度；x/y 是桌面位置。
+// scale 调整大小，opacity 调整透明度；x/y 是桌面构图坐标，不是窗口边距。
 // 每个节点可加 src: 'assets/ref.jpg' 或 video: 'assets/ref.mp4'；留空使用图集示意。
 export const referenceFrames = [
   {

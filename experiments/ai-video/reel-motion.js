@@ -42,18 +42,24 @@ export function scenePose(position, index, g, config) {
 }
 
 export function referenceRect(ref, i, g, config) {
-  const desired = g.frame.h * 1.855 * config.referenceWidth;
-  const base = g.mobile ? Math.min(desired, g.W * config.mobileReferenceWidth) : desired;
+  // 构图跟随视频高度缩放，以视频中心定位；窗口宽度只决定裁切范围。
+  const canvasH = g.frame.h / config.videoHeight;
+  const canvasW =
+    canvasH * (g.mobile ? config.mobileReferenceCanvasAspect : config.referenceCanvasAspect);
+  const canvasX = (g.W - canvasW) / 2,
+    canvasY = (g.H - canvasH) / 2;
+  const base = g.frame.h * 1.855 * config.referenceWidth;
   const w = base * (ref.scale ?? 1),
     h = w / 1.855;
-  if (!g.mobile) return { x: ref.x * g.W, y: ref.y * g.H, w, h, tilt: ref.tilt };
+  if (!g.mobile)
+    return { x: canvasX + ref.x * canvasW, y: canvasY + ref.y * canvasH, w, h, tilt: ref.tilt };
   const slot = i % 6,
     lane = base / 1.855;
-  const centerX = [-0.1, 0.16, 0.4, 0.66, 0.9, 1.14][slot] * g.W;
+  const centerX = canvasX + [-0.1, 0.16, 0.4, 0.66, 0.9, 1.14][slot] * canvasW;
   const centerY =
     ref.side === 'left'
-      ? Math.max(18, g.frame.y - 96 - lane * 0.4) + ((slot % 3) - 1) * 7
-      : g.H - lane * 0.5 - ((slot % 3) - 1) * 9;
+      ? g.frame.y - 96 - lane * 0.4 + ((slot % 3) - 1) * 7
+      : canvasY + canvasH - lane * 0.5 - ((slot % 3) - 1) * 9;
   return {
     x: centerX - w / 2,
     y: centerY - h / 2 + ref.tilt * 0.22,
