@@ -18,11 +18,40 @@ export const reelConfig = {
   referenceCanvasAspect: 1.28,
   mobileReferenceCanvasAspect: 0.46,
   referenceOpacity: 0.82,
+  // 第一部影片可以向上回看完整入场；首次约对应 Blender 第 54 帧。
+  initialPosition: -0.22,
+  minimumPosition: -0.9,
+  // 相对当前作品的滚动区间，映射到两台设备共享的完整动画时间轴。
+  deviceAnimation: { start: -0.9, end: 0.9 },
+  deviceLayer: {
+    cameraName: 'sourceCamera',
+    sourceAspect: 16 / 9,
+    referenceVideoHeight: 0.4,
+    size: 1,
+    desktopSize: 0.72,
+    verticalFovScale: 1,
+    offsetX: 0,
+    offsetY: 0,
+    // 手机用同一画布的两次投影，把设备移至上下，保持原动画轨迹和错峰。
+    mobileSize: 0.48,
+    mobileComposition: {
+      sony: { sourceX: 0.09, sourceY: 0.5, targetX: 0.5, targetY: 0.2 },
+      pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.5, targetY: 0.77 },
+    },
+    environmentIntensity: 0.22,
+    keyIntensity: 3,
+    fillIntensity: 1,
+    softboxIntensity: 2,
+    exposure: 1,
+    maxPixelRatio: 1.5,
+    mobileMaxPixelRatio: 1,
+    reducedProgress: 0.375,
+  },
 };
 
 // 用原始参考图作为共享图集，CSS 裁切，不改动用户原图。
 export const sheet = {
-  src: 'assets/vertical-film-sheet.jpg',
+  src: new URL('./assets/vertical-film-sheet.jpg', import.meta.url).href,
   width: 3882,
   height: 2183,
 };

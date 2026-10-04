@@ -54,6 +54,8 @@ TypeScript 严格检查新增入口、调参文件和全景生命周期。继承
 
 `experiments/ai-video/` 保存纵向视频展示实验及必要素材：实拍采用两侧相机，AI 采用参考画面与流光连线。启动和调参方式见其中的 README。它独立于主站，也不会复制到 `dist/`。
 
+视频实验运行 `npm run dev:video`（4184）；独立构建为 `npm run build:video`，输出 `dist-experiments/`。Three.js 仅用于实验中的相机／Pocket 滚动动画，主站没有引入它。原 Blender 文件不作为网页资源或 Git 素材上传。
+
 其他完整本地副本：
 
 - `G:\zuopingji\Portfolio-pre-continuum-20260929\Editorial Vanguard\code`

@@ -7,6 +7,7 @@ import {
   referenceFrames,
 } from './video-reel.config.js';
 import { clamp, smooth, reelLayout, scenePose, referenceRect } from './reel-motion.js';
+import { createDeviceLayer } from './device-layer.js';
 
 let wireSequence = 0;
 const ns = 'http://www.w3.org/2000/svg';
@@ -41,7 +42,10 @@ export class VideoReel {
   constructor(host, { standalone = false, returnUrl = '../../dist/' } = {}) {
     this.host = host;
     this.standalone = standalone;
-    this.position = this.target = this.pending = this.velocity = 0;
+    this.minimum = standalone ? reelConfig.minimumPosition : 0;
+    this.maximum = reelWorks.length - 1;
+    this.position = this.target = standalone ? reelConfig.initialPosition : 0;
+    this.pending = this.velocity = 0;
     this.active = false;
     this.raf = 0;
     this.lastTime = 0;
@@ -54,7 +58,7 @@ export class VideoReel {
     this.abort = new AbortController();
     this.reduced = matchMedia('(prefers-reduced-motion: reduce)');
     this.works = reelWorks.map((w) => ({ ...w }));
-    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / 02</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>当前使用你提供的设计图预览构图，两种布局共享同一帧示意画面。尚未接入正式视频。</p><p>MENU 可载入当前作品的本地视频，仅用于本次浏览，不上传。相机暂为静态参考图。</p><button data-action="close-info">关闭</button></div></section>`;
+    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / 02</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>影片暂用你提供的设计图预览；MENU 可载入当前作品的本地视频，仅用于本次浏览，不上传。</p><p>实拍设备采用你的相机与 Pocket 三维动画，跟随滚动正向／反向播放。模型加载中或设备不支持三维时显示静态参考。</p><button data-action="close-info">关闭</button></div></section>`;
     this.root = host.firstElementChild;
     this.root.querySelector('.reel-return').href = returnUrl;
     this.world = this.root.querySelector('.reel-world');
@@ -171,6 +175,7 @@ export class VideoReel {
       index,
       source: null,
       failed: false,
+      devices: null,
     };
     if (work.type === 'live') {
       cameraCrops.forEach((rect, i) => {
@@ -182,6 +187,23 @@ export class VideoReel {
         crop(camera, rect);
         side.append(camera);
         scene.cameras.push(camera);
+      });
+      const deviceHost = document.createElement('div');
+      deviceHost.className = 'reel-device-layer';
+      deviceHost.setAttribute('role', 'img');
+      deviceHost.setAttribute('aria-label', '相机和 Pocket 云台相机，随滚动展示三维动画');
+      side.append(deviceHost);
+      scene.devices = createDeviceLayer(deviceHost, {
+        assetUrl: new URL('./assets/capture-devices.glb', import.meta.url).href,
+        config: reelConfig.deviceLayer,
+        onState: (state) => {
+          scene.el.classList.toggle('is-device-ready', state === 'ready');
+          scene.el.dataset.deviceState = state;
+          scene.cameras.forEach((camera) =>
+            camera.setAttribute('aria-hidden', String(state === 'ready')),
+          );
+        },
+        onInvalidate: () => this.request(),
       });
     } else {
       const defs = svgNode('defs');
@@ -333,7 +355,7 @@ export class VideoReel {
   }
   render() {
     if (!this.scenes[0]?.geo) return;
-    const nearest = Math.round(this.position);
+    const nearest = this.currentIndex();
     let focused = null;
     for (const scene of this.scenes) {
       const g = scene.geo,
@@ -341,6 +363,16 @@ export class VideoReel {
         p = scenePose(this.position, scene.index, g, reelConfig);
       scene.el.hidden = Math.abs(p.r) > 1.06;
       scene.el.inert = scene.index !== nearest;
+      scene.devices?.update({
+        progress: clamp(
+          (p.r - reelConfig.deviceAnimation.start) /
+            (reelConfig.deviceAnimation.end - reelConfig.deviceAnimation.start),
+        ),
+        geo: g,
+        opacity: p.opacity,
+        visible: this.active && !document.hidden && !scene.el.hidden && p.opacity > 0.001,
+        reduced: this.reduced.matches,
+      });
       if (scene.el.hidden) continue;
       move(scene.frame, 0, p.y);
       scene.frame.style.opacity = p.opacity;
@@ -426,6 +458,9 @@ export class VideoReel {
     this.root.dataset.target = this.target.toFixed(6);
     this.root.dataset.phase = this.snap ? 'snap' : focused ? 'view' : 'transition';
   }
+  currentIndex() {
+    return clamp(Math.round(this.position), 0, this.works.length - 1);
+  }
   request() {
     if (this.active && !document.hidden && !this.raf)
       this.raf = requestAnimationFrame((t) => this.tick(t));
@@ -447,7 +482,7 @@ export class VideoReel {
     } else {
       const delivered = this.pending * (1 - Math.exp(-dt / 0.1));
       this.pending -= delivered;
-      this.target = clamp(this.target + delivered, 0, this.works.length - 1);
+      this.target = clamp(this.target + delivered, this.minimum, this.maximum);
       const gap = this.target - this.position;
       this.position =
         this.reduced.matches || Math.abs(gap) < 0.00001
@@ -477,7 +512,7 @@ export class VideoReel {
     this.direction = sign;
     this.snap = null;
     if (wheel && !this.reduced.matches) this.pending += clamp(delta, -0.22, 0.22);
-    else this.target = clamp(this.target + delta, 0, this.works.length - 1);
+    else this.target = clamp(this.target + delta, this.minimum, this.maximum);
     this.request();
   }
   wheel(e) {
@@ -487,8 +522,8 @@ export class VideoReel {
       (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? this.root.clientHeight : 1);
     if (
       !this.standalone &&
-      ((this.position <= 0.001 && dy < 0) ||
-        (this.position >= this.works.length - 1 - 0.001 && dy > 0))
+      ((this.position <= this.minimum + 0.001 && dy < 0) ||
+        (this.position >= this.maximum - 0.001 && dy > 0))
     )
       return;
     if (dy) {
@@ -524,7 +559,7 @@ export class VideoReel {
     if (this.root.hasPointerCapture(e.pointerId)) this.root.releasePointerCapture(e.pointerId);
     this.drag = null;
     this.root.classList.remove('is-dragging');
-    const nearest = Math.round(this.target);
+    const nearest = clamp(Math.round(this.target), 0, this.works.length - 1);
     if (Math.abs(this.target - nearest) < 0.16) this.goTo(nearest);
     else this.request();
   }
@@ -559,6 +594,7 @@ export class VideoReel {
     else {
       this.cancelMotion();
       this.pauseAll();
+      this.render();
     }
   }
   cancelMotion() {
@@ -582,7 +618,7 @@ export class VideoReel {
     this.playing = null;
   }
   togglePlay() {
-    const scene = this.scenes[Math.round(this.position)];
+    const scene = this.scenes[this.currentIndex()];
     if (!scene.source) {
       this.message('请先在 MENU 中载入当前视频。');
       return;
@@ -600,7 +636,7 @@ export class VideoReel {
       this.message('请选择视频文件。');
       return;
     }
-    const scene = this.scenes[Math.round(this.position)],
+    const scene = this.scenes[this.currentIndex()],
       old = this.sources.get(scene.index);
     this.pauseAll();
     const src = URL.createObjectURL(file);
@@ -627,6 +663,7 @@ export class VideoReel {
     this.resize.disconnect();
     clearTimeout(this.messageTimer);
     this.scenes.forEach((s) => {
+      s.devices?.dispose();
       s.video.removeAttribute('src');
       s.video.load();
       s.refs.forEach((n) => {

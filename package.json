@@ -12,6 +12,9 @@
     "typecheck": "tsc --noEmit",
     "dev": "vite --host 127.0.0.1 --port 4173 --strictPort",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
+    "dev:video": "vite --config experiments/ai-video/vite.config.js",
+    "build:video": "vite build --config experiments/ai-video/vite.config.js",
+    "preview:video": "vite preview --config experiments/ai-video/vite.config.js",
     "start": "npm run preview",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "format": "prettier --write src tests vite.config.ts index.html",
@@ -20,7 +23,8 @@
   "dependencies": {
     "gsap": "^3.14.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "three": "^0.183.2"
   },
   "devDependencies": {
     "@types/node": "^22.19.0",

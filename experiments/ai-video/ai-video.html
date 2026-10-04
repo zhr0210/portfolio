@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Kilian Zhou — FILM / 视频作品</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="video-reel.css?rev=10" />
+    <link rel="stylesheet" href="video-reel.css" />
     <style>
       html,
       body {
@@ -26,8 +26,11 @@
   <body>
     <main id="ai-node-study"></main>
     <script type="module">
-      import { VideoReel } from './video-reel.js?rev=10';
-      const reel = new VideoReel(document.getElementById('ai-node-study'), { standalone: true });
+      import { VideoReel } from './video-reel.js';
+      const reel = new VideoReel(document.getElementById('ai-node-study'), {
+        standalone: true,
+        returnUrl: 'http://127.0.0.1:4173/',
+      });
       reel.setActive(true);
       window.reel = reel;
     </script>
