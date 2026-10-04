@@ -4,7 +4,7 @@
   "sourceSha256": "f8232fa875549b4f2429c20451a8ea7e0a6f9aba97247bfd2aa8a2f9c992d051",
   "exporter": "Blender 5.2.0 LTS",
   "asset": "capture-devices.glb",
-  "bytes": 4510628,
+  "bytes": 4628656,
   "roots": {
     "sony": "z轴移动",
     "pocket": "空物体"
@@ -15,21 +15,9 @@
     "lensMm": 35.0,
     "sensorWidthMm": 36.0,
     "sourceAspect": 1.7777777777777777,
-    "sourceResolution": [
-      1920,
-      1080
-    ],
-    "blenderPosition": [
-      19.0730591,
-      -56.6198158,
-      0.0
-    ],
-    "blenderQuaternionWxyz": [
-      0.7071068,
-      0.7071068,
-      0.0,
-      0.0
-    ],
+    "sourceResolution": [1920, 1080],
+    "blenderPosition": [19.0730591, -56.6198158, 0.0],
+    "blenderQuaternionWxyz": [0.7071068, 0.7071068, 0.0, 0.0],
     "gltfPerspective": {
       "aspectRatio": 1.7777777777777777,
       "yfov": 0.5631968779732008,
@@ -45,18 +33,9 @@
     "fps": 24,
     "durationSeconds": 6,
     "sampleStepFrames": 1,
-    "sonyRange": [
-      0,
-      108
-    ],
-    "pocketRange": [
-      36,
-      144
-    ],
-    "gimbalRange": [
-      62,
-      138
-    ]
+    "sonyRange": [0, 108],
+    "pocketRange": [36, 144],
+    "gimbalRange": [62, 138]
   },
   "sourceGeometry": {
     "meshes": 172,
@@ -70,249 +49,130 @@
     "materials": 11,
     "animations": 1,
     "animationChannels": 12,
-    "extensionsRequired": [
-      "EXT_texture_webp"
-    ]
+    "extensionsRequired": ["EXT_texture_webp"]
   },
   "actions": [
     {
       "object": "x轴稳定",
       "action": "x轴稳定动作",
-      "keyFrames": [
-        62.0,
-        101.0,
-        138.0
-      ]
+      "keyFrames": [62.0, 101.0, 138.0]
     },
     {
       "object": "z轴移动",
       "action": "z轴移动动作",
-      "keyFrames": [
-        0.0,
-        108.0
-      ]
+      "keyFrames": [0.0, 108.0]
     },
     {
       "object": "z轴移动.001",
       "action": "z轴移动动作.005",
-      "keyFrames": [
-        36.0,
-        144.0
-      ]
+      "keyFrames": [36.0, 144.0]
     },
     {
       "object": "动画控制器",
       "action": "动画控制器动作",
-      "keyFrames": [
-        0.0,
-        54.0,
-        108.0
-      ]
+      "keyFrames": [0.0, 54.0, 108.0]
     },
     {
       "object": "模型三轴旋转",
       "action": "动画控制器动作.004",
-      "keyFrames": [
-        36.0,
-        90.0,
-        144.0
-      ]
+      "keyFrames": [36.0, 90.0, 144.0]
     },
     {
       "object": "镜头模组",
       "action": "空物体.001动作.001",
-      "keyFrames": [
-        62.0,
-        101.0,
-        138.0
-      ]
+      "keyFrames": [62.0, 101.0, 138.0]
     },
     {
       "object": "零件控制器",
       "action": "空物体.001动作",
-      "keyFrames": [
-        62.0,
-        101.0,
-        138.0
-      ]
+      "keyFrames": [62.0, 101.0, 138.0]
     }
   ],
   "textures": [
     {
       "name": "Sony24_70G_Body_Mat Base color",
-      "sourceSize": [
-        4096,
-        4096
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "sourceSize": [4096, 4096],
+      "webSize": [1024, 1024]
     },
     {
-      "name": "Sony24_70G_Body_Mat Occlusion roughness metallic",
-      "sourceSize": [
-        4096,
-        4096
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "name": "Sony24_70G_Body_Mat Occlusion roughness metallic_web_matte",
+      "sourceSize": [4096, 4096],
+      "webSize": [1024, 1024]
     },
     {
       "name": "Sony24_70G_Body_Mat Normal",
-      "sourceSize": [
-        4096,
-        4096
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "sourceSize": [4096, 4096],
+      "webSize": [1024, 1024]
     },
     {
       "name": "Sony24_70G_Lens_Mat Base color",
-      "sourceSize": [
-        128,
-        128
-      ],
-      "webSize": [
-        128,
-        128
-      ]
+      "sourceSize": [128, 128],
+      "webSize": [128, 128]
     },
     {
       "name": "Sony_A7RM3_ViewfinderLens_Mat Occlusion roughness metallic",
-      "sourceSize": [
-        128,
-        128
-      ],
-      "webSize": [
-        128,
-        128
-      ]
+      "sourceSize": [128, 128],
+      "webSize": [128, 128]
     },
     {
       "name": "Sony_A7RM3_ViewfinderLens_Mat Normal",
-      "sourceSize": [
-        128,
-        128
-      ],
-      "webSize": [
-        128,
-        128
-      ]
+      "sourceSize": [128, 128],
+      "webSize": [128, 128]
     },
     {
       "name": "SonyA7RM3_Body_Led_Mat Base color",
-      "sourceSize": [
-        128,
-        128
-      ],
-      "webSize": [
-        128,
-        128
-      ]
+      "sourceSize": [128, 128],
+      "webSize": [128, 128]
     },
     {
       "name": "SonyA7RM3_Body_Led_Mat Occlusion roughness metallic",
-      "sourceSize": [
-        128,
-        128
-      ],
-      "webSize": [
-        128,
-        128
-      ]
+      "sourceSize": [128, 128],
+      "webSize": [128, 128]
     },
     {
       "name": "Sony_A7RM3_Body_Mat Base color",
-      "sourceSize": [
-        4096,
-        4096
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "sourceSize": [4096, 4096],
+      "webSize": [1024, 1024]
     },
     {
-      "name": "Sony_A7RM3_Body_Mat Occlusion roughness metallic",
-      "sourceSize": [
-        4096,
-        4096
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "name": "Sony_A7RM3_Body_Mat Occlusion roughness metallic_web_matte",
+      "sourceSize": [4096, 4096],
+      "webSize": [1024, 1024]
     },
     {
       "name": "Sony_A7RM3_Body_Mat Normal",
-      "sourceSize": [
-        4096,
-        4096
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "sourceSize": [4096, 4096],
+      "webSize": [1024, 1024]
     },
     {
       "name": "Sony_A7RM3_ViewfinderLens_Mat Base color",
-      "sourceSize": [
-        128,
-        128
-      ],
-      "webSize": [
-        128,
-        128
-      ]
+      "sourceSize": [128, 128],
+      "webSize": [128, 128]
     },
     {
       "name": "000002339E020538.dds",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "sourceSize": [2048, 2048],
+      "webSize": [1024, 1024]
     },
     {
-      "name": "000002339D2BD338.dds",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "name": "000002339D2BD338.dds_web_matte",
+      "sourceSize": [2048, 2048],
+      "webSize": [1024, 1024]
     },
     {
       "name": "000002339D2BCDF8.dds",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "sourceSize": [2048, 2048],
+      "webSize": [1024, 1024]
     },
     {
       "name": "000002339D2BD338.dds.001",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        1024,
-        1024
-      ]
+      "sourceSize": [2048, 2048],
+      "webSize": [1024, 1024]
+    },
+    {
+      "name": "000002339D2BD338.dds",
+      "sourceSize": [2048, 2048],
+      "webSize": [1024, 1024]
     }
   ],
   "sourceAreaLights": [
@@ -321,99 +181,123 @@
       "type": "AREA",
       "parent": "z轴移动",
       "energy": 500.0,
-      "color": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "color": [1.0, 1.0, 1.0],
       "size": 60.326637268066406,
-      "blenderPositionAtFrame0": [
-        -1.6126428,
-        -5.1432972,
-        2.4148178
-      ],
-      "blenderQuaternionWxyz": [
-        1.0,
-        0.0,
-        0.0,
-        0.0
-      ]
+      "blenderPositionAtFrame0": [-1.6126428, -5.1432972, 2.4148178],
+      "blenderQuaternionWxyz": [1.0, 0.0, 0.0, 0.0]
     },
     {
       "name": "聚光.001",
       "type": "AREA",
       "parent": "z轴移动.001",
       "energy": 500.0,
-      "color": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "color": [1.0, 1.0, 1.0],
       "size": 60.326637268066406,
-      "blenderPositionAtFrame0": [
-        39.9873543,
-        -5.1432972,
-        -1.7651825
-      ],
-      "blenderQuaternionWxyz": [
-        1.0,
-        0.0,
-        0.0,
-        0.0
-      ]
+      "blenderPositionAtFrame0": [39.9873543, -5.1432972, -1.7651825],
+      "blenderQuaternionWxyz": [1.0, 0.0, 0.0, 0.0]
     },
     {
       "name": "面光",
       "type": "AREA",
       "parent": "z轴移动",
       "energy": 500.0,
-      "color": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "color": [1.0, 1.0, 1.0],
       "size": 37.20100021362305,
-      "blenderPositionAtFrame0": [
-        0.0,
-        -6.8917418,
-        -39.6599846
-      ],
-      "blenderQuaternionWxyz": [
-        0.0329788,
-        0.9994547,
-        -0.0,
-        0.0016266
-      ]
+      "blenderPositionAtFrame0": [0.0, -6.8917418, -39.6599846],
+      "blenderQuaternionWxyz": [0.0329788, 0.9994547, -0.0, 0.0016266]
     },
     {
       "name": "面光.001",
       "type": "AREA",
       "parent": "z轴移动.001",
       "energy": 500.0,
-      "color": [
-        1.0,
-        1.0,
-        1.0
-      ],
+      "color": [1.0, 1.0, 1.0],
       "size": 37.20100021362305,
-      "blenderPositionAtFrame0": [
-        41.5999985,
-        -6.8917418,
-        -43.8399849
-      ],
-      "blenderQuaternionWxyz": [
-        0.0329788,
-        0.9994547,
-        -0.0,
-        0.0016266
-      ]
+      "blenderPositionAtFrame0": [41.5999985, -6.8917418, -43.8399849],
+      "blenderQuaternionWxyz": [0.0329788, 0.9994547, -0.0, 0.0016266]
     }
   ],
-  "excluded": [
-    "无人机 collection",
-    "Pocket unparented original fragments",
-    "AREA lights"
-  ],
+  "materialProfile": {
+    "name": "portfolio-matte-v1",
+    "displayScalePreference": 1.12,
+    "authoringCopy": "camera 无人机-web-matte.blend",
+    "adjustments": [
+      {
+        "sourceMaterial": "Sony24_70G_Body_Mat",
+        "material": "Sony24_70G_Body_Mat_web_matte",
+        "kind": "sony-lens-barrel",
+        "sourceOrm": "Sony24_70G_Body_Mat Occlusion roughness metallic",
+        "adjustedOrm": "Sony24_70G_Body_Mat Occlusion roughness metallic_web_matte",
+        "before": {
+          "roughnessMean": 0.6435420513153076,
+          "metallicMean": 0.06897655129432678,
+          "specularIORLevel": 0.5,
+          "specularLinked": false,
+          "coatWeight": 0.0
+        },
+        "after": {
+          "roughnessMean": 0.7182936668395996,
+          "metallicMean": 0.06897655129432678,
+          "specularIORLevel": 0.35,
+          "coatWeight": 0.0
+        },
+        "treatment": "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
+      },
+      {
+        "sourceMaterial": "Sony_A7RM3_Body_Mat",
+        "material": "Sony_A7RM3_Body_Mat_web_matte",
+        "kind": "sony-body",
+        "sourceOrm": "Sony_A7RM3_Body_Mat Occlusion roughness metallic",
+        "adjustedOrm": "Sony_A7RM3_Body_Mat Occlusion roughness metallic_web_matte",
+        "before": {
+          "roughnessMean": 0.49158406257629395,
+          "metallicMean": 0.19009530544281006,
+          "specularIORLevel": 0.5,
+          "specularLinked": false,
+          "coatWeight": 0.0
+        },
+        "after": {
+          "roughnessMean": 0.5864307880401611,
+          "metallicMean": 0.19009530544281006,
+          "specularIORLevel": 0.35,
+          "coatWeight": 0.0
+        },
+        "treatment": "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
+      },
+      {
+        "sourceMaterial": "mat_0.007",
+        "material": "mat_0.007_web_matte",
+        "kind": "pocket-shell",
+        "sourceOrm": "000002339D2BD338.dds",
+        "adjustedOrm": "000002339D2BD338.dds_web_matte",
+        "before": {
+          "roughnessMean": 0.4200957715511322,
+          "metallicMean": 0.5749496221542358,
+          "specularIORLevel": 0.5,
+          "specularLinked": true,
+          "coatWeight": 0.0
+        },
+        "after": {
+          "roughnessMean": 0.8124211430549622,
+          "metallicMean": 0.04599596560001373,
+          "specularIORLevel": 0.28,
+          "coatWeight": 0.0
+        },
+        "treatment": "Plastic shell ORM: roughness 0.72 + source * 0.22; metallic source * 0.08; remove imported alpha/specular branch."
+      }
+    ],
+    "preserved": [
+      "Sony lens glass and viewfinder",
+      "Pocket mat_0.008 optical/display material",
+      "Pocket Material.006 optical coating",
+      "separate Pocket metal materials",
+      "metal pixels in Sony body/barrel ORM",
+      "base-color and normal textures",
+      "all source transforms and animation curves",
+      "unselected materials, including drone"
+    ]
+  },
+  "excluded": ["无人机 collection", "Pocket unparented original fragments", "AREA lights"],
   "rendering": {
     "sourceViewTransform": "AgX",
     "sourceExposure": 0.0,

@@ -60,6 +60,7 @@
 }
 .reel-scene {
   isolation: isolate;
+  z-index: 1;
 }
 .reel-frame {
   position: absolute;
@@ -138,9 +139,9 @@
   pointer-events: none;
 }
 .reel-device-layer {
-  z-index: 2;
+  z-index: 0;
 }
-.reel-live.is-device-ready .reel-camera {
+.reel-device-layer.is-device-ready .reel-camera {
   visibility: hidden;
 }
 .reel-reference {

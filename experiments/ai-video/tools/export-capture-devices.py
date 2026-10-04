@@ -1,7 +1,8 @@
 """Export the two finished devices from a saved Blender file in a background process.
 
 Run Blender with --background --disable-autoexec before loading the source file.
-This script changes only its process-local copy and never saves the .blend file.
+The original .blend is never overwritten. --save-blend-copy can save a separate,
+full-resolution material-adjusted authoring file before web-only optimization.
 """
 
 import argparse
@@ -15,6 +16,7 @@ import sys
 import tempfile
 
 import bpy
+import numpy as np
 
 
 ROOT_NAMES = {"sony": "z轴移动", "pocket": "空物体"}
@@ -22,6 +24,13 @@ FRAME_START = 0
 FRAME_END = 144
 FPS = 24
 CLIP_NAME = "CaptureDevices"
+MATTE_PROFILE = "portfolio-matte-v1"
+DISPLAY_SCALE = 1.12
+BODY_MATERIALS = {
+    "Sony_A7RM3_Body_Mat": "sony-body",
+    "Sony24_70G_Body_Mat": "sony-lens-barrel",
+    "mat_0.007": "pocket-shell",
+}
 
 
 def parse_arguments():
@@ -30,6 +39,8 @@ def parse_arguments():
     parser.add_argument("--metadata", type=Path)
     parser.add_argument("--max-texture-size", type=int, default=1024)
     parser.add_argument("--texture-quality", type=int, default=90)
+    parser.add_argument("--material-profile", choices=["source", "matte"], default="matte")
+    parser.add_argument("--save-blend-copy", type=Path)
     extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
     return parser.parse_args(extra)
 
@@ -97,6 +108,114 @@ def prepare_textures(materials, max_size, temporary_directory):
     return records
 
 
+def principled(material):
+    return next((node for node in material.node_tree.nodes if node.type == "BSDF_PRINCIPLED"), None)
+
+
+def set_unlinked_value(material, shader, name, value):
+    socket = shader.inputs[name]
+    for link in list(socket.links):
+        material.node_tree.links.remove(link)
+    socket.default_value = value
+
+
+def apply_matte_profile(meshes, roots, temporary_directory):
+    """Change selected body material copies, never shared drone/source materials.
+
+    Sony's ORM metal mask still preserves metal rings and contacts. Pocket's
+    imported shell atlas misclassifies much of its plastic as metal, so only
+    that material gets a low metallic mask. Screens, optical coatings, the
+    viewfinder and separate small metal materials retain their source nodes.
+    """
+    records = []
+    copied = {}
+    for obj in meshes:
+        for slot in obj.material_slots:
+            source_material = slot.material
+            if source_material is None:
+                continue
+            original_name = source_material.get("portfolio_source_material", source_material.name)
+            kind = BODY_MATERIALS.get(original_name)
+            if kind is None:
+                continue
+            if source_material.get("portfolio_material_profile") == MATTE_PROFILE:
+                if source_material not in copied:
+                    records.append(json.loads(source_material["portfolio_material_record"]))
+                    copied[source_material] = source_material
+                continue
+            if source_material in copied:
+                slot.material = copied[source_material]
+                continue
+            material = source_material.copy()
+            material.name = original_name + "_web_matte"
+            material["portfolio_source_material"] = original_name
+            material["portfolio_material_profile"] = MATTE_PROFILE
+            shader = principled(material)
+            if shader is None:
+                raise RuntimeError(f"Missing body Principled material: {original_name}")
+            roughness_socket = shader.inputs["Roughness"]
+            if not roughness_socket.is_linked:
+                raise RuntimeError(f"Review new untextured body material: {original_name}")
+            separate = roughness_socket.links[0].from_node
+            if separate.type != "SEPARATE_COLOR" or not separate.inputs["Color"].is_linked:
+                raise RuntimeError(f"Review new ORM node layout: {original_name}")
+            texture = separate.inputs["Color"].links[0].from_node
+            if texture.type != "TEX_IMAGE" or texture.image is None:
+                raise RuntimeError(f"Review new ORM texture: {original_name}")
+            original_image = texture.image
+            pixels = np.empty(len(original_image.pixels), dtype=np.float32)
+            original_image.pixels.foreach_get(pixels)
+            values = pixels.reshape((-1, 4))
+            sample = values[::max(1, len(values) // 65536)]
+            before = {"roughnessMean": float(sample[:, 1].mean()),
+                      "metallicMean": float(sample[:, 2].mean()),
+                      "specularIORLevel": float(shader.inputs["Specular IOR Level"].default_value),
+                      "specularLinked": shader.inputs["Specular IOR Level"].is_linked,
+                      "coatWeight": float(shader.inputs["Coat Weight"].default_value)}
+            if kind == "pocket-shell":
+                values[:, 1] = 0.72 + values[:, 1] * 0.22
+                values[:, 2] *= 0.08
+                specular = 0.28
+                treatment = "Plastic shell ORM: roughness 0.72 + source * 0.22; metallic source * 0.08; remove imported alpha/specular branch."
+            else:
+                nonmetal = values[:, 2] < 0.5
+                values[nonmetal, 1] = np.minimum(1.0, np.maximum(0.64, values[nonmetal, 1] * 0.9 + 0.14))
+                specular = 0.35
+                treatment = "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
+            adjusted_image = original_image.copy()
+            adjusted_image.name = original_image.name + "_web_matte"
+            adjusted_image.pixels.foreach_set(pixels)
+            adjusted_image.update()
+            adjusted_image.filepath_raw = str(Path(temporary_directory) / f"matte-orm-{len(copied)}.png")
+            adjusted_image.file_format = "PNG"
+            adjusted_image.save()
+            adjusted_image.pack()
+            # Body AO and metallic nodes may reference the same atlas; reconnect
+            # all of this material's references, but leave other materials alone.
+            for node in material.node_tree.nodes:
+                if node.type == "TEX_IMAGE" and node.image == original_image:
+                    node.image = adjusted_image
+            set_unlinked_value(material, shader, "Specular IOR Level", specular)
+            set_unlinked_value(material, shader, "Coat Weight", 0.0)
+            material.node_tree.nodes.active = shader
+            record = {"sourceMaterial": original_name, "material": material.name,
+                      "kind": kind, "sourceOrm": original_image.name,
+                      "adjustedOrm": adjusted_image.name, "before": before,
+                      "after": {"roughnessMean": float(sample[:, 1].mean()),
+                                "metallicMean": float(sample[:, 2].mean()),
+                                "specularIORLevel": specular, "coatWeight": 0.0},
+                      "treatment": treatment}
+            material["portfolio_material_record"] = json.dumps(record)
+            records.append(record)
+            copied[source_material] = material
+            slot.material = material
+    for root in roots.values():
+        # This is an authoring/display preference, not a transform multiplier.
+        # The website applies it once; source motion and model units stay intact.
+        root["portfolio_web_display_scale"] = DISPLAY_SCALE
+    return records
+
+
 def remove_unused_uv_layers(meshes):
     removed = 0
     for obj in meshes:
@@ -141,6 +260,10 @@ def main():
     source = Path(bpy.data.filepath)
     if not source.is_file():
         raise RuntimeError("Load the saved source .blend file before running this script")
+    source_sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
+    blend_copy = args.save_blend_copy.resolve() if args.save_blend_copy else None
+    if blend_copy and (blend_copy == source.resolve() or blend_copy.suffix.lower() != ".blend"):
+        raise RuntimeError("The authoring copy must be a separate .blend path; never overwrite the source")
     args.output = args.output.resolve()
     if args.output.suffix.lower() != ".glb":
         raise RuntimeError("The output must be a .glb file")
@@ -165,6 +288,20 @@ def main():
     if any(obj.animation_data and obj.animation_data.drivers for obj in selected):
         raise RuntimeError("The source now contains drivers; review the baking strategy")
 
+    meshes = [obj for obj in selected if obj.type == "MESH"]
+    material_records = []
+    if args.material_profile == "matte":
+        with tempfile.TemporaryDirectory(prefix="portfolio-device-matte-") as temporary_directory:
+            material_records = apply_matte_profile(meshes, roots, temporary_directory)
+            if blend_copy:
+                blend_copy.parent.mkdir(parents=True, exist_ok=True)
+                # Save before changing camera names, timeline settings, UV sets
+                # or texture resolution. Drone materials and all original
+                # actions remain untouched in this complete authoring copy.
+                bpy.ops.wm.save_as_mainfile(filepath=str(blend_copy), copy=True)
+    elif blend_copy:
+        raise RuntimeError("--save-blend-copy requires the matte material profile")
+
     source_camera.name = "sourceCamera"
     scene.frame_start = FRAME_START
     scene.frame_end = FRAME_END
@@ -175,7 +312,6 @@ def main():
     for obj in selected:
         obj.select_set(True)
     bpy.context.view_layer.objects.active = roots["sony"]
-    meshes = [obj for obj in selected if obj.type == "MESH"]
     materials = sorted({m for obj in meshes for m in obj.data.materials if m}, key=lambda m: m.name)
     triangles = 0
     for obj in meshes:
@@ -261,7 +397,7 @@ def main():
     report = {
         "schemaVersion": 1,
         "sourceFile": source.name,
-        "sourceSha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+        "sourceSha256": source_sha256,
         "exporter": f"Blender {bpy.app.version_string}",
         "asset": args.output.name,
         "bytes": args.output.stat().st_size,
@@ -278,6 +414,14 @@ def main():
         "actions": actions,
         "textures": texture_records,
         "sourceAreaLights": light_records,
+        "materialProfile": {"name": MATTE_PROFILE if args.material_profile == "matte" else "source",
+                            "displayScalePreference": DISPLAY_SCALE if args.material_profile == "matte" else 1.0,
+                            "authoringCopy": blend_copy.name if blend_copy else None,
+                            "adjustments": material_records,
+                            "preserved": ["Sony lens glass and viewfinder", "Pocket mat_0.008 optical/display material",
+                                          "Pocket Material.006 optical coating", "separate Pocket metal materials",
+                                          "metal pixels in Sony body/barrel ORM", "base-color and normal textures",
+                                          "all source transforms and animation curves", "unselected materials, including drone"]},
         "excluded": ["无人机 collection", "Pocket unparented original fragments", "AREA lights"],
         "rendering": {"sourceViewTransform": scene.view_settings.view_transform,
                       "sourceExposure": scene.view_settings.exposure,
