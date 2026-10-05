@@ -32,39 +32,5 @@ export function scenePose(position, index, g, config) {
     opacity: r < 0 ? range(-0.9, -0.1, r) : 1 - range(0.15, 0.9, r),
     titleY: y - Math.abs(y) * config.titleParallax,
     metadataY: y + Math.abs(y) * config.metadataParallax,
-    referenceY: y * config.referenceParallax,
-    referenceOpacity: range(-0.98, -0.18, r) * (1 - range(0.1, 0.83, r)),
-    connection:
-      range(-0.48, -0.08, r) *
-      (1 - range(0.1, 0.72, r)) *
-      smooth(clamp((g.H - (g.frame.y + y)) / g.frame.h)),
-  };
-}
-
-export function referenceRect(ref, i, g, config) {
-  // 构图跟随视频高度缩放，以视频中心定位；窗口宽度只决定裁切范围。
-  const canvasH = g.frame.h / config.videoHeight;
-  const canvasW =
-    canvasH * (g.mobile ? config.mobileReferenceCanvasAspect : config.referenceCanvasAspect);
-  const canvasX = (g.W - canvasW) / 2,
-    canvasY = (g.H - canvasH) / 2;
-  const base = g.frame.h * 1.855 * config.referenceWidth;
-  const w = base * (ref.scale ?? 1),
-    h = w / 1.855;
-  if (!g.mobile)
-    return { x: canvasX + ref.x * canvasW, y: canvasY + ref.y * canvasH, w, h, tilt: ref.tilt };
-  const slot = i % 6,
-    lane = base / 1.855;
-  const centerX = canvasX + [-0.1, 0.16, 0.4, 0.66, 0.9, 1.14][slot] * canvasW;
-  const centerY =
-    ref.side === 'left'
-      ? g.frame.y - 96 - lane * 0.4 + ((slot % 3) - 1) * 7
-      : canvasY + canvasH - lane * 0.5 - ((slot % 3) - 1) * 9;
-  return {
-    x: centerX - w / 2,
-    y: centerY - h / 2 + ref.tilt * 0.22,
-    w,
-    h,
-    tilt: ref.tilt * 0.7,
   };
 }

@@ -6,17 +6,12 @@ import {
   cameraCrops,
   referenceFrames,
 } from './video-reel.config.js';
-import { clamp, smooth, reelLayout, scenePose, referenceRect } from './reel-motion.js';
+import { clamp, smooth, range, reelLayout, scenePose } from './reel-motion.js';
 import { createDeviceLayer } from './device-layer.js';
 import { devicePose } from './device-motion.js';
+import { createAIGenerationLayer } from './ai-generation.js';
+import { reelTimeline, generationProgress, generationState } from './ai-generation-motion.js';
 
-let wireSequence = 0;
-const ns = 'http://www.w3.org/2000/svg';
-function svgNode(name, attrs = {}) {
-  const el = document.createElementNS(ns, name);
-  for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
-  return el;
-}
 function crop(el, rect, W, H) {
   el.style.backgroundImage = `url("${new URL(sheet.src, import.meta.url)}")`;
   if (W && H) {
@@ -44,7 +39,8 @@ export class VideoReel {
     this.host = host;
     this.standalone = standalone;
     this.minimum = standalone ? reelConfig.minimumPosition : 0;
-    this.maximum = reelWorks.length - 1;
+    this.timeline = reelTimeline(reelWorks, reelConfig);
+    this.maximum = this.timeline.at(-1).end;
     this.position = this.target = standalone ? reelConfig.initialPosition : 0;
     this.pending = this.velocity = 0;
     this.active = false;
@@ -117,7 +113,7 @@ export class VideoReel {
       }
       if (e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        this.goTo(e.key === 'Home' ? 0 : this.works.length - 1);
+        this.goTo(e.key === 'Home' ? 0 : this.works.length - 1, e.key === 'End');
       }
     });
     on(document, 'visibilitychange', () => {
@@ -142,7 +138,7 @@ export class VideoReel {
     el.className = `reel-scene reel-${work.type}`;
     el.setAttribute('aria-label', `${work.title} · ${work.type === 'live' ? '实拍' : 'AI'}视频`);
     el.innerHTML =
-      '<svg class="reel-wires" aria-hidden="true"></svg><div class="reel-side-elements"></div><div class="reel-frame"><div class="reel-poster" role="img"></div><video muted playsinline loop preload="auto"></video></div><div class="reel-title"><span></span><h1></h1></div><div class="reel-parameters"></div>';
+      '<div class="reel-side-elements"></div><div class="reel-frame"><div class="reel-poster" role="img"></div><video muted playsinline loop preload="auto"></video></div><div class="reel-title"><span></span><h1></h1></div><div class="reel-parameters"></div>';
     const frame = el.querySelector('.reel-frame'),
       poster = el.querySelector('.reel-poster'),
       video = el.querySelector('video');
@@ -159,8 +155,7 @@ export class VideoReel {
       p.textContent = line;
       params.append(p);
     });
-    const side = el.querySelector('.reel-side-elements'),
-      svg = el.querySelector('svg');
+    const side = el.querySelector('.reel-side-elements');
     const scene = {
       el,
       frame,
@@ -169,14 +164,16 @@ export class VideoReel {
       title: el.querySelector('.reel-title'),
       params,
       side,
-      svg,
-      refs: [],
       cameras: [],
       work,
       index,
       source: null,
       failed: false,
       devices: null,
+      generation: null,
+      posterAsset: { ...sheet, crop: filmCrop },
+      posterVersion: 0,
+      posterURL: null,
     };
     if (work.type === 'live') {
       cameraCrops.forEach((rect, i) => {
@@ -211,83 +208,26 @@ export class VideoReel {
         onInvalidate: () => this.request(),
       });
     } else {
-      const defs = svgNode('defs');
-      svg.append(defs);
-      const gradient = svgNode('linearGradient', {
-        id: 'reel-flow-' + ++wireSequence,
-        x1: '0',
-        x2: '1',
-        y1: '0',
-        y2: '0',
+      const generationHost = document.createElement('div');
+      generationHost.className = 'reel-generation-layer';
+      generationHost.setAttribute('role', 'img');
+      generationHost.setAttribute('aria-label', '参考画面汇聚、字符重构与去噪成像，随滚动可逆展示');
+      el.prepend(generationHost);
+      scene.generationHost = generationHost;
+      scene.generation = createAIGenerationLayer(generationHost, {
+        config: reelConfig.aiGeneration,
+        assets: this.generationAssets(scene),
+        onInvalidate: () => this.request(),
+        onState: (state) => {
+          scene.el.dataset.generationState = state;
+        },
       });
-      gradient.innerHTML =
-        '<stop stop-color="#a2b9aa" stop-opacity="0"/><stop offset=".45" stop-color="#b8cdbe" stop-opacity=".65"/><stop offset=".7" stop-color="#e5f0d6"/><stop offset="1" stop-color="#97b3a2" stop-opacity="0"/>';
-      defs.append(gradient);
-      scene.refs = referenceFrames.map((ref, i) => {
-        const node = document.createElement('div');
-        node.className = 'reel-reference';
-        const image = document.createElement(ref.video ? 'video' : ref.src ? 'img' : 'div');
-        image.className = 'reel-reference-image';
-        image.setAttribute('aria-label', ref.name + (ref.src || ref.video ? '' : '，示意画面'));
-        if (ref.video) {
-          image.src = new URL(ref.video, import.meta.url).href;
-          image.muted = true;
-          image.playsInline = true;
-          image.loop = true;
-          image.preload = 'metadata';
-          image.addEventListener('loadeddata', () => this.request(), { signal: this.abort.signal });
-        } else if (ref.src) {
-          image.src = new URL(ref.src, import.meta.url).href;
-          image.alt = ref.name;
-        } else {
-          image.setAttribute('role', 'img');
-          crop(image, filmCrop);
-        }
-        node.append(image);
-        side.append(node);
-        const mask = svgNode('mask', {
-          id: 'reel-mask-' + ++wireSequence,
-          maskUnits: 'userSpaceOnUse',
-        });
-        const reveal = svgNode('path', {
-          fill: 'none',
-          stroke: '#fff',
-          'stroke-width': 18,
-          pathLength: 1000,
-          'stroke-dasharray': '1000 1000',
-        });
-        mask.append(reveal);
-        defs.append(mask);
-        const base = svgNode('path', { class: 'reel-wire-base', pathLength: 1000 });
-        const glow = svgNode('path', {
-          class: 'reel-wire-glow',
-          pathLength: 1000,
-          stroke: `url(#${gradient.id})`,
-        });
-        const flow = svgNode('path', {
-          class: 'reel-wire-flow',
-          pathLength: 1000,
-          stroke: `url(#${gradient.id})`,
-        });
-        for (const path of [base, glow, flow]) {
-          path.setAttribute('mask', `url(#${mask.id})`);
-          svg.append(path);
-        }
-        flow.style.animationDelay = glow.style.animationDelay = -(i * 0.31) + 's';
-        return {
-          node,
-          image,
-          video: ref.video ? image : null,
-          ref,
-          reveal,
-          paths: [base, glow, flow],
-          mask,
-        };
-      });
+      if (work.poster) this.setPoster(scene, { src: new URL(work.poster, import.meta.url).href });
     }
     const on = (type, fn) => video.addEventListener(type, fn, { signal: this.abort.signal });
     on('loadeddata', () => {
       scene.failed = false;
+      if (work.type === 'ai' && (!work.poster || scene.localSource)) this.capturePoster(scene);
       this.request();
     });
     on('loadedmetadata', () => this.layout());
@@ -309,6 +249,68 @@ export class VideoReel {
     this.world.append(el);
     return scene;
   }
+  generationAssets(scene) {
+    return {
+      poster: scene.posterAsset,
+      fallback: { ...sheet, crop: filmCrop },
+      references: scene.work.references || referenceFrames,
+    };
+  }
+  layoutPoster(scene, W, H) {
+    const asset = scene.posterAsset;
+    if (asset.crop) {
+      crop(scene.poster, asset.crop, W, H);
+    } else {
+      scene.poster.style.backgroundImage = `url("${asset.src}")`;
+      scene.poster.style.backgroundSize = 'cover';
+      scene.poster.style.backgroundPosition = 'center';
+    }
+  }
+  setPoster(scene, asset, owned = false) {
+    const previous = scene.posterURL;
+    scene.posterURL = owned ? asset.src : null;
+    scene.posterAsset = asset;
+    scene.generation?.setAssets(this.generationAssets(scene));
+    this.layoutPoster(scene, scene.geo?.frame.w, scene.geo?.frame.h);
+    if (previous && previous !== asset.src) URL.revokeObjectURL(previous);
+    if (!asset.crop) {
+      const check = new Image();
+      check.onerror = () => {
+        if (!this.abort.signal.aborted && scene.posterAsset === asset)
+          this.setPoster(scene, { ...sheet, crop: filmCrop });
+      };
+      check.src = asset.src;
+    }
+    this.request();
+  }
+  capturePoster(scene) {
+    if (!scene.source || scene.capturedSource === scene.source || !scene.video.videoWidth) return;
+    const version = scene.posterVersion,
+      source = scene.source;
+    const preview = document.createElement('canvas');
+    preview.width = scene.video.videoWidth;
+    preview.height = scene.video.videoHeight;
+    try {
+      preview.getContext('2d').drawImage(scene.video, 0, 0);
+      preview.toBlob((blob) => {
+        if (
+          !blob ||
+          this.abort.signal.aborted ||
+          version !== scene.posterVersion ||
+          source !== scene.source
+        )
+          return;
+        scene.capturedSource = source;
+        this.setPoster(
+          scene,
+          { src: URL.createObjectURL(blob), width: preview.width, height: preview.height },
+          true,
+        );
+      }, 'image/png');
+    } catch {
+      // Cross-origin videos may forbid canvas access; keep the configured cover.
+    }
+  }
   layout() {
     const W = this.root.clientWidth,
       H = this.root.clientHeight;
@@ -327,7 +329,7 @@ export class VideoReel {
       g.travel = travel;
       const f = g.frame;
       box(scene.frame, f);
-      crop(scene.poster, filmCrop, f.w, f.h);
+      this.layoutPoster(scene, f.w, f.h);
       scene.title.style.left = Math.max(18, f.x - W * (g.mobile ? 0.025 : 0.042)) + 'px';
       scene.title.style.top = Math.max(12, f.y - (g.mobile ? 64 : Math.max(64, H * 0.073))) + 'px';
       scene.params.style.right = Math.max(18, f.x - g.W * 0.052) + 'px';
@@ -346,14 +348,6 @@ export class VideoReel {
         });
         crop(camera, cameraCrops[i], w, h);
       });
-      scene.svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-      scene.refs.forEach((n, i) => {
-        n.rect = referenceRect(n.ref, i, g, reelConfig);
-        box(n.node, n.rect);
-        if (!n.ref.src && !n.ref.video) crop(n.image, filmCrop, n.rect.w, n.rect.h);
-        for (const [k, v] of Object.entries({ x: -W, y: -H, width: W * 3, height: H * 3 }))
-          n.mask.setAttribute(k, v);
-      });
     });
     this.render();
     this.request();
@@ -364,8 +358,10 @@ export class VideoReel {
     let focused = null;
     for (const scene of this.scenes) {
       const g = scene.geo,
-        f = g.frame,
-        p = scenePose(this.position, scene.index, g, reelConfig);
+        f = g.frame;
+      const segment = this.timeline[scene.index];
+      const p = scenePose(this.position, segment.entry, g, reelConfig);
+      let eligible = Math.abs(p.r) < 0.18;
       scene.el.hidden = Math.abs(p.r) > 1.06;
       scene.el.inert = scene.index !== nearest;
       scene.devices?.update({
@@ -399,55 +395,64 @@ export class VideoReel {
         move(camera, 0, pose.y - h / 2);
         camera.style.opacity = this.active && !document.hidden && pose.visible ? '1' : '0';
       });
+      if (scene.generation) {
+        const progress = generationProgress(this.position, segment);
+        const state = generationState(progress, reelConfig.aiGeneration);
+        const fallback =
+          this.reduced.matches || ['failed', 'lost'].includes(scene.generation.stats.state);
+        const exit = Math.max(0, this.position - segment.end);
+        const outro = scenePose(exit, 0, g, reelConfig);
+        const intro = range(segment.entry - 0.08, segment.entry, this.position);
+        scene.el.hidden = this.position < segment.entry - 0.08 || exit > 1.06;
+        const visible = !scene.el.hidden && this.active && !document.hidden;
+        scene.generation.update({ progress, geometry: g, visible, reduced: this.reduced.matches });
+        scene.generationHost.setAttribute('aria-hidden', String(fallback || state.complete));
+        scene.el.style.setProperty('--generation-intro', intro);
+        scene.frame.style.opacity = fallback
+          ? intro * outro.opacity
+          : state.resolve * outro.opacity;
+        p.y = outro.y;
+        p.titleY = outro.titleY - (1 - state.labelOpacity) * f.h * reelConfig.titleParallax;
+        p.metadataY =
+          outro.metadataY + (1 - state.labelOpacity) * f.h * reelConfig.metadataParallax;
+        p.opacity = (fallback ? intro : state.labelOpacity) * outro.opacity;
+        p.r = exit;
+        eligible =
+          !scene.el.hidden &&
+          (fallback ? this.position >= segment.entry : state.complete) &&
+          exit < 0.18;
+        scene.poster.setAttribute('aria-hidden', String(!fallback && !state.complete));
+        scene.el.dataset.generationPhase = fallback ? 'static' : state.phase;
+        scene.el.dataset.generationProgress = String(progress);
+        if (scene.index === nearest) {
+          this.root.dataset.generationPhase = scene.el.dataset.generationPhase;
+          this.root.dataset.generationProgress = progress.toFixed(6);
+        }
+      } else {
+        scene.frame.style.opacity = p.opacity;
+      }
       if (scene.el.hidden) continue;
       move(scene.frame, 0, p.y);
-      scene.frame.style.opacity = p.opacity;
       move(scene.title, 0, p.titleY);
       scene.title.style.opacity = p.opacity;
+      scene.title.setAttribute('aria-hidden', String(p.opacity < 0.01));
       move(scene.params, 0, p.metadataY);
       scene.params.style.opacity = p.opacity;
+      scene.params.setAttribute('aria-hidden', String(p.opacity < 0.01));
       scene.frame.style.setProperty(
         '--media-drift',
         clamp(-p.r, -1, 1) * Math.min(26, f.h * 0.055) + 'px',
       );
-      scene.refs.forEach((n, i) => {
-        const extra = (1 - p.referenceOpacity) * (i % 3) * 12;
-        const y = p.referenceY + extra;
-        move(n.node, 0, y, `rotate(${n.rect.tilt}deg)`);
-        n.node.style.opacity =
-          p.referenceOpacity * (n.ref.opacity ?? 1) * reelConfig.referenceOpacity;
-        move(
-          n.image,
-          clamp(p.r, -1, 1) * n.rect.w * 0.07 * (i % 2 ? 1 : -1),
-          clamp(p.r, -1, 1) * n.rect.h * 0.06,
-          'scale(1.16)',
-        );
-        n.shouldPlay =
-          p.referenceOpacity > 0.3 && n.rect.y + y < g.H && n.rect.y + y + n.rect.h > 0;
-        const left = n.ref.side === 'left',
-          theta = (n.rect.tilt * Math.PI) / 180,
-          sign = left ? 1 : -1;
-        const dx = g.mobile ? 0 : (sign * n.rect.w) / 2;
-        const dy = g.mobile ? (sign * n.rect.h) / 2 : 0;
-        const ax = n.rect.x + n.rect.w / 2 + Math.cos(theta) * dx - Math.sin(theta) * dy;
-        const ay = n.rect.y + y + n.rect.h / 2 + Math.sin(theta) * dx + Math.cos(theta) * dy;
-        const bx = g.mobile ? f.x + f.w * (0.1 + (i % 6) * 0.16) : left ? f.x : f.x + f.w;
-        const by = g.mobile
-          ? f.y + p.y + (left ? 0 : f.h)
-          : f.y + p.y + f.h * (0.22 + (i % 6) * 0.11);
-        const bend = Math.abs(g.mobile ? by - ay : bx - ax) * 0.52;
-        const d = g.mobile
-          ? `M${ax} ${ay} C${ax} ${ay + sign * bend} ${bx} ${by - sign * bend} ${bx} ${by}`
-          : `M${ax} ${ay} C${ax + sign * bend} ${ay} ${bx - sign * bend} ${by} ${bx} ${by}`;
-        for (const path of [...n.paths, n.reveal]) path.setAttribute('d', d);
-        n.reveal.setAttribute('stroke-dashoffset', String((1 - p.connection) * 1000));
-      });
-      scene.svg.style.opacity = p.referenceOpacity;
-      const hasVideo = !!scene.source && !scene.failed && scene.video.readyState >= 2;
+      const hasVideo =
+        !!scene.source &&
+        !scene.failed &&
+        scene.video.readyState >= 2 &&
+        (!scene.generation || eligible);
       scene.frame.classList.toggle('has-video', hasVideo);
       scene.video.setAttribute('aria-hidden', String(!hasVideo));
-      scene.poster.setAttribute('aria-hidden', String(hasVideo));
-      if (Math.abs(p.r) < 0.18) focused = scene;
+      if (!scene.generation) scene.poster.setAttribute('aria-hidden', String(hasVideo));
+      else if (hasVideo) scene.poster.setAttribute('aria-hidden', 'true');
+      if (eligible) focused = scene;
     }
     const next =
       focused?.source &&
@@ -458,6 +463,16 @@ export class VideoReel {
         ? focused.video
         : null;
     if (next !== this.playing) {
+      const outgoing = this.scenes.find((scene) => scene.video === this.playing);
+      if (
+        outgoing?.generation &&
+        !generationState(
+          generationProgress(this.position, this.timeline[outgoing.index]),
+          reelConfig.aiGeneration,
+        ).complete &&
+        outgoing.video.readyState >= 1
+      )
+        outgoing.video.currentTime = 0;
       this.pauseAll();
       this.userPaused = false;
       this.playing = next;
@@ -468,20 +483,21 @@ export class VideoReel {
       '--frame-left',
       Math.max(24, this.scenes[nearest].geo.frame.x + 4) + 'px',
     );
-    for (const scene of this.scenes)
-      for (const n of scene.refs) {
-        if (!n.video) continue;
-        if (!this.active || document.hidden || scene.el.hidden || !n.shouldPlay) n.video.pause();
-        else if (n.video.paused && n.video.readyState >= 2) n.video.play()?.catch(() => {});
-      }
-    this.scrollHint.style.opacity = String(1 - clamp(this.position, 0, 0.6));
+    const ai = this.scenes[nearest].generation;
+    this.scrollHint.firstChild.textContent = ai ? 'SCROLL TO REVEAL ' : 'SCROLL TO EXPLORE ';
+    this.scrollHint.style.opacity = ai
+      ? String(this.position < this.timeline[nearest].end ? 1 : 0)
+      : String(1 - clamp(this.position, 0, 0.6));
     this.root.dataset.position = this.position.toFixed(6);
     this.root.dataset.type = this.works[nearest].type;
     this.root.dataset.target = this.target.toFixed(6);
     this.root.dataset.phase = this.snap ? 'snap' : focused ? 'view' : 'transition';
   }
   currentIndex() {
-    return clamp(Math.round(this.position), 0, this.works.length - 1);
+    let index = 0;
+    for (let i = 1; i < this.timeline.length; i++)
+      if (this.position >= this.timeline[i].entry - 0.5) index = i;
+    return index;
   }
   request() {
     if (this.active && !document.hidden && !this.raf)
@@ -584,14 +600,22 @@ export class VideoReel {
     if (this.root.hasPointerCapture(e.pointerId)) this.root.releasePointerCapture(e.pointerId);
     this.drag = null;
     this.root.classList.remove('is-dragging');
-    const nearest = clamp(Math.round(this.target), 0, this.works.length - 1);
-    if (Math.abs(this.target - nearest) < 0.16 && Math.abs(this.position - nearest) > 0.00001)
+    const nearest = this.currentIndex();
+    const segment = this.timeline[nearest];
+    // Never snap a partially generated AI frame past its intermediate stages.
+    if (
+      segment.type === 'live' &&
+      Math.abs(this.target - segment.entry) < 0.16 &&
+      Math.abs(this.position - segment.entry) > 0.00001
+    )
       this.goTo(nearest);
     else this.request();
   }
-  goTo(index) {
+  goTo(index, completed = false) {
     this.setMenu(false);
-    const to = clamp(index, 0, this.works.length - 1);
+    this.root.focus({ preventScroll: true });
+    const segment = this.timeline[clamp(index, 0, this.works.length - 1)];
+    const to = completed ? segment.end : segment.entry;
     this.pending = 0;
     if (this.reduced.matches) {
       this.cancelMotion();
@@ -639,7 +663,6 @@ export class VideoReel {
   pauseAll() {
     this.scenes.forEach((s) => {
       s.video.pause();
-      s.refs.forEach((n) => n.video?.pause());
     });
     this.playing = null;
   }
@@ -647,6 +670,16 @@ export class VideoReel {
     const scene = this.scenes[this.currentIndex()];
     if (!scene.source) {
       this.message('请先在 MENU 中载入当前视频。');
+      return;
+    }
+    if (
+      scene.generation &&
+      this.position < this.timeline[scene.index].end &&
+      !this.reduced.matches &&
+      !['failed', 'lost'].includes(scene.generation.stats.state)
+    ) {
+      this.message('继续滚动，画面生成完成后播放。');
+      this.setMenu(false);
       return;
     }
     if (this.playing === scene.video) {
@@ -669,6 +702,9 @@ export class VideoReel {
     this.sources.set(scene.index, src);
     scene.source = src;
     scene.failed = false;
+    scene.localSource = true;
+    scene.posterVersion++;
+    scene.capturedSource = null;
     scene.video.src = src;
     scene.video.load();
     if (old) URL.revokeObjectURL(old);
@@ -690,14 +726,11 @@ export class VideoReel {
     clearTimeout(this.messageTimer);
     this.scenes.forEach((s) => {
       s.devices?.dispose();
+      s.generation?.dispose();
+      s.posterVersion++;
+      if (s.posterURL) URL.revokeObjectURL(s.posterURL);
       s.video.removeAttribute('src');
       s.video.load();
-      s.refs.forEach((n) => {
-        if (n.video) {
-          n.video.removeAttribute('src');
-          n.video.load();
-        }
-      });
     });
     this.sources.forEach((s) => URL.revokeObjectURL(s));
     this.host.replaceChildren();

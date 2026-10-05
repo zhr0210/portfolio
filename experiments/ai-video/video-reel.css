@@ -52,8 +52,7 @@
 }
 .reel-world,
 .reel-scene,
-.reel-side-elements,
-.reel-wires {
+.reel-side-elements {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -61,6 +60,25 @@
 .reel-scene {
   isolation: isolate;
   z-index: 1;
+}
+.reel-generation-layer,
+.reel-generation-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.reel-generation-layer {
+  z-index: 4;
+  opacity: var(--generation-intro, 1);
+}
+.reel-ai .reel-frame {
+  background: transparent;
+}
+.reel-ai .reel-poster,
+.reel-ai .reel-frame video {
+  transition: none;
 }
 .reel-frame {
   position: absolute;
@@ -143,57 +161,6 @@
 }
 .reel-device-layer.is-device-ready .reel-camera {
   visibility: hidden;
-}
-.reel-reference {
-  position: absolute;
-  z-index: 2;
-  overflow: hidden;
-  will-change: transform;
-  transform-origin: center;
-  box-shadow: 0 0 0 1px #a0b29818;
-}
-.reel-reference-image {
-  position: absolute;
-  inset: 0;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.88) saturate(0.72);
-}
-.reel-wires {
-  overflow: visible;
-  z-index: 2;
-}
-.reel-wires path {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-  stroke-linecap: round;
-}
-.reel-wire-base {
-  stroke: #a0b19f;
-  stroke-width: 1;
-  stroke-opacity: 0.19;
-}
-.reel-wire-flow,
-.reel-wire-glow {
-  stroke-dasharray: 135 240;
-  animation: reel-flow 4s linear infinite;
-}
-.reel-wire-flow {
-  stroke-width: 1.3;
-  stroke-opacity: 0.7;
-  filter: drop-shadow(0 0 2px #d5e6c532);
-}
-.reel-wire-glow {
-  stroke-width: 5;
-  stroke-opacity: 0.26;
-  filter: blur(2.5px);
-}
-@keyframes reel-flow {
-  to {
-    stroke-dashoffset: -1125;
-  }
 }
 .reel-header {
   position: absolute;
@@ -328,14 +295,6 @@
   padding: 8px 0;
   border-bottom: 1px solid #bec7b755;
 }
-.video-reel.is-inactive .reel-wire-flow,
-.video-reel.is-inactive .reel-wire-glow,
-.video-reel.is-background .reel-wire-flow,
-.video-reel.is-background .reel-wire-glow,
-.video-reel.is-reduced .reel-wire-flow,
-.video-reel.is-reduced .reel-wire-glow {
-  animation-play-state: paused;
-}
 .scene-ai-film .video-reel {
   position: absolute;
   inset: 0;
@@ -383,20 +342,10 @@ body:has(.stage[data-chapter='aiFilm']) .progress-track {
     top: 110px;
     right: 6%;
   }
-  .reel-wire-flow {
-    stroke-width: 1;
-  }
-  .reel-wire-glow {
-    stroke-width: 3;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .video-reel * {
     transition: none !important;
     will-change: auto !important;
-  }
-  .reel-wire-flow,
-  .reel-wire-glow {
-    animation: none !important;
   }
 }
