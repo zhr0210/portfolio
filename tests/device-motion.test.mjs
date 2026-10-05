@@ -1,11 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AnimationClip, AnimationMixer, Group, LoopOnce, NumberKeyframeTrack } from 'three';
-import {
-  deviceLoopPose,
-  deviceProjection,
-  deviceTime,
-} from '../experiments/ai-video/device-motion.js';
+import { devicePose, deviceProjection, deviceTime } from '../experiments/ai-video/device-motion.js';
 import { sampleDeviceTimeline } from '../experiments/ai-video/device-layer.js';
 import { reelConfig } from '../experiments/ai-video/video-reel.config.js';
 
@@ -42,57 +38,92 @@ test('Device sampling clamps endpoints and uses a fixed reduced-motion pose', ()
   assert.equal(deviceTime(NaN, 6), 0);
 });
 
-test('Device cycles wrap negative progress and repeat after any whole number of turns', () => {
-  const initial = deviceLoopPose(0.125, 140, 900);
-  for (const cycles of [-3.875, -0.875, 1.125, 1000000.125])
-    assert.deepEqual(deviceLoopPose(cycles, 140, 900), initial);
-  assert.equal(deviceLoopPose(-0.25, 140, 900).progress, 0.75);
-  assert.equal(deviceLoopPose(-1, 140, 900).progress, 0);
-  assert.deepEqual(deviceLoopPose(NaN, 140, 900), deviceLoopPose(0, 140, 900));
-  assert.deepEqual(deviceLoopPose(Infinity, 140, 900), deviceLoopPose(0, 140, 900));
-  assert.deepEqual(
-    deviceLoopPose(NaN, 140, 900, { phase: 0.125 }),
-    deviceLoopPose(0.125, 140, 900),
-  );
-  assert.deepEqual(deviceLoopPose(0.125, 140, 900, { phase: NaN }), initial);
+test('Device travel has fixed entry and exit and never re-enters outside the video interval', () => {
+  for (const phase of Object.values(reelConfig.deviceLayer.entryOffsets)) {
+    const options = { phase };
+    const entering = devicePose(-phase, 140, 900, options);
+    const exiting = devicePose(1 - phase, 140, 900, options);
+    assert.equal(entering.visible, false);
+    assert.equal(exiting.visible, false);
+    assert.equal(entering.progress, 0);
+    assert.equal(exiting.progress, 1);
+    assert.equal(devicePose(0.5 - phase, 140, 900, options).visible, true);
+    for (const position of [-1000, -10, -1, 0]) {
+      const pose = devicePose(position - phase, 140, 900, options);
+      assert.equal(pose.visible, false, 'Earlier scroll never wraps a model into view');
+      assert.equal(pose.y, entering.y);
+    }
+    for (const position of [1, 1.5, 2, 10, 1000000]) {
+      const pose = devicePose(position - phase, 140, 900, options);
+      assert.equal(pose.visible, false, 'Later videos never bring this model back into view');
+      assert.equal(pose.y, exiting.y);
+    }
+  }
+  const initial = devicePose(0.125, 140, 900);
+  assert.deepEqual(devicePose(NaN, 140, 900), devicePose(0, 140, 900));
+  assert.deepEqual(devicePose(Infinity, 140, 900), devicePose(0, 140, 900));
+  assert.deepEqual(devicePose(NaN, 140, 900, { phase: 0.125 }), devicePose(0.125, 140, 900));
+  assert.deepEqual(devicePose(0.125, 140, 900, { phase: NaN }), initial);
 });
 
-test('Forward and reverse scroll sample the same loop pose across both wrap directions', () => {
-  const cycles = [-1.125, -0.875, -0.125, 0.125, 0.875, 1.125, 1.875];
-  const forward = cycles.map((value) => deviceLoopPose(value, 210, 844, { phase: 0.125 }));
-  const reversed = [...cycles]
-    .reverse()
-    .map((value) => deviceLoopPose(value, 210, 844, { phase: 0.125 }));
+test('XYZ rotation repeats while vertical travel continues upwards only once', () => {
+  const options = { rotationPeriod: 0.5 };
+  const firstTurn = devicePose(0.125, 140, 900, options);
+  const secondTurn = devicePose(0.625, 140, 900, options);
+  assert.equal(firstTurn.rotationProgress, secondTurn.rotationProgress);
+  assert.equal(firstTurn.visible, true);
+  assert.equal(secondTurn.visible, true);
+  assert.ok(secondTurn.y < firstTurn.y);
+  assert.notEqual(secondTurn.progress, firstTurn.progress);
+  for (const position of [1.125, 2.125, 100.125]) {
+    const pose = devicePose(position, 140, 900, options);
+    assert.equal(pose.rotationProgress, firstTurn.rotationProgress);
+    assert.equal(pose.progress, 1);
+    assert.equal(pose.visible, false);
+  }
+});
+
+test('Forward and reverse scroll deterministically sample fixed travel and repeating rotation', () => {
+  const positions = [-1.125, -0.875, -0.125, 0.125, 0.375, 0.875, 1.125, 1.875];
+  const options = { phase: 0.125, rotationPeriod: 0.5 };
+  const forward = positions.map((value) => devicePose(value, 210, 844, options));
+  const reversed = [...positions].reverse().map((value) => devicePose(value, 210, 844, options));
   assert.deepEqual(reversed.reverse(), forward);
   for (let index = 1; index < forward.length; index++) {
     if (forward[index].progress > forward[index - 1].progress)
       assert.ok(forward[index].y < forward[index - 1].y);
+    else assert.equal(forward[index].y, forward[index - 1].y);
   }
 });
 
-test('Both sides of a cycle reset keep the entire projected radius outside the viewport', () => {
+test('Fixed travel starts and ends with the entire projected radius outside the viewport', () => {
   for (const [height, radius] of [
     [900, 140],
     [844, 210],
     [320, 300],
   ]) {
-    const entering = deviceLoopPose(0, radius, height);
-    const exiting = deviceLoopPose(-1e-8, radius, height);
+    const entering = devicePose(0, radius, height);
+    const exiting = devicePose(1, radius, height);
     assert.ok(entering.y - radius > height, 'The lower edge begins entirely below the frame');
     assert.ok(exiting.y + radius < 0, 'The upper edge exits entirely above the frame');
     assert.equal(entering.travel, height + 2 * (radius + 8));
-    assert.equal(deviceLoopPose(0.5, radius, height).y, height / 2);
+    assert.equal(devicePose(0.5, radius, height).y, height / 2);
   }
 });
 
-test('Reduced motion fixes the loop pose regardless of scroll or device phase', () => {
-  const pose = deviceLoopPose(0, 140, 900, { reduced: true });
-  for (const [cycles, phase] of [
-    [-100.125, -0.04],
-    [0.375, 0.12],
-    [1000.75, 0.9],
-  ])
-    assert.deepEqual(deviceLoopPose(cycles, 140, 900, { reduced: true, phase }), pose);
+test('Reduced motion fixes the pose but still hides the device outside its fixed interval', () => {
+  const pose = devicePose(0.25, 140, 900, { reduced: true });
+  for (const phase of Object.values(reelConfig.deviceLayer.entryOffsets)) {
+    for (const progress of [0.01, 0.375, 0.99])
+      assert.deepEqual(devicePose(progress - phase, 140, 900, { reduced: true, phase }), pose);
+    for (const progress of [-100, -1, 0, 1, 2, 1000]) {
+      const hidden = devicePose(progress - phase, 140, 900, { reduced: true, phase });
+      assert.equal(hidden.visible, false);
+      assert.equal(hidden.progress, pose.progress);
+      assert.equal(hidden.rotationProgress, pose.rotationProgress);
+      assert.equal(hidden.y, pose.y);
+    }
+  }
   assert.equal(pose.progress, 0.5);
   assert.equal(pose.y, 450);
 });

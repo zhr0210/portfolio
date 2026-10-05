@@ -1,4 +1,6 @@
-import { deviceLoopPose, deviceProjection } from './device-motion.js';
+import { devicePose, deviceProjection } from './device-motion.js';
+import { createRotationLoopClip } from './device-animation.js';
+import { createAuthoredPocketLighting } from './device-lighting.js';
 
 /** LoopOnce pauses an action at its endpoint; restore it before reverse sampling. */
 export function sampleDeviceTimeline(mixer, actions, time) {
@@ -97,21 +99,29 @@ export function createDeviceLayer(
   let deviceRoots = null;
   let timelines = null;
   let bounds = null;
+  let pocketLighting = null;
+  let studioLights = [];
+  let releasing = false;
 
-  function sampleLoops(progress) {
+  function sampleLoops(poses) {
     for (const [name, timeline] of Object.entries(timelines)) {
       const [start, end] = settings.animationRanges?.[name] || [0, stats.duration];
       sampleDeviceTimeline(
-        timeline.mixer,
-        timeline.actions,
-        start + progress[name] * (end - start),
+        timeline.sequence.mixer,
+        timeline.sequence.actions,
+        start + poses[name].progress * (end - start),
+      );
+      sampleDeviceTimeline(
+        timeline.rotation.mixer,
+        timeline.rotation.actions,
+        poses[name].rotationProgress * timeline.rotation.duration,
       );
     }
     scene.updateMatrixWorld(true);
   }
 
   function prepareLoops(THREE, clips) {
-    // Keep the authored rotations and gimbal motion; replace only vertical travel.
+    // XYZ repeats independently; gimbal motion and entry/exit happen only once.
     timelines = {};
     for (const [name, root] of Object.entries(deviceRoots)) {
       const targets = new Set();
@@ -119,31 +129,65 @@ export function createDeviceLayer(
         targets.add(node.uuid);
         targets.add(THREE.PropertyBinding.sanitizeNodeName(node.name));
       });
-      const deviceMixer = new THREE.AnimationMixer(root);
+      const controls = new Set(
+        (name === 'sony' ? ['动画控制器'] : ['模型三轴旋转']).map(
+          THREE.PropertyBinding.sanitizeNodeName,
+        ),
+      );
+      const sequenceMixer = new THREE.AnimationMixer(root);
+      const rotationMixer = new THREE.AnimationMixer(root);
       const [start, end] = settings.animationRanges[name];
-      const keyTimes = new Set([start, end]);
-      const deviceActions = clips.map((sourceClip) => {
-        const tracks = sourceClip.tracks.filter((track) => {
-          const binding = THREE.PropertyBinding.parseTrackName(track.name);
-          return binding.propertyName === 'quaternion' && targets.has(binding.nodeName);
-        });
-        for (const track of tracks)
-          for (const time of track.times) if (time >= start && time <= end) keyTimes.add(time);
-        const action = deviceMixer.clipAction(
-          new THREE.AnimationClip(sourceClip.name, sourceClip.duration, tracks),
-        );
+      const sequenceActions = [];
+      const rotationActions = [];
+      let rotationDuration = 0;
+      const addAction = (mixer, clip, actions) => {
+        const action = mixer.clipAction(clip);
         action.setLoop(THREE.LoopOnce, 1);
         action.clampWhenFinished = true;
         action.play();
-        return action;
-      });
-      const times = [...keyTimes].sort((a, b) => a - b);
-      const samples = times.flatMap((time, index) =>
-        index ? [(times[index - 1] + time) / 2, time] : [time],
-      );
-      timelines[name] = { mixer: deviceMixer, actions: deviceActions, samples };
+        actions.push(action);
+      };
+      for (const sourceClip of clips) {
+        const tracks = sourceClip.tracks.filter((track) => {
+          const binding = THREE.PropertyBinding.parseTrackName(track.name);
+          return (
+            binding.propertyName === 'quaternion' &&
+            targets.has(binding.nodeName) &&
+            !controls.has(binding.nodeName)
+          );
+        });
+        if (tracks.length)
+          addAction(
+            sequenceMixer,
+            new THREE.AnimationClip(`${sourceClip.name}:Sequence`, sourceClip.duration, tracks),
+            sequenceActions,
+          );
+        if (
+          sourceClip.tracks.some((track) => {
+            const binding = THREE.PropertyBinding.parseTrackName(track.name);
+            return binding.propertyName === 'quaternion' && controls.has(binding.nodeName);
+          })
+        ) {
+          const clip = createRotationLoopClip(
+            THREE,
+            sourceClip,
+            [...controls],
+            start,
+            end,
+            settings.rotationReturnDuration,
+          );
+          rotationDuration = Math.max(rotationDuration, clip.duration);
+          addAction(rotationMixer, clip, rotationActions);
+        }
+      }
+      if (!rotationActions.length) throw new Error(`The ${name} XYZ rotation is missing`);
+      timelines[name] = {
+        sequence: { mixer: sequenceMixer, actions: sequenceActions },
+        rotation: { mixer: rotationMixer, actions: rotationActions, duration: rotationDuration },
+      };
     }
-    // Bound every authored key frame plus midpoint to keep the wrap outside the viewport.
+    // Bound the combined finite gimbal motion and repeated XYZ, including the
+    // smooth return. Source lights are attached afterwards, outside these bounds.
     const boxes = Object.fromEntries(
       Object.keys(deviceRoots).map((name) => [name, new THREE.Box3()]),
     );
@@ -151,10 +195,15 @@ export function createDeviceLayer(
       Object.keys(deviceRoots).map((name) => [name, { minY: Infinity, maxY: -Infinity }]),
     );
     const corner = new THREE.Vector3();
-    for (const [name, timeline] of Object.entries(timelines)) {
-      for (const time of timeline.samples) {
-        sampleDeviceTimeline(timeline.mixer, timeline.actions, time);
-        scene.updateMatrixWorld(true);
+    for (let index = 0; index <= 240; index++) {
+      const poses = Object.fromEntries(
+        Object.keys(timelines).map((name) => [
+          name,
+          devicePose(index / 240, 1, 1, { rotationPeriod: settings.rotationPeriod }),
+        ]),
+      );
+      sampleLoops(poses);
+      for (const name of Object.keys(timelines)) {
         const root = deviceRoots[name];
         const box = new THREE.Box3().setFromObject(root);
         boxes[name].union(box);
@@ -203,8 +252,11 @@ export function createDeviceLayer(
     if (disposed || !renderer || contextLost || stats.state !== 'ready' || !latest.geo) return;
     const opacity = Math.max(0, Math.min(1, latest.opacity || 0));
     const visible = latest.visible && opacity > 0 && !document.hidden;
-    canvas.style.opacity = visible ? String(opacity) : '0';
-    if (!visible) return;
+    if (!visible) {
+      canvas.style.opacity = '0';
+      stats.renderPasses = 0;
+      return;
+    }
     const projection = deviceProjection(latest.geo, sourceFov, settings, window.devicePixelRatio);
     const fovRatio =
       Math.tan((sourceFov * Math.PI) / 360) / Math.tan((projection.fov * Math.PI) / 360);
@@ -230,17 +282,18 @@ export function createDeviceLayer(
         window.devicePixelRatio,
         device,
       );
-      const pose = deviceLoopPose(
+      const pose = devicePose(
         latest.progress,
         (bounds[device].radiusRatio * fovRatio + Math.abs(settings.offsetY || 0)) * view.fullHeight,
         latest.geo.H,
         {
-          phase: settings.loopPhases?.[device],
+          phase: settings.entryOffsets?.[device],
+          rotationPeriod: settings.rotationPeriod,
           reduced: latest.reduced,
           reducedProgress: settings.reducedProgress,
         },
       );
-      poses[device] = pose.progress;
+      poses[device] = pose;
       if (latest.reduced) pose.y = latest.geo.H * slot.targetY;
       else
         pose.y +=
@@ -256,7 +309,7 @@ export function createDeviceLayer(
       };
     });
     const [sonyStart, sonyEnd] = settings.animationRanges.sony;
-    const time = sonyStart + poses.sony * (sonyEnd - sonyStart);
+    const time = sonyStart + poses.sony.progress * (sonyEnd - sonyStart);
     const projectionKey = JSON.stringify(passes);
     const resizeKey = `${projection.width}:${projection.height}:${projection.pixelRatio}`;
     if (resizeKey !== lastProjection) {
@@ -270,8 +323,6 @@ export function createDeviceLayer(
     stats.width = projection.width;
     stats.height = projection.height;
     stats.pixelRatio = projection.pixelRatio;
-    if (renderKey === lastRenderKey) return;
-    sampleLoops(poses);
     stats.devices = Object.fromEntries(
       passes.map((pass) => [
         pass.device,
@@ -281,18 +332,32 @@ export function createDeviceLayer(
             settings.animationRanges[pass.device][0] +
             pass.pose.progress *
               (settings.animationRanges[pass.device][1] - settings.animationRanges[pass.device][0]),
+          rotationTime: pass.pose.rotationProgress * timelines[pass.device].rotation.duration,
           targetX: (latest.geo.mobile ? settings.mobileComposition : settings.desktopComposition)[
             pass.device
           ].targetX,
         },
       ]),
     );
+    const activePasses = passes.filter((pass) => pass.pose.visible);
+    canvas.style.opacity = activePasses.length ? String(opacity) : '0';
+    stats.renderPasses = activePasses.length;
+    if (!activePasses.length || renderKey === lastRenderKey) return;
+    sampleLoops(poses);
     renderer.clear();
     const visibility =
       deviceRoots &&
       Object.fromEntries(Object.entries(deviceRoots).map(([name, root]) => [name, root.visible]));
     try {
-      for (const pass of passes) {
+      for (const pass of activePasses) {
+        const pocket = pass.device === 'pocket';
+        for (const light of studioLights) light.visible = !pocket;
+        pocketLighting.setEnabled(pocket);
+        scene.environment = pocket ? null : environment.texture;
+        scene.environmentIntensity = pocket ? 0 : (settings.environmentIntensity ?? 0.8);
+        renderer.toneMappingExposure = pocket
+          ? (settings.pocketLighting?.exposure ?? pocketLighting.exposure)
+          : (settings.exposure ?? 1);
         const view = pass.projection;
         camera.fov = view.fov;
         camera.setViewOffset(
@@ -313,8 +378,12 @@ export function createDeviceLayer(
     } finally {
       if (visibility)
         for (const [name, root] of Object.entries(deviceRoots)) root.visible = visibility[name];
+      for (const light of studioLights) light.visible = true;
+      pocketLighting.setEnabled(false);
+      scene.environment = environment.texture;
+      scene.environmentIntensity = settings.environmentIntensity ?? 0.8;
+      renderer.toneMappingExposure = settings.exposure ?? 1;
     }
-    stats.renderPasses = passes.length;
     stats.draws += 1;
     stats.memory = { ...renderer.info.memory };
     lastRenderKey = renderKey;
@@ -411,7 +480,8 @@ export function createDeviceLayer(
       scene.environmentIntensity = settings.environmentIntensity ?? 0.8;
       // Neutral diffuse fill keeps a matte black shell readable without
       // increasing environment reflections or reintroducing a glossy finish.
-      scene.add(new THREE.AmbientLight(0xffffff, settings.ambientIntensity ?? 0.55));
+      const ambient = new THREE.AmbientLight(0xffffff, settings.ambientIntensity ?? 0.55);
+      scene.add(ambient);
       const key = new THREE.DirectionalLight(0xffffff, settings.keyIntensity ?? 3);
       key.position.set(-15, 20, 45);
       key.target.position.set(20, 0, 0);
@@ -425,6 +495,7 @@ export function createDeviceLayer(
       const softbox = new THREE.RectAreaLight(0xffffff, settings.softboxIntensity ?? 6, 80, 80);
       softbox.position.set(20, 0, 35);
       scene.add(softbox);
+      studioLights = [ambient, key, fill, softbox];
       stats.duration = Math.max(...gltf.animations.map((clip) => clip.duration));
       stats.clips = gltf.animations.map((clip) => ({
         name: clip.name,
@@ -432,6 +503,17 @@ export function createDeviceLayer(
         tracks: clip.tracks.length,
       }));
       prepareLoops(THREE, gltf.animations);
+      pocketLighting = createAuthoredPocketLighting(
+        THREE,
+        deviceRoots.pocket,
+        settings.pocketLighting,
+      );
+      pocketLighting.setEnabled(false);
+      stats.lighting = {
+        genericStudioForSonyOnly: true,
+        pocket: pocketLighting.snapshot,
+        pocketExposure: settings.pocketLighting?.exposure ?? pocketLighting.exposure,
+      };
       state('ready');
       draw();
       onInvalidate();
@@ -448,12 +530,18 @@ export function createDeviceLayer(
   }
 
   function releaseResources() {
+    releasing = true;
     if (timelines)
       for (const timeline of Object.values(timelines)) {
-        timeline.mixer.stopAllAction();
-        timeline.mixer.uncacheRoot(timeline.mixer.getRoot());
+        for (const track of [timeline.sequence, timeline.rotation]) {
+          track.mixer.stopAllAction();
+          track.mixer.uncacheRoot(track.mixer.getRoot());
+        }
       }
     timelines = bounds = null;
+    pocketLighting?.dispose();
+    pocketLighting = null;
+    studioLights = [];
     releaseScene(scene);
     environment?.dispose();
     pmrem?.dispose();
@@ -467,7 +555,7 @@ export function createDeviceLayer(
     'webglcontextlost',
     (event) => {
       event.preventDefault();
-      if (disposed) return;
+      if (disposed || releasing) return;
       contextLost = true;
       canvas.style.opacity = '0';
       // Release generated targets while the old GL context is still lost.
@@ -490,7 +578,7 @@ export function createDeviceLayer(
       queueMicrotask(() => {
         // Our listener is registered before WebGLRenderer's listener. Wait for
         // Three to rebuild its GL state before creating new GPU resources.
-        if (disposed || !renderer || !scene) return;
+        if (disposed || releasing || !renderer || !scene) return;
         contextLost = false;
         try {
           // PMREM is generated GPU content, so restore it instead of reusing an empty target.

@@ -8,7 +8,7 @@ import {
 } from './video-reel.config.js';
 import { clamp, smooth, reelLayout, scenePose, referenceRect } from './reel-motion.js';
 import { createDeviceLayer } from './device-layer.js';
-import { deviceLoopPose } from './device-motion.js';
+import { devicePose } from './device-motion.js';
 
 let wireSequence = 0;
 const ns = 'http://www.w3.org/2000/svg';
@@ -46,8 +46,6 @@ export class VideoReel {
     this.minimum = standalone ? reelConfig.minimumPosition : 0;
     this.maximum = reelWorks.length - 1;
     this.position = this.target = standalone ? reelConfig.initialPosition : 0;
-    this.devicePosition = this.deviceTarget = this.position;
-    this.devicePending = 0;
     this.pending = this.velocity = 0;
     this.active = false;
     this.raf = 0;
@@ -61,7 +59,7 @@ export class VideoReel {
     this.abort = new AbortController();
     this.reduced = matchMedia('(prefers-reduced-motion: reduce)');
     this.works = reelWorks.map((w) => ({ ...w }));
-    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / 02</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>影片暂用你提供的设计图预览；MENU 可载入当前作品的本地视频，仅用于本次浏览，不上传。</p><p>相机和 Pocket 随滚动无限向上循环，反向滚动倒放；停止滚动后保持当前姿态。三维加载失败时显示静态参考。</p><button data-action="close-info">关闭</button></div></section>`;
+    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / 02</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>影片暂用你提供的设计图预览；MENU 可载入当前作品的本地视频，仅用于本次浏览，不上传。</p><p>相机和 Pocket 在实拍视频的固定区间各向上进入、退出一次，只有 XYZ 旋转循环；反向滚动可以倒放，停止后保持当前姿态。Pocket 使用 Blender 原场景的面光。三维加载失败时显示静态参考。</p><button data-action="close-info">关闭</button></div></section>`;
     this.root = host.firstElementChild;
     this.root.querySelector('.reel-return').href = returnUrl;
     this.world = this.root.querySelector('.reel-world');
@@ -372,7 +370,7 @@ export class VideoReel {
       scene.el.inert = scene.index !== nearest;
       scene.devices?.update({
         progress:
-          (this.devicePosition - reelConfig.deviceAnimation.start) /
+          (this.position - scene.index - reelConfig.deviceAnimation.start) /
           (reelConfig.deviceAnimation.end - reelConfig.deviceAnimation.start),
         geo: g,
         opacity: 1,
@@ -381,16 +379,25 @@ export class VideoReel {
       });
       scene.cameras.forEach((camera, i) => {
         const h = parseFloat(camera.style.height) || 1;
-        const cycles =
-          (this.devicePosition - reelConfig.deviceAnimation.start) /
+        const progress =
+          (this.position - scene.index - reelConfig.deviceAnimation.start) /
           (reelConfig.deviceAnimation.end - reelConfig.deviceAnimation.start);
-        const pose = deviceLoopPose(cycles, h / 2, g.H, {
-          phase: reelConfig.deviceLayer.loopPhases[i === 0 ? 'sony' : 'pocket'],
+        const name = i === 0 ? 'sony' : 'pocket';
+        const pose = devicePose(progress, h / 2, g.H, {
+          phase: reelConfig.deviceLayer.entryOffsets[name],
           reduced: this.reduced.matches,
+          reducedProgress: reelConfig.deviceLayer.reducedProgress,
         });
+        const slot = (
+          g.mobile
+            ? reelConfig.deviceLayer.mobileComposition
+            : reelConfig.deviceLayer.desktopComposition
+        )[name];
+        if (this.reduced.matches) pose.y = g.H * slot.targetY;
+        else pose.y += (slot.verticalBias || 0) * g.H * Math.sin(Math.PI * pose.progress) ** 2;
         camera.style.top = '0px';
         move(camera, 0, pose.y - h / 2);
-        camera.style.opacity = this.active && !document.hidden ? '1' : '0';
+        camera.style.opacity = this.active && !document.hidden && pose.visible ? '1' : '0';
       });
       if (scene.el.hidden) continue;
       move(scene.frame, 0, p.y);
@@ -471,7 +478,6 @@ export class VideoReel {
     this.root.dataset.position = this.position.toFixed(6);
     this.root.dataset.type = this.works[nearest].type;
     this.root.dataset.target = this.target.toFixed(6);
-    this.root.dataset.devicePosition = this.devicePosition.toFixed(6);
     this.root.dataset.phase = this.snap ? 'snap' : focused ? 'view' : 'transition';
   }
   currentIndex() {
@@ -491,10 +497,8 @@ export class VideoReel {
       const s = this.snap,
         u = clamp((now - s.start) / s.duration);
       this.position = s.from + (s.to - s.from) * smooth(u);
-      this.devicePosition = s.deviceFrom + (s.deviceTo - s.deviceFrom) * smooth(u);
       if (u === 1) {
         this.position = this.target = s.to;
-        this.devicePosition = this.deviceTarget = s.deviceTo;
         this.snap = null;
       }
     } else {
@@ -506,22 +510,11 @@ export class VideoReel {
         this.reduced.matches || Math.abs(gap) < 0.00001
           ? this.target
           : this.position + gap * (1 - Math.exp(-dt / (this.drag ? 0.075 : reelConfig.smoothing)));
-      const deviceDelivered = this.devicePending * (1 - Math.exp(-dt / 0.1));
-      this.devicePending -= deviceDelivered;
-      this.deviceTarget += deviceDelivered;
-      const deviceGap = this.deviceTarget - this.devicePosition;
-      this.devicePosition =
-        this.reduced.matches || Math.abs(deviceGap) < 0.00001
-          ? this.deviceTarget
-          : this.devicePosition +
-            deviceGap * (1 - Math.exp(-dt / (this.drag ? 0.075 : reelConfig.smoothing)));
     }
     this.velocity = (this.position - before) / dt;
     this.render();
     if (
       this.snap ||
-      Math.abs(this.devicePending) > 0.000001 ||
-      Math.abs(this.deviceTarget - this.devicePosition) > 0.000001 ||
       Math.abs(this.pending) > 0.000001 ||
       Math.abs(this.target - this.position) > 0.000001
     )
@@ -536,18 +529,14 @@ export class VideoReel {
     const sign = Math.sign(delta);
     if (this.direction && this.direction !== sign) {
       this.pending = 0;
-      this.devicePending = 0;
-      this.deviceTarget = this.devicePosition;
       this.target = this.position;
     }
     this.direction = sign;
     this.snap = null;
     if (wheel && !this.reduced.matches) {
       this.pending += clamp(delta, -0.22, 0.22);
-      this.devicePending += clamp(delta, -0.22, 0.22);
     } else {
       this.target = clamp(this.target + delta, this.minimum, this.maximum);
-      this.deviceTarget += delta;
     }
     this.request();
   }
@@ -597,32 +586,26 @@ export class VideoReel {
     this.root.classList.remove('is-dragging');
     const nearest = clamp(Math.round(this.target), 0, this.works.length - 1);
     if (Math.abs(this.target - nearest) < 0.16 && Math.abs(this.position - nearest) > 0.00001)
-      this.goTo(nearest, { moveDevices: false });
+      this.goTo(nearest);
     else this.request();
   }
-  goTo(index, { moveDevices = true } = {}) {
+  goTo(index) {
     this.setMenu(false);
     const to = clamp(index, 0, this.works.length - 1);
-    const deviceTo = moveDevices ? this.devicePosition + to - this.position : this.deviceTarget;
     this.pending = 0;
-    this.devicePending = 0;
     if (this.reduced.matches) {
       this.cancelMotion();
       this.position = this.target = to;
-      this.devicePosition = this.deviceTarget = deviceTo;
       this.render();
       return;
     }
     this.snap = {
       from: this.position,
       to,
-      deviceFrom: this.devicePosition,
-      deviceTo,
       start: performance.now(),
       duration: 800 + Math.abs(to - this.position) * 400,
     };
     this.target = to;
-    this.deviceTarget = deviceTo;
     this.request();
   }
   setMenu(open) {
@@ -645,8 +628,6 @@ export class VideoReel {
     this.raf = 0;
     this.snap = null;
     this.pending = 0;
-    this.devicePending = 0;
-    this.deviceTarget = this.devicePosition;
     this.target = this.position;
     this.lastTime = 0;
   }

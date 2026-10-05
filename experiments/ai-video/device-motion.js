@@ -1,19 +1,28 @@
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const finite = (value, fallback) => (Number.isFinite(value) ? value : fallback);
 
-// Wrap only after the whole device has left the viewport, including its rotation bounds.
-export function deviceLoopPose(
-  cycles,
+// Travel has one fixed entry/exit. Only the authored XYZ rotation repeats.
+export function devicePose(
+  position,
   radius,
   height,
-  { phase = 0, reduced = false, reducedProgress = 0.5 } = {},
+  { phase = 0, rotationPeriod = 0.5, reduced = false, reducedProgress = 0.5 } = {},
 ) {
-  const value = finite(cycles, 0) + finite(phase, 0);
-  const progress = reduced ? clamp(finite(reducedProgress, 0.5), 0, 1) : ((value % 1) + 1) % 1;
+  const value = finite(position, 0) + finite(phase, 0);
+  const travelProgress = clamp(value, 0, 1);
+  const progress = reduced ? clamp(finite(reducedProgress, 0.5), 0, 1) : travelProgress;
+  const cycle = value / Math.max(0.01, finite(rotationPeriod, 0.5));
+  const rotationProgress = reduced ? progress : ((cycle % 1) + 1) % 1;
   const margin = Math.max(1, finite(radius, 0)) + 8;
   const safeHeight = Math.max(1, finite(height, 1));
   const travel = safeHeight + margin * 2;
-  return { progress, y: safeHeight + margin - progress * travel, travel };
+  return {
+    progress,
+    rotationProgress,
+    visible: travelProgress > 0 && travelProgress < 1,
+    y: safeHeight + margin - progress * travel,
+    travel,
+  };
 }
 
 /** Absolute sampling keeps the authored device timing reversible. */

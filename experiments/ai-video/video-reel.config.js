@@ -18,10 +18,10 @@ export const reelConfig = {
   referenceCanvasAspect: 1.28,
   mobileReferenceCanvasAspect: 0.46,
   referenceOpacity: 0.82,
-  // 第一部影片可以向上回看完整入场；首次约对应 Blender 第 54 帧。
+  // 第一部影片可以向上回看完整入场；保留原来的首次打开位置。
   initialPosition: -0.22,
   minimumPosition: -0.9,
-  // 1.8 段滚动完成一圈；设备使用独立、无边界的可逆滚动进度。
+  // 两台设备只在第一部影片的固定区间进出场，停止滚动后停帧。
   deviceAnimation: { start: -0.9, end: 0.9 },
   deviceLayer: {
     cameraName: 'sourceCamera',
@@ -37,7 +37,10 @@ export const reelConfig = {
       sony: { sourceX: 0.09, sourceY: 0.5, targetX: 0.17, targetY: 0.5 },
       pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.84, targetY: 0.5 },
     },
-    loopPhases: { sony: 0.12, pocket: -0.04 },
+    entryOffsets: { sony: 0.12, pocket: -0.04 },
+    // XYZ 旋转一圈占进出场行程的一半，云台动作只随原进度播放一次。
+    rotationPeriod: 0.5,
+    rotationReturnDuration: 0.75,
     animationRanges: { sony: [0, 4.5], pocket: [1.5, 6] },
     // 手机用同一画布的两次投影，把设备移至上下，保持原动画轨迹和错峰。
     mobileSize: 0.48,
@@ -51,6 +54,8 @@ export const reelConfig = {
     fillIntensity: 0.7,
     softboxIntensity: 0.75,
     exposure: 0.94,
+    // 对照 Blender 预览校准网页亮度；保留原面光的尺寸、方向和功率比例。
+    pocketLighting: { powerScale: 0.04, exposure: 1 },
     maxPixelRatio: 1.5,
     mobileMaxPixelRatio: 1,
     reducedProgress: 0.375,
