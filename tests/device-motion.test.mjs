@@ -66,26 +66,22 @@ test('Device travel has fixed entry and exit and never re-enters outside the vid
   assert.deepEqual(devicePose(0.125, 140, 900, { phase: NaN }), initial);
 });
 
-test('XYZ rotation repeats while vertical travel continues upwards only once', () => {
-  const options = { rotationPeriod: 0.5 };
-  const firstTurn = devicePose(0.125, 140, 900, options);
-  const secondTurn = devicePose(0.625, 140, 900, options);
-  assert.equal(firstTurn.rotationProgress, secondTurn.rotationProgress);
-  assert.equal(firstTurn.visible, true);
-  assert.equal(secondTurn.visible, true);
-  assert.ok(secondTurn.y < firstTurn.y);
-  assert.notEqual(secondTurn.progress, firstTurn.progress);
+test('Authored animation advances with finite travel without repeating an earlier progress', () => {
+  const earlier = devicePose(0.125, 140, 900);
+  const later = devicePose(0.625, 140, 900);
+  assert.ok(later.y < earlier.y);
+  assert.ok(later.progress > earlier.progress);
+  assert.ok(!('rotationProgress' in later));
   for (const position of [1.125, 2.125, 100.125]) {
-    const pose = devicePose(position, 140, 900, options);
-    assert.equal(pose.rotationProgress, firstTurn.rotationProgress);
+    const pose = devicePose(position, 140, 900);
     assert.equal(pose.progress, 1);
     assert.equal(pose.visible, false);
   }
 });
 
-test('Forward and reverse scroll deterministically sample fixed travel and repeating rotation', () => {
+test('Forward and reverse scroll deterministically sample the same finite animation progress', () => {
   const positions = [-1.125, -0.875, -0.125, 0.125, 0.375, 0.875, 1.125, 1.875];
-  const options = { phase: 0.125, rotationPeriod: 0.5 };
+  const options = { phase: 0.125 };
   const forward = positions.map((value) => devicePose(value, 210, 844, options));
   const reversed = [...positions].reverse().map((value) => devicePose(value, 210, 844, options));
   assert.deepEqual(reversed.reverse(), forward);
@@ -120,7 +116,6 @@ test('Reduced motion fixes the pose but still hides the device outside its fixed
       const hidden = devicePose(progress - phase, 140, 900, { reduced: true, phase });
       assert.equal(hidden.visible, false);
       assert.equal(hidden.progress, pose.progress);
-      assert.equal(hidden.rotationProgress, pose.rotationProgress);
       assert.equal(hidden.y, pose.y);
     }
   }

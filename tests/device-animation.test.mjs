@@ -1,145 +1,154 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as THREE from 'three';
-import { createRotationLoopClip } from '../experiments/ai-video/device-animation.js';
+import {
+  AnimationClip,
+  AnimationMixer,
+  Group,
+  LoopOnce,
+  Quaternion,
+  QuaternionKeyframeTrack,
+} from 'three';
 import { sampleDeviceTimeline } from '../experiments/ai-video/device-layer.js';
+import { reelConfig } from '../experiments/ai-video/video-reel.config.js';
 
-// Exercise the shipped animation, whose first/last XYZ orientations differ.
 const bytes = readFileSync(
   new URL('../experiments/ai-video/assets/capture-devices.glb', import.meta.url),
 );
 const jsonLength = bytes.readUInt32LE(12);
 const gltf = JSON.parse(bytes.subarray(20, 20 + jsonLength));
 const binaryStart = 28 + jsonLength;
+const metadata = JSON.parse(
+  readFileSync(
+    new URL('../experiments/ai-video/assets/capture-devices.metadata.json', import.meta.url),
+  ),
+);
 function floats(index) {
-  const accessor = gltf.accessors[index];
-  const view = gltf.bufferViews[accessor.bufferView];
-  const width = { SCALAR: 1, VEC3: 3, VEC4: 4 }[accessor.type];
+  const accessor = gltf.accessors[index],
+    view = gltf.bufferViews[accessor.bufferView];
+  const width = { SCALAR: 1, VEC4: 4 }[accessor.type];
   assert.equal(accessor.componentType, 5126);
   const start = binaryStart + (view.byteOffset || 0) + (accessor.byteOffset || 0);
   return Array.from({ length: accessor.count * width }, (_, i) => bytes.readFloatLE(start + i * 4));
 }
-const source = new THREE.AnimationClip(
-  'CaptureDevices',
-  6,
-  gltf.animations[0].channels.map((channel) => {
-    const name = THREE.PropertyBinding.sanitizeNodeName(gltf.nodes[channel.target.node].name);
-    const sampler = gltf.animations[0].samplers[channel.sampler];
-    const rotation = channel.target.path === 'rotation';
-    const Track = rotation ? THREE.QuaternionKeyframeTrack : THREE.VectorKeyframeTrack;
-    return new Track(
-      `${name}.${rotation ? 'quaternion' : 'position'}`,
-      floats(sampler.input),
-      floats(sampler.output),
-    );
-  }),
-);
-const devices = [
-  { name: '动画控制器', start: 0, end: 4.5 },
-  { name: '模型三轴旋转', start: 1.5, end: 6 },
-];
-const orientation = (track, time) =>
-  new THREE.Quaternion().fromArray(track.createInterpolant().evaluate(time)).normalize();
-const sameOrientation = (a, b, message) => {
-  const angle = a.clone().normalize().angleTo(b.clone().normalize());
-  assert.ok(angle < 1e-6, `${message}: angle ${angle}`);
-};
+function rotation(name) {
+  const channel = gltf.animations[0].channels.find(
+    (c) => gltf.nodes[c.target.node].name === name && c.target.path === 'rotation',
+  );
+  const sampler = gltf.animations[0].samplers[channel.sampler];
+  return new QuaternionKeyframeTrack(
+    `${name}.quaternion`,
+    floats(sampler.input),
+    floats(sampler.output),
+  );
+}
+const pose = (track, frame) =>
+  new Quaternion().fromArray(track.createInterpolant().evaluate(frame / 24)).normalize();
 
-test('Authored Sony and Pocket XYZ rotations close their real endpoint mismatch smoothly', () => {
-  for (const { name, start, end } of devices) {
-    const authored = source.tracks.find((track) => track.name === `${name}.quaternion`);
+test('Both Blender rotations are doubled and sampled once over their complete finite ranges', () => {
+  assert.deepEqual(metadata.timeline.sonyRange, [0, 216]);
+  assert.deepEqual(metadata.timeline.pocketRange, [36, 252]);
+  assert.equal(metadata.timeline.durationSeconds, 10.5);
+  assert.deepEqual(reelConfig.deviceLayer.animationRanges, { sony: [0, 9], pocket: [1.5, 10.5] });
+  assert.ok(!('rotationPeriod' in reelConfig.deviceLayer));
+  for (const record of Object.values(metadata.motionExtension.devices)) {
+    assert.equal(
+      record.endFrame - record.startFrame,
+      2 * (record.originalEndFrame - record.startFrame),
+    );
+    const track = rotation(record.control);
     assert.ok(
-      orientation(authored, start).angleTo(orientation(authored, end)) > 1,
-      `${name} would visibly jump if wrapped without a return`,
+      pose(track, record.startFrame).angleTo(pose(track, record.endFrame)) < 1e-5,
+      'Last pose matches initial orientation',
     );
-    const clip = createRotationLoopClip(THREE, source, [name], start, end);
-    const track = clip.tracks[0];
-    assert.equal(clip.duration, end - start + 0.75);
+    for (const axis of record.axes) {
+      const turns = (axis.finalDegrees - axis.originalKeysDegrees[0][1]) / 360;
+      assert.ok(
+        Math.abs(turns - Math.round(turns)) < 1e-6,
+        'XYZ endpoint uses whole forward turns',
+      );
+    }
+  }
+});
+
+test('Baked Sony and Pocket extensions preserve forward winding without a shortest-path rollback', () => {
+  const expected = { sony: [-315, 390, -500], pocket: [-257, 66, -448] };
+  for (const [device, record] of Object.entries(metadata.motionExtension.devices)) {
+    const track = rotation(record.control);
     assert.deepEqual(
-      clip.tracks.map((entry) => entry.name),
-      [authored.name],
+      record.axes.map((axis) => axis.direction),
+      [-1, 1, -1],
     );
-    assert.deepEqual(Array.from(track.values.slice(-4)), Array.from(track.values.slice(0, 4)));
-    for (const time of [start, ...authored.times, end])
-      if (time >= start && time <= end)
-        sameOrientation(
-          orientation(track, time - start),
-          orientation(authored, time),
-          `${name} retains authored pose at ${time}`,
+    for (const [axis, value] of record.axes.entries())
+      assert.ok(Math.abs(value.finalDegrees - expected[device][axis]) < 1e-4);
+    for (const [index, sample] of record.extensionSamples.entries()) {
+      const expectedPose = new Quaternion().fromArray(sample.gltfQuaternion).normalize();
+      assert.ok(
+        pose(track, sample.frame).angleTo(expectedPose) < 1e-5,
+        `${device} exports its continued Euler rotation at frame ${sample.frame}`,
+      );
+      if (index) {
+        const previous = record.extensionSamples[index - 1];
+        for (const [axis, direction] of record.axes.entries())
+          assert.ok(
+            direction.direction * (sample.eulerDegrees[axis] - previous.eulerDegrees[axis]) >=
+              -1e-4,
+            'Each extended Euler axis keeps its original terminal direction',
+          );
+        assert.ok(
+          pose(track, sample.frame).angleTo(pose(track, previous.frame)) < 0.3,
+          'No single-frame full-turn jump',
         );
-    const epsilon = 1e-5;
-    const before = orientation(track, clip.duration - epsilon);
-    const after = orientation(track, epsilon);
-    assert.ok(before.angleTo(after) < 0.001, `${name} has no visible seam`);
-    const endpoint = orientation(track, end - start);
-    const initial = orientation(track, 0);
-    let remaining = endpoint.angleTo(initial);
-    for (let index = 1; index <= 60; index++) {
-      const q = orientation(track, end - start + (0.75 * index) / 60);
-      assert.ok(Math.abs(q.length() - 1) < 1e-12, 'Return remains a valid rotation');
-      const angle = q.angleTo(initial);
-      assert.ok(angle <= remaining + 1e-6, 'Return follows one continuous shortest turn');
-      remaining = angle;
+      }
     }
   }
 });
 
-test('XYZ loop sampling reverses through its return and finished endpoint without moving the device', () => {
-  for (const { name, start, end } of devices) {
-    const root = new THREE.Group();
-    const device = new THREE.Group();
-    device.name = name;
-    device.position.set(7, -4, 2);
-    root.add(device);
-    const clip = createRotationLoopClip(THREE, source, [name], start, end);
-    const mixer = new THREE.AnimationMixer(root);
-    const action = mixer.clipAction(clip).setLoop(THREE.LoopOnce, 1);
-    action.clampWhenFinished = true;
-    action.play();
-    const times = [0, 0.25, 2.75, end - start, clip.duration - 0.15, clip.duration];
-    const poses = times.map((time) => {
-      sampleDeviceTimeline(mixer, [action], time);
-      return device.quaternion.clone();
-    });
-    assert.equal(action.paused, true, 'Test crosses the finished LoopOnce endpoint');
-    for (let index = times.length - 1; index >= 0; index--) {
-      sampleDeviceTimeline(mixer, [action], times[index]);
-      sameOrientation(device.quaternion, poses[index], `${name} reverse pose at ${times[index]}`);
-      assert.deepEqual(device.position.toArray(), [7, -4, 2]);
-    }
-    sameOrientation(poses.at(-1), poses[0], `${name} repeats only orientation`);
+test('Momentum is continuous across the authored endpoint and settles at the new final frame', () => {
+  for (const record of Object.values(metadata.motionExtension.devices)) {
+    const track = rotation(record.control),
+      join = record.originalEndFrame,
+      end = record.endFrame;
+    const before = pose(track, join - 1).angleTo(pose(track, join));
+    const after = pose(track, join).angleTo(pose(track, join + 1));
+    assert.ok(before > 0.005, 'The old endpoint no longer stops the spin');
+    assert.ok(Math.abs(after - before) / before < 0.2, 'No velocity jump at the join');
+    const finalStep = pose(track, end - 1).angleTo(pose(track, end));
+    const earlierStep = pose(track, end - 12).angleTo(pose(track, end - 11));
+    assert.ok(finalStep < earlierStep * 0.15, 'The end eases into its resting orientation');
+    assert.ok(finalStep < 0.01, 'Final frame has no visible snap');
   }
 });
 
-test('Creating XYZ loops leaves source motion and all gimbal tracks untouched', () => {
-  const original = source.tracks.map((track) => ({
-    name: track.name,
-    times: Array.from(track.times),
-    values: Array.from(track.values),
-  }));
-  for (const { name, start, end } of devices) {
-    const clip = createRotationLoopClip(THREE, source, [name], start, end);
-    assert.ok(clip.tracks.every((track) => track.name === `${name}.quaternion`));
-  }
+test('The full extended tracks reverse exactly after seeking their finite endpoint', () => {
+  const root = new Group();
+  const records = Object.values(metadata.motionExtension.devices);
+  const controls = records.map((record) => {
+    const node = new Group();
+    node.name = record.control;
+    root.add(node);
+    return node;
+  });
+  const mixer = new AnimationMixer(root);
+  const action = mixer.clipAction(
+    new AnimationClip(
+      'CaptureDevices',
+      10.5,
+      records.map((record) => rotation(record.control)),
+    ),
+  );
+  action.setLoop(LoopOnce, 1);
+  action.clampWhenFinished = true;
+  action.play();
+  sampleDeviceTimeline(mixer, [action], 7.25);
+  const first = controls.map((node) => node.quaternion.toArray());
+  sampleDeviceTimeline(mixer, [action], 10.5);
+  sampleDeviceTimeline(mixer, [action], 0);
+  sampleDeviceTimeline(mixer, [action], 7.25);
   assert.deepEqual(
-    source.tracks.map((track) => ({
-      name: track.name,
-      times: Array.from(track.times),
-      values: Array.from(track.values),
-    })),
-    original,
+    controls.map((node) => node.quaternion.toArray()),
+    first,
   );
-  assert.throws(
-    () => createRotationLoopClip(THREE, source, ['missing'], 0, 4.5),
-    /no requested XYZ rotation/,
-  );
-  assert.throws(
-    () => createRotationLoopClip(THREE, source, ['动画控制器'], 4.5, 0),
-    /valid authored range/,
-  );
-  assert.throws(
-    () => createRotationLoopClip(THREE, source, ['动画控制器'], 0, 4.5, 0),
-    /positive return duration/,
-  );
+  mixer.stopAllAction();
+  mixer.uncacheRoot(root);
 });

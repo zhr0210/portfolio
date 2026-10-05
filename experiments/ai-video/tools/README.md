@@ -3,7 +3,7 @@
 使用 Blender 5.2，在独立后台进程读取已保存文件；不在用户正在编辑的 Blender 会话中执行。脚本不覆盖原 .blend，可另存包含完整场景的材质修复副本。
 
 ```powershell
-& 'F:\blender\blender.exe' --background --disable-autoexec 'C:\Users\kilian\Downloads\camera 无人机.blend' --python 'experiments\ai-video\tools\export-capture-devices.py' -- --output 'experiments\ai-video\assets\capture-devices.glb' --save-blend-copy 'C:\Users\kilian\Downloads\camera 无人机-pocket3-reference.blend'
+& 'F:\blender\blender.exe' --background --disable-autoexec 'C:\Users\kilian\Downloads\camera 无人机-pocket3-reference.blend' --python 'experiments\ai-video\tools\export-capture-devices.py' -- --extend-animation --output 'experiments\ai-video\assets\capture-devices.glb' --save-blend-copy 'C:\Users\kilian\Downloads\camera 无人机-inertia-216.blend'
 ```
 
 按本机位置修改 Blender 和源文件路径。不需要更新作者文件时，省略 --save-blend-copy；该参数必须指向另一个 .blend。所有贴图保留原始尺寸，内嵌无损 PNG：Sony 主体／镜筒 4096px，Pocket 2048px，原有 128px 小贴图保持原样。DDS 从已有像素解码，不额外降采样或使用有损 WebP / JPEG。
@@ -37,12 +37,14 @@ Sony 源 Specular IOR Level 为 0.5，Coat 为 0。机身 ORM 粗糙度最低约
 
 ## 导出和验证
 
-脚本选取两台设备的正确根节点与原 35 mm 相机，使用 0–144 帧、24 fps、一帧一步采样。各对象轨道合入 CaptureDevices，保留 Pocket 的 36 帧起始延迟与云台动作。仅在网页导出过程清理未使用 UV；每个材质指定的原 UV 坐标保留并映射到 TEXCOORD_0。未完成无人机、未绑定的 Pocket 静态残留及 AREA 灯不进入 GLB。
+`--extend-animation` 调用 `device_inertia.py`：Sony 主控制器 0–108 延长至 216 帧，Pocket 主控制器 36–144 延长至 252 帧。保留原三个关键姿态，沿末段 X、Z 递减与 Y 递增的方向计算新的中段、尾段。终点采用起始 Euler 角加整圈，Sony 为 −315°／390°／−500°，Pocket 为 −257°／66°／−448°；与起始朝向相同。旧尾帧切线改为连续的惯性速度，新增曲线单向并在终点减速，不使用起始／中间帧复制或四元数短路径返回。升降父级的关键帧和手柄时间加倍，保持距离与 36 帧错峰；三个云台动作原样保留。作者副本保存完整场景与原灯光，无人机及其动画不改。副本通过场景 profile 识别已延长动画，再次导出不重复加倍；没有此选项且源文件没有 profile 时仍可导出原 0–144 帧动画。
+
+脚本选取两台设备的正确根节点与原 35 mm 相机，按 24 fps、一帧一步采样，延长版共同时间轴为 0–252 帧。各对象轨道合入 CaptureDevices。仅在网页导出过程清理未使用 UV；每个材质指定的原 UV 坐标保留并映射到 TEXCOORD_0。未完成无人机、未绑定的 Pocket 静态残留及 AREA 灯不进入 GLB。
 
 图片复制时传递当前像素，保存 PNG 后重新载入并打包，避免 Image.copy() / 旧 packed file 回退成源 DDS。export_image_format=AUTO 保留 PNG；Blender 5.2 不接受 PNG 枚举。颜色乘数使用现代 ShaderNodeMix（RGBA / MULTIPLY），保证 Blender 与 glTF 一致。
 
-自动校验实际 PNG 签名、MIME 和原尺寸，Pocket 各零件绑定、颜色因子、粗糙度、金属度及必需纹理；检查源根节点、相机、无新增约束／驱动、无无人机、共同动画持续 6 秒。tests/device-asset.test.mjs 解码真实 Sony ORM 与 Pocket 快门 atlas 像素，验证哑光掩码、暗中心和橙环；检查镜片 UV、关键零件表面、文字绑定及动画正反循环。
+自动校验实际 PNG 签名、MIME 和原尺寸，Pocket 各零件绑定、颜色因子、粗糙度、金属度及必需纹理；检查源根节点、相机、无新增约束／驱动、无无人机、延长版共同动画持续 10.5 秒。`tests/device-animation.test.mjs` 对照实际 GLB 的每个新增旋转样本，验证单向 Euler 延伸、首尾同朝向、连接速度连续、尾段减速及倒放。`tests/device-asset.test.mjs` 解码真实 Sony ORM 与 Pocket 快门 atlas 像素，验证哑光掩码、暗中心和橙环；检查镜片 UV、关键零件表面、文字绑定及有限动画往返。
 
-当前资产为 50,079,276 字节，172 个网格、109,938 个三角形、12 条动画通道。修复作者副本重复导出得到相同 GLB SHA-256。同名 .metadata.json 记录源 SHA-256、无损策略、时序、灯光和材质修复，不包含本机绝对路径。主站构建仍不包含实验资产。
+当前资产为 50,099,584 字节，172 个网格、109,938 个三角形、12 条动画通道。修复作者副本重复导出得到相同 GLB SHA-256。同名 .metadata.json 记录源 SHA-256、无损策略、时序、灯光和材质修复，不包含本机绝对路径。主站构建仍不包含实验资产。
 
 重新导出后运行 npm test、npm run build、npm run build:video，检查桌面／手机、滚动往返与各姿态。新增约束、骨骼、不同 UV 或调整起止帧时，先审查导出脚本。

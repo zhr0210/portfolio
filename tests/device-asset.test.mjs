@@ -116,9 +116,9 @@ test('The shipped asset contains only the two finished devices and the sampled s
   assert.equal(gltf.meshes.length, 172);
   for (const sampler of animation.samplers) {
     const times = floats(sampler.input);
-    assert.equal(times.length, 145);
+    assert.equal(times.length, 253);
     assert.equal(times[0], 0);
-    assert.equal(times.at(-1), 6);
+    assert.equal(times.at(-1), 10.5);
     assert.equal(sampler.interpolation, 'LINEAR');
   }
   const pocket = samples('z轴移动.001', 'translation').values;
@@ -129,7 +129,8 @@ test('The shipped asset contains only the two finished devices and the sampled s
   );
   assert.notDeepEqual(pocket.slice(36 * 3, 37 * 3), pocket.slice(90 * 3, 91 * 3));
   const sony = samples('z轴移动', 'translation').values;
-  assert.deepEqual(sony.slice(108 * 3, 109 * 3), sony.slice(144 * 3, 145 * 3));
+  assert.deepEqual(sony.slice(216 * 3, 217 * 3), sony.slice(252 * 3, 253 * 3));
+  assert.notDeepEqual(sony.slice(108 * 3, 109 * 3), sony.slice(216 * 3, 217 * 3));
   for (const control of ['x轴稳定', '镜头模组', '零件控制器'])
     assert.ok(channel(control, 'rotation'));
 });
@@ -303,7 +304,7 @@ test('The actual Sony, Pocket and gimbal tracks return to the same pose after th
     );
   });
   const mixer = new AnimationMixer(root);
-  const action = mixer.clipAction(new AnimationClip('CaptureDevices', 6, tracks));
+  const action = mixer.clipAction(new AnimationClip('CaptureDevices', 10.5, tracks));
   action.setLoop(LoopOnce, 1);
   action.clampWhenFinished = true;
   action.play();
@@ -314,7 +315,7 @@ test('The actual Sony, Pocket and gimbal tracks return to the same pose after th
     ]);
   sampleDeviceTimeline(mixer, [action], 2.25);
   const first = pose();
-  sampleDeviceTimeline(mixer, [action], 6);
+  sampleDeviceTimeline(mixer, [action], 10.5);
   sampleDeviceTimeline(mixer, [action], 0);
   sampleDeviceTimeline(mixer, [action], 2.25);
   for (const [i, values] of pose().entries())

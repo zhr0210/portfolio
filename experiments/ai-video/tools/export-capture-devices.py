@@ -3,6 +3,7 @@
 Run Blender with --background --disable-autoexec before loading the source file.
 The original .blend is never overwritten. --save-blend-copy can save a separate,
 full-resolution material-adjusted authoring file before web-only optimization.
+--extend-animation appends forward Euler inertia and doubles the device travel.
 """
 
 import argparse
@@ -20,6 +21,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pocket_materials import ATLAS_BASE, apply_pocket_reference, linear, rgb
+from device_inertia import SCENE_PROPERTY, extend_device_animation
 
 
 ROOT_NAMES = {"sony": "z轴移动", "pocket": "空物体"}
@@ -41,6 +43,7 @@ def parse_arguments():
     parser.add_argument("--metadata", type=Path)
     parser.add_argument("--material-profile", choices=["source", "matte"], default="matte")
     parser.add_argument("--save-blend-copy", type=Path)
+    parser.add_argument("--extend-animation", action="store_true")
     extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
     return parser.parse_args(extra)
 
@@ -277,6 +280,14 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     metadata_path = args.metadata or args.output.with_suffix(".metadata.json")
     scene = bpy.context.scene
+    motion_extension = (
+        extend_device_animation(scene) if args.extend_animation
+        else json.loads(scene.get(SCENE_PROPERTY, "null"))
+    )
+    frame_end = (
+        max(record["endFrame"] for record in motion_extension["devices"].values())
+        if motion_extension else FRAME_END
+    )
     source_camera = scene.camera
     if source_camera is None or source_camera.data.type != "PERSP":
         raise RuntimeError("The source perspective camera is missing")
@@ -306,15 +317,15 @@ def main():
             if blend_copy:
                 blend_copy.parent.mkdir(parents=True, exist_ok=True)
                 # Save before changing camera names, timeline settings, UV sets
-                # or texture resolution. Drone materials and all original
-                # actions remain untouched in this complete authoring copy.
+                # or texture resolution. Drone materials and actions remain
+                # untouched in this complete authoring copy.
                 bpy.ops.wm.save_as_mainfile(filepath=str(blend_copy), copy=True)
     elif blend_copy:
         raise RuntimeError("--save-blend-copy requires the matte material profile")
 
     source_camera.name = "sourceCamera"
     scene.frame_start = FRAME_START
-    scene.frame_end = FRAME_END
+    scene.frame_end = frame_end
     scene.render.fps = FPS
     scene.render.fps_base = 1.0
     scene.frame_set(FRAME_START)
@@ -401,7 +412,7 @@ def main():
     gltf = read_glb(args.output)
     clip = gltf["animations"][0]
     duration = max(gltf["accessors"][sampler["input"]]["max"][0] for sampler in clip["samplers"])
-    if abs(duration - FRAME_END / FPS) > 1e-6:
+    if abs(duration - frame_end / FPS) > 1e-6:
         raise RuntimeError(f"Unexpected clip duration: {duration}")
     camera["gltfPerspective"] = gltf["cameras"][0]["perspective"]
     camera["verticalFovDegrees"] = math.degrees(camera["gltfPerspective"]["yfov"])
@@ -414,9 +425,11 @@ def main():
         "bytes": args.output.stat().st_size,
         "roots": ROOT_NAMES,
         "camera": camera,
-        "timeline": {"clip": CLIP_NAME, "startFrame": FRAME_START, "endFrame": FRAME_END,
+        "timeline": {"clip": CLIP_NAME, "startFrame": FRAME_START, "endFrame": frame_end,
                      "fps": FPS, "durationSeconds": duration, "sampleStepFrames": 1,
-                     "sonyRange": [0, 108], "pocketRange": [36, 144], "gimbalRange": [62, 138]},
+                     "sonyRange": [0, 216] if motion_extension else [0, 108],
+                     "pocketRange": [36, 252] if motion_extension else [36, 144], "gimbalRange": [62, 138]},
+        "motionExtension": motion_extension,
         "sourceGeometry": {"meshes": len(meshes), "triangles": triangles, "materials": len(materials)},
         "removedUnusedUvLayers": removed_uv_layers,
         "gltf": {"nodes": len(gltf["nodes"]), "meshes": len(gltf["meshes"]),
@@ -434,7 +447,8 @@ def main():
                             "preserved": ["Sony lens glass and viewfinder", "Pocket lens photo and shutter-ring atlas",
                                           "Pocket original geometry and UV coordinates",
                                           "metal pixels in Sony body/barrel ORM", "native texture dimensions",
-                                          "all source transforms and animation curves", "unselected materials, including drone"]},
+                                          "authored Euler key poses and original gimbal curves",
+                                          "unselected materials and animations, including drone"]},
         "excluded": ["无人机 collection", "Pocket unparented original fragments", "AREA lights"],
         "rendering": {"sourceViewTransform": scene.view_settings.view_transform,
                       "sourceExposure": scene.view_settings.exposure,

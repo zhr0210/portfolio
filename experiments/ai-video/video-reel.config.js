@@ -38,10 +38,8 @@ export const reelConfig = {
       pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.84, targetY: 0.5 },
     },
     entryOffsets: { sony: 0.12, pocket: -0.04 },
-    // XYZ 旋转一圈占进出场行程的一半，云台动作只随原进度播放一次。
-    rotationPeriod: 0.5,
-    rotationReturnDuration: 0.75,
-    animationRanges: { sony: [0, 4.5], pocket: [1.5, 6] },
+    // Sony 0–216 帧，Pocket 保留 36 帧错峰并延长至 252 帧；完整采样一次。
+    animationRanges: { sony: [0, 9], pocket: [1.5, 10.5] },
     // 手机用同一画布的两次投影，把设备移至上下，保持原动画轨迹和错峰。
     mobileSize: 0.48,
     mobileComposition: {
