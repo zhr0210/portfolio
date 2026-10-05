@@ -46,6 +46,7 @@ export const reelConfig = {
       pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.5, targetY: 0.77, verticalBias: 0.25 },
     },
     environmentIntensity: 0.12,
+    ambientIntensity: 0.55,
     keyIntensity: 1.45,
     fillIntensity: 0.7,
     softboxIntensity: 0.75,

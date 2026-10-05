@@ -24,7 +24,7 @@ FRAME_START = 0
 FRAME_END = 144
 FPS = 24
 CLIP_NAME = "CaptureDevices"
-MATTE_PROFILE = "portfolio-matte-v1"
+MATTE_PROFILE = "portfolio-matte-v2"
 DISPLAY_SCALE = 1.12
 BODY_MATERIALS = {
     "Sony_A7RM3_Body_Mat": "sony-body",
@@ -37,8 +37,6 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--metadata", type=Path)
-    parser.add_argument("--max-texture-size", type=int, default=1024)
-    parser.add_argument("--texture-quality", type=int, default=90)
     parser.add_argument("--material-profile", choices=["source", "matte"], default="matte")
     parser.add_argument("--save-blend-copy", type=Path)
     extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
@@ -73,7 +71,31 @@ def keyframes(action):
     )
 
 
-def prepare_textures(materials, max_size, temporary_directory):
+def packed_png_copy(image, name, path, pixels=None):
+    """Save current pixels, then pack a freshly loaded PNG with no stale bytes.
+
+    Image.copy() alone omits unsaved edits and retains the original packed
+    file. Image.pack() on that copy can therefore keep old DDS/ORM data.
+    """
+    if pixels is None:
+        pixels = np.empty(len(image.pixels), dtype=np.float32)
+        image.pixels.foreach_get(pixels)
+    copy = image.copy()
+    copy.pixels.foreach_set(pixels)
+    copy.update()
+    copy.filepath_raw = str(path)
+    copy.file_format = "PNG"
+    copy.save()
+    result = bpy.data.images.load(str(path), check_existing=False)
+    result.name = name
+    result.colorspace_settings.name = image.colorspace_settings.name
+    result.alpha_mode = image.alpha_mode
+    result.pack()
+    bpy.data.images.remove(copy)
+    return result
+
+
+def prepare_textures(materials, temporary_directory):
     copies = {}
     records = []
     for material in materials:
@@ -87,22 +109,15 @@ def prepare_textures(materials, max_size, temporary_directory):
                 original_size = list(image.size)
                 if not all(original_size):
                     raise RuntimeError(f"Missing image pixels: {image.name}")
-                copy = image.copy()
-                copy.name = image.name + "_web"
-                width, height = original_size
-                ratio = min(1.0, max_size / max(width, height))
-                output_size = [max(1, round(width * ratio)), max(1, round(height * ratio))]
-                if output_size != original_size:
-                    copy.scale(*output_size)
-                # Saving the process-local copy also prevents the exporter from
-                # reusing packed bytes from the original 4K image after resizing.
-                copy.filepath_raw = str(Path(temporary_directory) / f"image-{len(copies)}.png")
-                copy.file_format = "PNG"
-                copy.save()
-                copy.pack()
+                output_size = original_size.copy()
+                # Preserve native dimensions and encode without lossy texture compression.
+                # PNG's lossless encoding also decodes imported DDS pixels for the web.
+                copy = packed_png_copy(image, image.name + "_web",
+                                       Path(temporary_directory) / f"image-{len(copies)}.png")
                 copies[image] = copy
                 records.append(
-                    {"name": image.name, "sourceSize": original_size, "webSize": output_size}
+                    {"name": image.name, "sourceSize": original_size, "webSize": output_size,
+                     "format": "PNG", "resized": False, "lossyCompression": False}
                 )
             node.image = copies[image]
     return records
@@ -124,7 +139,7 @@ def apply_matte_profile(meshes, roots, temporary_directory):
 
     Sony's ORM metal mask still preserves metal rings and contacts. Pocket's
     imported shell atlas misclassifies much of its plastic as metal, so only
-    that material gets a low metallic mask. Screens, optical coatings, the
+    that material gets a nonmetal matte mask. Screens, optical coatings, the
     viewfinder and separate small metal materials retain their source nodes.
     """
     records = []
@@ -138,6 +153,9 @@ def apply_matte_profile(meshes, roots, temporary_directory):
             kind = BODY_MATERIALS.get(original_name)
             if kind is None:
                 continue
+            previous_profile = source_material.get("portfolio_material_profile")
+            if previous_profile and previous_profile != MATTE_PROFILE:
+                raise RuntimeError("Use the original saved .blend to upgrade an older material profile")
             if source_material.get("portfolio_material_profile") == MATTE_PROFILE:
                 if source_material not in copied:
                     records.append(json.loads(source_material["portfolio_material_record"]))
@@ -147,7 +165,7 @@ def apply_matte_profile(meshes, roots, temporary_directory):
                 slot.material = copied[source_material]
                 continue
             material = source_material.copy()
-            material.name = original_name + "_web_matte"
+            material.name = "Pocket3_Body_Matte" if kind == "pocket-shell" else original_name + "_web_matte"
             material["portfolio_source_material"] = original_name
             material["portfolio_material_profile"] = MATTE_PROFILE
             shader = principled(material)
@@ -173,23 +191,34 @@ def apply_matte_profile(meshes, roots, temporary_directory):
                       "specularLinked": shader.inputs["Specular IOR Level"].is_linked,
                       "coatWeight": float(shader.inputs["Coat Weight"].default_value)}
             if kind == "pocket-shell":
-                values[:, 1] = 0.72 + values[:, 1] * 0.22
-                values[:, 2] *= 0.08
+                # Source mat_0.002_0.005 and mat_0.006 have roughness=1, coat=0.
+                # They are lettering/marks, so use their finish as a reference,
+                # keeping the shell's own high-resolution albedo, normal and AO.
+                values[:, 1] = 1.0
+                values[:, 2] = 0.0
                 specular = 0.28
-                treatment = "Plastic shell ORM: roughness 0.72 + source * 0.22; metallic source * 0.08; remove imported alpha/specular branch."
+                treatment = "Unified graphite plastic shell: roughness 1, metallic 0, coat 0, specular 0.28; reference source mat_0.002_0.005/mat_0.006 matte finish, preserve shell albedo/normal/AO, apply neutral 0.9 color tint."
+                base = shader.inputs["Base Color"]
+                color_link = base.links[0]
+                # Blender 5.2 glTF recognizes the modern Mix node's constant
+                # multiplier; legacy MixRGB renders in Blender but loses its
+                # tint on export.
+                tint = material.node_tree.nodes.new("ShaderNodeMix")
+                tint.label = "Unified graphite body color"
+                tint.data_type = "RGBA"
+                tint.blend_type = "MULTIPLY"
+                next(s for s in tint.inputs if s.type == "VALUE" and s.name == "Factor").default_value = 1.0
+                color_inputs = [s for s in tint.inputs if s.type == "RGBA"]
+                color_inputs[1].default_value = (0.9, 0.9, 0.9, 1.0)
+                material.node_tree.links.new(color_link.from_socket, color_inputs[0])
+                material.node_tree.links.new(next(s for s in tint.outputs if s.type == "RGBA"), base)
             else:
                 nonmetal = values[:, 2] < 0.5
                 values[nonmetal, 1] = np.minimum(1.0, np.maximum(0.64, values[nonmetal, 1] * 0.9 + 0.14))
                 specular = 0.35
                 treatment = "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
-            adjusted_image = original_image.copy()
-            adjusted_image.name = original_image.name + "_web_matte"
-            adjusted_image.pixels.foreach_set(pixels)
-            adjusted_image.update()
-            adjusted_image.filepath_raw = str(Path(temporary_directory) / f"matte-orm-{len(copied)}.png")
-            adjusted_image.file_format = "PNG"
-            adjusted_image.save()
-            adjusted_image.pack()
+            adjusted_image = packed_png_copy(original_image, original_image.name + "_web_matte",
+                                             Path(temporary_directory) / f"matte-orm-{len(copied)}.png", pixels)
             # Body AO and metallic nodes may reference the same atlas; reconnect
             # all of this material's references, but leave other materials alone.
             for node in material.node_tree.nodes:
@@ -205,6 +234,10 @@ def apply_matte_profile(meshes, roots, temporary_directory):
                                 "metallicMean": float(sample[:, 2].mean()),
                                 "specularIORLevel": specular, "coatWeight": 0.0},
                       "treatment": treatment}
+            if kind == "pocket-shell":
+                record["referenceMaterials"] = ["mat_0.002_0.005", "mat_0.006"]
+                record["baseColorFactor"] = [0.9, 0.9, 0.9, 1.0]
+                record["preservedRoles"] = ["mat_0.008 display/button UV", "Material.006 lens coating", "mat_2.006 lens elements", "mat_0.002_0.005 and mat_0.006 lettering/marks"]
             material["portfolio_material_record"] = json.dumps(record)
             records.append(record)
             copied[source_material] = material
@@ -343,7 +376,7 @@ def main():
         for obj in sorted(area_lights, key=lambda o: o.name)
     ]
     with tempfile.TemporaryDirectory(prefix="portfolio-device-textures-") as temporary_directory:
-        texture_records = prepare_textures(materials, args.max_texture_size, temporary_directory)
+        texture_records = prepare_textures(materials, temporary_directory)
         bpy.ops.export_scene.gltf(
             filepath=str(args.output),
             export_format="GLB",
@@ -361,9 +394,9 @@ def main():
             export_optimize_animation_keep_anim_object=False,
             export_bake_animation=False,
             export_current_frame=False,
-            export_image_format="WEBP",
-            export_image_quality=args.texture_quality,
-            export_image_webp_fallback=False,
+            # AUTO preserves the PNG images prepared above; PNG is not an
+            # export_image_format enum in Blender 5.2's glTF exporter.
+            export_image_format="AUTO",
             export_unused_images=False,
             export_unused_textures=False,
             export_texcoords=True,
@@ -376,6 +409,7 @@ def main():
             export_draco_mesh_compression_enable=False,
         )
     gltf = read_glb(args.output)
+    validate_texture_export(args.output, gltf, texture_records, material_records)
     node_names = {node.get("name", "") for node in gltf["nodes"]}
     if any("无人机" in name or name in {"Cam tilt", "mesh_18_217.nr", "mesh_18_220.nr", "mesh_0_0.nr"} for name in node_names):
         raise RuntimeError("An excluded source object leaked into the GLB")
@@ -413,6 +447,8 @@ def main():
                  "animationChannels": len(clip["channels"]), "extensionsRequired": gltf.get("extensionsRequired", [])},
         "actions": actions,
         "textures": texture_records,
+        "texturePolicy": {"resolution": "native", "format": "PNG", "lossyCompression": False,
+                          "resampling": False, "meshCompression": False},
         "sourceAreaLights": light_records,
         "materialProfile": {"name": MATTE_PROFILE if args.material_profile == "matte" else "source",
                             "displayScalePreference": DISPLAY_SCALE if args.material_profile == "matte" else 1.0,
@@ -453,6 +489,31 @@ def merge_glb_clips(path, name):
     tail = data[20 + old_json_length :]
     total = 12 + 8 + len(json_bytes) + len(tail)
     path.write_bytes(struct.pack("<III", 0x46546C67, 2, total) + struct.pack("<II", len(json_bytes), 0x4E4F534A) + json_bytes + tail)
+
+
+def validate_texture_export(path, gltf, texture_records, material_records):
+    """Check actual embedded bytes, not just the requested export settings."""
+    data = path.read_bytes()
+    json_length, _ = struct.unpack_from("<II", data, 12)
+    binary_start = 28 + json_length
+    source_sizes = {tuple(record["sourceSize"]) for record in texture_records}
+    for image in gltf.get("images", []):
+        if image.get("mimeType") != "image/png" or "bufferView" not in image:
+            raise RuntimeError("Every exported texture must be an embedded lossless PNG")
+        view = gltf["bufferViews"][image["bufferView"]]
+        start = binary_start + view.get("byteOffset", 0)
+        if data[start : start + 8] != b"\x89PNG\r\n\x1a\n":
+            raise RuntimeError("An exported texture is not PNG encoded")
+        size = struct.unpack_from(">II", data, start + 16)
+        if size not in source_sizes:
+            raise RuntimeError(f"Unexpected exported texture dimensions: {size}")
+    for record in material_records:
+        if record["kind"] != "pocket-shell":
+            continue
+        material = next(m for m in gltf["materials"] if m["name"] == record["material"])
+        factor = material.get("pbrMetallicRoughness", {}).get("baseColorFactor", [1.0] * 4)
+        if any(abs(a - b) > 1e-6 for a, b in zip(factor, record["baseColorFactor"])):
+            raise RuntimeError("Pocket body color differs between Blender and glTF")
 
 
 if __name__ == "__main__":

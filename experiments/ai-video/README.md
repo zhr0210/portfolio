@@ -44,6 +44,7 @@ npm run dev:video
 | `deviceLayer.loopPhases`                                  | 两台设备的循环相位，0–1 为一圈                                                      |
 | `deviceLayer.animationRanges`                             | 各设备使用的原始旋转动画有效时间段（秒）                                            |
 | `deviceLayer.environmentIntensity`                        | 环境反射亮度                                                                        |
+| `deviceLayer.ambientIntensity`                            | 中性漫反射补光，帮助黑色哑光外壳保持可读性，不增强环境镜面反射                      |
 | `deviceLayer.keyIntensity/fillIntensity/softboxIntensity` | 主光、辅光和柔光亮度                                                                |
 | `deviceLayer.exposure`                                    | 三维曝光，不改变视频亮度                                                            |
 | `deviceLayer.maxPixelRatio/mobileMaxPixelRatio`           | 桌面／手机渲染清晰度上限                                                            |
@@ -53,9 +54,9 @@ npm run dev:video
 
 ## Blender 资产
 
-`assets/capture-devices.glb` 约 4.63 MB，172 个网格、约 11 万三角面、单一共同动画。相机源模型为 Sony A7RM3，Pocket 为 Osmo Pocket 3；影片拍摄参数仍来自 `reelWorks`，不自动用模型名称覆盖。贴图最高 1024px，使用内嵌 WebP，未减面。仅包含 `z轴移动` 与 `空物体` 完整子树和原 35 mm 透视相机；排除未完成无人机、Pocket 未绑定的静态残留及 AREA 灯。
+`assets/capture-devices.glb` 约 52.87 MB（52,866,528 字节），172 个网格、约 11 万三角面、单一共同动画。相机源模型为 Sony A7RM3，Pocket 为 Osmo Pocket 3；影片拍摄参数仍来自 `reelWorks`，不自动用模型名称覆盖。按用户要求保留原始贴图分辨率：Sony 主体／镜筒为 4096px，Pocket 为 2048px，小型光学／指示灯贴图保持原有 128px。全部内嵌无损 PNG，不降采样、不使用有损 WebP，也未减面。高分辨率贴图增加下载体积和显存需求；网页给贴图设置硬件支持范围内最高 8 倍各向异性过滤，改善斜面清晰度。仅包含 `z轴移动` 与 `空物体` 完整子树和原 35 mm 透视相机；排除未完成无人机、Pocket 未绑定的静态残留及 AREA 灯。
 
-原 `.blend` 留在用户提供的位置且不被覆盖；哑光调整另存为 Downloads 中的 `camera 无人机-web-matte.blend`，不进入网站包或 Git。Sony 的非金属机身和镜筒提高粗糙度；Pocket 塑料壳降低误设的金属度并去掉额外高光支路。镜片、屏幕、金属环保留原材质，网页同时降低环境反射、主光与柔光。导出在独立后台 Blender 进程完成，保留当前编辑器的未保存修改与无人机原场景。导出记录在 `assets/capture-devices.metadata.json`，材质公式及可重现方式见 [tools/README.md](tools/README.md)。
+原 `.blend` 留在用户提供的位置且不被覆盖；本轮统一材质另存为 Downloads 中的 `camera 无人机-web-unified.blend`，不进入网站包或 Git。Sony 的非金属机身和镜筒提高粗糙度；Pocket 的 `mat_0.007` 外壳复制为 `Pocket3_Body_Matte`，参考原有文字／标记材质的哑光表面参数，统一为粗糙度 1、金属度 0、无清漆，并添加 0.9 的中性石墨灰色因子。保留外壳原颜色、法线及 UV；屏幕、镜片和标记继续使用各自的材质。Blender 使用现代 Mix 节点，导出文件校验颜色因子，确保作者文件和网页材质一致。导出在独立后台 Blender 进程完成，保留当前编辑器的未保存修改与无人机原场景。导出记录在 `assets/capture-devices.metadata.json`，材质公式及可重现方式见 [tools/README.md](tools/README.md)。
 
 使用 Three.js `GLTFLoader` 和 `AnimationMixer`，无需迁移主站 React＋Vite。参考 Oryzo 的 Astro＋Three.js 路线；其公开代码可确认三维渲染器，不能据此认定其模型格式或滚动动画与本项目一致。未来并入 React 主站时可用 React Three Fiber 9 封装，但不会自动提高视觉质量。
 

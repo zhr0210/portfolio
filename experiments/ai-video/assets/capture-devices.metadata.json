@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "sourceFile": "camera 无人机.blend",
-  "sourceSha256": "f8232fa875549b4f2429c20451a8ea7e0a6f9aba97247bfd2aa8a2f9c992d051",
+  "sourceSha256": "98d83d944e723e9d1e9d5e0d4f988623a12e563dcf511b8011efb6e5db556c10",
   "exporter": "Blender 5.2.0 LTS",
   "asset": "capture-devices.glb",
-  "bytes": 4628656,
+  "bytes": 52866528,
   "roots": {
     "sony": "z轴移动",
     "pocket": "空物体"
@@ -15,9 +15,21 @@
     "lensMm": 35.0,
     "sensorWidthMm": 36.0,
     "sourceAspect": 1.7777777777777777,
-    "sourceResolution": [1920, 1080],
-    "blenderPosition": [19.0730591, -56.6198158, 0.0],
-    "blenderQuaternionWxyz": [0.7071068, 0.7071068, 0.0, 0.0],
+    "sourceResolution": [
+      1920,
+      1080
+    ],
+    "blenderPosition": [
+      19.0730591,
+      -56.6198158,
+      0.0
+    ],
+    "blenderQuaternionWxyz": [
+      0.7071068,
+      0.7071068,
+      0.0,
+      0.0
+    ],
     "gltfPerspective": {
       "aspectRatio": 1.7777777777777777,
       "yfov": 0.5631968779732008,
@@ -33,9 +45,18 @@
     "fps": 24,
     "durationSeconds": 6,
     "sampleStepFrames": 1,
-    "sonyRange": [0, 108],
-    "pocketRange": [36, 144],
-    "gimbalRange": [62, 138]
+    "sonyRange": [
+      0,
+      108
+    ],
+    "pocketRange": [
+      36,
+      144
+    ],
+    "gimbalRange": [
+      62,
+      138
+    ]
   },
   "sourceGeometry": {
     "meshes": 172,
@@ -49,178 +70,416 @@
     "materials": 11,
     "animations": 1,
     "animationChannels": 12,
-    "extensionsRequired": ["EXT_texture_webp"]
+    "extensionsRequired": []
   },
   "actions": [
     {
       "object": "x轴稳定",
       "action": "x轴稳定动作",
-      "keyFrames": [62.0, 101.0, 138.0]
+      "keyFrames": [
+        62.0,
+        101.0,
+        138.0
+      ]
     },
     {
       "object": "z轴移动",
       "action": "z轴移动动作",
-      "keyFrames": [0.0, 108.0]
+      "keyFrames": [
+        0.0,
+        108.0
+      ]
     },
     {
       "object": "z轴移动.001",
       "action": "z轴移动动作.005",
-      "keyFrames": [36.0, 144.0]
+      "keyFrames": [
+        36.0,
+        144.0
+      ]
     },
     {
       "object": "动画控制器",
       "action": "动画控制器动作",
-      "keyFrames": [0.0, 54.0, 108.0]
+      "keyFrames": [
+        0.0,
+        54.0,
+        108.0
+      ]
     },
     {
       "object": "模型三轴旋转",
       "action": "动画控制器动作.004",
-      "keyFrames": [36.0, 90.0, 144.0]
+      "keyFrames": [
+        36.0,
+        90.0,
+        144.0
+      ]
     },
     {
       "object": "镜头模组",
       "action": "空物体.001动作.001",
-      "keyFrames": [62.0, 101.0, 138.0]
+      "keyFrames": [
+        62.0,
+        101.0,
+        138.0
+      ]
     },
     {
       "object": "零件控制器",
       "action": "空物体.001动作",
-      "keyFrames": [62.0, 101.0, 138.0]
+      "keyFrames": [
+        62.0,
+        101.0,
+        138.0
+      ]
     }
   ],
   "textures": [
     {
-      "name": "Sony24_70G_Body_Mat Base color",
-      "sourceSize": [4096, 4096],
-      "webSize": [1024, 1024]
-    },
-    {
-      "name": "Sony24_70G_Body_Mat Occlusion roughness metallic_web_matte",
-      "sourceSize": [4096, 4096],
-      "webSize": [1024, 1024]
-    },
-    {
-      "name": "Sony24_70G_Body_Mat Normal",
-      "sourceSize": [4096, 4096],
-      "webSize": [1024, 1024]
-    },
-    {
-      "name": "Sony24_70G_Lens_Mat Base color",
-      "sourceSize": [128, 128],
-      "webSize": [128, 128]
-    },
-    {
-      "name": "Sony_A7RM3_ViewfinderLens_Mat Occlusion roughness metallic",
-      "sourceSize": [128, 128],
-      "webSize": [128, 128]
-    },
-    {
-      "name": "Sony_A7RM3_ViewfinderLens_Mat Normal",
-      "sourceSize": [128, 128],
-      "webSize": [128, 128]
-    },
-    {
-      "name": "SonyA7RM3_Body_Led_Mat Base color",
-      "sourceSize": [128, 128],
-      "webSize": [128, 128]
-    },
-    {
-      "name": "SonyA7RM3_Body_Led_Mat Occlusion roughness metallic",
-      "sourceSize": [128, 128],
-      "webSize": [128, 128]
-    },
-    {
-      "name": "Sony_A7RM3_Body_Mat Base color",
-      "sourceSize": [4096, 4096],
-      "webSize": [1024, 1024]
-    },
-    {
-      "name": "Sony_A7RM3_Body_Mat Occlusion roughness metallic_web_matte",
-      "sourceSize": [4096, 4096],
-      "webSize": [1024, 1024]
-    },
-    {
-      "name": "Sony_A7RM3_Body_Mat Normal",
-      "sourceSize": [4096, 4096],
-      "webSize": [1024, 1024]
-    },
-    {
-      "name": "Sony_A7RM3_ViewfinderLens_Mat Base color",
-      "sourceSize": [128, 128],
-      "webSize": [128, 128]
-    },
-    {
       "name": "000002339E020538.dds",
-      "sourceSize": [2048, 2048],
-      "webSize": [1024, 1024]
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "webSize": [
+        2048,
+        2048
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
     },
     {
       "name": "000002339D2BD338.dds_web_matte",
-      "sourceSize": [2048, 2048],
-      "webSize": [1024, 1024]
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "webSize": [
+        2048,
+        2048
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
     },
     {
       "name": "000002339D2BCDF8.dds",
-      "sourceSize": [2048, 2048],
-      "webSize": [1024, 1024]
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "webSize": [
+        2048,
+        2048
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
     },
     {
       "name": "000002339D2BD338.dds.001",
-      "sourceSize": [2048, 2048],
-      "webSize": [1024, 1024]
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "webSize": [
+        2048,
+        2048
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony24_70G_Body_Mat Base color",
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "webSize": [
+        4096,
+        4096
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony24_70G_Body_Mat Occlusion roughness metallic_web_matte",
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "webSize": [
+        4096,
+        4096
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony24_70G_Body_Mat Normal",
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "webSize": [
+        4096,
+        4096
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony24_70G_Lens_Mat Base color",
+      "sourceSize": [
+        128,
+        128
+      ],
+      "webSize": [
+        128,
+        128
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony_A7RM3_ViewfinderLens_Mat Occlusion roughness metallic",
+      "sourceSize": [
+        128,
+        128
+      ],
+      "webSize": [
+        128,
+        128
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony_A7RM3_ViewfinderLens_Mat Normal",
+      "sourceSize": [
+        128,
+        128
+      ],
+      "webSize": [
+        128,
+        128
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "SonyA7RM3_Body_Led_Mat Base color",
+      "sourceSize": [
+        128,
+        128
+      ],
+      "webSize": [
+        128,
+        128
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "SonyA7RM3_Body_Led_Mat Occlusion roughness metallic",
+      "sourceSize": [
+        128,
+        128
+      ],
+      "webSize": [
+        128,
+        128
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony_A7RM3_Body_Mat Base color",
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "webSize": [
+        4096,
+        4096
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony_A7RM3_Body_Mat Occlusion roughness metallic_web_matte",
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "webSize": [
+        4096,
+        4096
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony_A7RM3_Body_Mat Normal",
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "webSize": [
+        4096,
+        4096
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Sony_A7RM3_ViewfinderLens_Mat Base color",
+      "sourceSize": [
+        128,
+        128
+      ],
+      "webSize": [
+        128,
+        128
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
     },
     {
       "name": "000002339D2BD338.dds",
-      "sourceSize": [2048, 2048],
-      "webSize": [1024, 1024]
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "webSize": [
+        2048,
+        2048
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
     }
   ],
+  "texturePolicy": {
+    "resolution": "native",
+    "format": "PNG",
+    "lossyCompression": false,
+    "resampling": false,
+    "meshCompression": false
+  },
   "sourceAreaLights": [
     {
       "name": "聚光",
       "type": "AREA",
       "parent": "z轴移动",
       "energy": 500.0,
-      "color": [1.0, 1.0, 1.0],
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
       "size": 60.326637268066406,
-      "blenderPositionAtFrame0": [-1.6126428, -5.1432972, 2.4148178],
-      "blenderQuaternionWxyz": [1.0, 0.0, 0.0, 0.0]
+      "blenderPositionAtFrame0": [
+        -1.6126428,
+        -5.1432972,
+        2.4148178
+      ],
+      "blenderQuaternionWxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
     },
     {
       "name": "聚光.001",
       "type": "AREA",
       "parent": "z轴移动.001",
       "energy": 500.0,
-      "color": [1.0, 1.0, 1.0],
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
       "size": 60.326637268066406,
-      "blenderPositionAtFrame0": [39.9873543, -5.1432972, -1.7651825],
-      "blenderQuaternionWxyz": [1.0, 0.0, 0.0, 0.0]
+      "blenderPositionAtFrame0": [
+        39.9873543,
+        -5.1432972,
+        -1.7651825
+      ],
+      "blenderQuaternionWxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
     },
     {
       "name": "面光",
       "type": "AREA",
       "parent": "z轴移动",
       "energy": 500.0,
-      "color": [1.0, 1.0, 1.0],
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
       "size": 37.20100021362305,
-      "blenderPositionAtFrame0": [0.0, -6.8917418, -39.6599846],
-      "blenderQuaternionWxyz": [0.0329788, 0.9994547, -0.0, 0.0016266]
+      "blenderPositionAtFrame0": [
+        0.0,
+        -6.8917418,
+        -39.6599846
+      ],
+      "blenderQuaternionWxyz": [
+        0.0329788,
+        0.9994547,
+        -0.0,
+        0.0016266
+      ]
     },
     {
       "name": "面光.001",
       "type": "AREA",
       "parent": "z轴移动.001",
       "energy": 500.0,
-      "color": [1.0, 1.0, 1.0],
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
       "size": 37.20100021362305,
-      "blenderPositionAtFrame0": [41.5999985, -6.8917418, -43.8399849],
-      "blenderQuaternionWxyz": [0.0329788, 0.9994547, -0.0, 0.0016266]
+      "blenderPositionAtFrame0": [
+        41.5999985,
+        -6.8917418,
+        -43.8399849
+      ],
+      "blenderQuaternionWxyz": [
+        0.0329788,
+        0.9994547,
+        -0.0,
+        0.0016266
+      ]
     }
   ],
   "materialProfile": {
-    "name": "portfolio-matte-v1",
+    "name": "portfolio-matte-v2",
     "displayScalePreference": 1.12,
-    "authoringCopy": "camera 无人机-web-matte.blend",
+    "authoringCopy": "camera 无人机-web-unified.blend",
     "adjustments": [
       {
         "sourceMaterial": "Sony24_70G_Body_Mat",
@@ -266,7 +525,7 @@
       },
       {
         "sourceMaterial": "mat_0.007",
-        "material": "mat_0.007_web_matte",
+        "material": "Pocket3_Body_Matte",
         "kind": "pocket-shell",
         "sourceOrm": "000002339D2BD338.dds",
         "adjustedOrm": "000002339D2BD338.dds_web_matte",
@@ -278,12 +537,28 @@
           "coatWeight": 0.0
         },
         "after": {
-          "roughnessMean": 0.8124211430549622,
-          "metallicMean": 0.04599596560001373,
+          "roughnessMean": 1.0,
+          "metallicMean": 0.0,
           "specularIORLevel": 0.28,
           "coatWeight": 0.0
         },
-        "treatment": "Plastic shell ORM: roughness 0.72 + source * 0.22; metallic source * 0.08; remove imported alpha/specular branch."
+        "treatment": "Unified graphite plastic shell: roughness 1, metallic 0, coat 0, specular 0.28; reference source mat_0.002_0.005/mat_0.006 matte finish, preserve shell albedo/normal/AO, apply neutral 0.9 color tint.",
+        "referenceMaterials": [
+          "mat_0.002_0.005",
+          "mat_0.006"
+        ],
+        "baseColorFactor": [
+          0.9,
+          0.9,
+          0.9,
+          1.0
+        ],
+        "preservedRoles": [
+          "mat_0.008 display/button UV",
+          "Material.006 lens coating",
+          "mat_2.006 lens elements",
+          "mat_0.002_0.005 and mat_0.006 lettering/marks"
+        ]
       }
     ],
     "preserved": [
@@ -297,7 +572,11 @@
       "unselected materials, including drone"
     ]
   },
-  "excluded": ["无人机 collection", "Pocket unparented original fragments", "AREA lights"],
+  "excluded": [
+    "无人机 collection",
+    "Pocket unparented original fragments",
+    "AREA lights"
+  ],
   "rendering": {
     "sourceViewTransform": "AgX",
     "sourceExposure": 0.0,

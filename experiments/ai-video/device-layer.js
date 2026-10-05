@@ -388,6 +388,18 @@ export function createDeviceLayer(
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.AgXToneMapping;
       renderer.toneMappingExposure = settings.exposure ?? 1;
+      const anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+      const filtered = new Set();
+      gltf.scene.traverse((object) => {
+        for (const material of [].concat(object.material || [])) {
+          for (const texture of Object.values(material)) {
+            if (!texture?.isTexture || filtered.has(texture)) continue;
+            texture.anisotropy = anisotropy;
+            texture.needsUpdate = true;
+            filtered.add(texture);
+          }
+        }
+      });
       pmrem = new THREE.PMREMGenerator(renderer);
       const room = new EnvironmentClass();
       try {
@@ -397,6 +409,9 @@ export function createDeviceLayer(
       }
       scene.environment = environment.texture;
       scene.environmentIntensity = settings.environmentIntensity ?? 0.8;
+      // Neutral diffuse fill keeps a matte black shell readable without
+      // increasing environment reflections or reintroducing a glossy finish.
+      scene.add(new THREE.AmbientLight(0xffffff, settings.ambientIntensity ?? 0.55));
       const key = new THREE.DirectionalLight(0xffffff, settings.keyIntensity ?? 3);
       key.position.set(-15, 20, 45);
       key.target.position.set(20, 0, 0);
