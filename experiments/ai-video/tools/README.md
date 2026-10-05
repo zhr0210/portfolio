@@ -1,32 +1,48 @@
 # 导出网页设备动画
 
-需要 Blender 5.2（脚本使用 layered action 和场景时间轴导出）。在仓库根目录用一个独立后台进程读取**已保存文件**；不在正在编辑的 Blender 会话中执行。脚本不覆盖原 `.blend`，可另存完整的哑光材质副本。
+使用 Blender 5.2，在独立后台进程读取已保存文件；不在用户正在编辑的 Blender 会话中执行。脚本不覆盖原 .blend，可另存包含完整场景的材质修复副本。
 
 ```powershell
-& 'F:\blender\blender.exe' --background --disable-autoexec 'C:\Users\kilian\Downloads\camera 无人机.blend' --python 'experiments\ai-video\tools\export-capture-devices.py' -- --output 'experiments\ai-video\assets\capture-devices.glb' --save-blend-copy 'C:\Users\kilian\Downloads\camera 无人机-web-unified.blend'
+& 'F:\blender\blender.exe' --background --disable-autoexec 'C:\Users\kilian\Downloads\camera 无人机.blend' --python 'experiments\ai-video\tools\export-capture-devices.py' -- --output 'experiments\ai-video\assets\capture-devices.glb' --save-blend-copy 'C:\Users\kilian\Downloads\camera 无人机-pocket3-reference.blend'
 ```
 
-按本机位置修改 Blender 和源文件路径。不需要更新作者文件时，省略 `--save-blend-copy`；该参数必须指向另一个 `.blend` 路径。所有贴图保留原始尺寸，内嵌无损 PNG；不再提供缩小贴图或有损质量参数。Sony 主体／镜筒保留 4096px，Pocket 保留 2048px，原有 128px 小贴图保持原样。PNG 使用无损编码，DDS 输入从已有像素解码，不额外降采样或使用 WebP / JPEG。
+按本机位置修改 Blender 和源文件路径。不需要更新作者文件时，省略 --save-blend-copy；该参数必须指向另一个 .blend。所有贴图保留原始尺寸，内嵌无损 PNG：Sony 主体／镜筒 4096px，Pocket 2048px，原有 128px 小贴图保持原样。DDS 从已有像素解码，不额外降采样或使用有损 WebP / JPEG。
 
-默认 `--material-profile matte` 应用 `portfolio-matte-v2`。需要对照原材质时，从原文件导出并加 `--material-profile source`，不要加 `--save-blend-copy`。从已另存的 v2 副本再次导出时，同一材质不会重复处理粗糙度或颜色；脚本通过自定义属性识别已应用的 profile。升级旧 v1 副本时必须重新读取原 `.blend`，脚本会拒绝叠加处理旧 profile。
+默认 --material-profile matte 保持 Sony 的 portfolio-matte-v2 处理，并应用 pocket3-reference-v1 分零件修复。需要对照原材质时，从原文件导出并加 --material-profile source，不要加 --save-blend-copy。从修复副本再次导出时，通过自定义属性识别已应用的 profile，不重复调整颜色或粗糙度。旧 Sony profile 升级需重新读取原 .blend。
 
-Sony 源材质的 Specular IOR Level 为 0.5、Coat 为 0，并非反射参数被额外调高；机身 ORM 的粗糙度最低约 0.024，强环境和面积光会突出这些反光区域。Pocket 塑料壳 ORM 的金属通道平均约 0.575，粗糙度平均约 0.420，并连接了额外的 alpha→Specular 分支，使塑料容易呈现金属和湿润的质感。灯光和曝光由网页配置单独控制。
+## Sony 材质
 
-哑光 profile 只复制并修改设备的三个主体材质及它们的 ORM，保留颜色、法线和 AO：
+Sony 源 Specular IOR Level 为 0.5，Coat 为 0。机身 ORM 粗糙度最低约 0.024，强环境和面积光突出这些反光区域。复制机身／镜筒材质和 ORM：金属通道 < 0.5 的像素，粗糙度改为 max(0.64, 原值 × 0.9 + 0.14)，上限 1；金属像素、颜色、法线和 AO 原样保留。Specular IOR Level 设为 0.35，Coat 为 0。镜片、取景器、独立金属材料不改。
 
-| 材质                      | 调整                                                                                                                                                                    |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sony 机身、镜筒           | ORM 金属通道 < 0.5 的像素：粗糙度 `max(0.64, 原值 × 0.9 + 0.14)`，上限 1；金属像素原样保留。Specular IOR Level 为 0.35，Coat 为 0。                                     |
-| Pocket 塑料壳 `mat_0.007` | 复制为 `Pocket3_Body_Matte`：ORM 粗糙度 1、金属度 0；移除 alpha→Specular 支路，Specular IOR Level 为 0.28，Coat 为 0；现代 Mix 节点设置中性颜色乘数 `(0.9, 0.9, 0.9)`。 |
+## Pocket 3 按参考图修复
 
-Pocket 的 `mat_0.002_0.005`（75 个文字／标记网格）和 `mat_0.006`（9 个小标记等）原有粗糙度为 1、Coat 为 0，用作外壳表面质感的参考；它们不是整机外壳贴图，不能直接替换外壳，否则会破坏文字及 UV。`mat_0.007` 才是机身、云台和镜头外壳，保留其原颜色、法线和 AO。镜片、Sony 取景器、Pocket 的 `mat_0.008` 屏幕／按钮、`Material.006` 光学涂层、`mat_2.006` 镜片内部和单独的金属零件保持原材质。无人机及未选物体的材料绑定保持原样；原设备层级、动画曲线和模型变换均不缩放。
+参考用户提供的 bin-render-04.webp，配置集中在 pocket_materials.py 的 SURFACES 和 PARTS。原材质名不能直接当作零件类型：mat_0.002_0.005 同时用于镜头附近的大零件和摇杆微小防滑颗粒；部分无贴图白色材料还是金属，原塑料 ORM 也混入大量金属像素。
 
-完整 Blender 副本在清理 UV 和更改导出相机名称之前保存，保留原始纹理尺寸和整份场景，包括未完成的无人机。设备根节点记录 `portfolio_web_display_scale = 1.12`，供网页显示比例使用；该属性本身不改变 Blender 模型或轨道。网页配置统一应用一次，避免源模型与网页叠加放大。
+| 表面                   | 处理                                                                          |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| 机身                   | 石墨灰塑料，粗糙度 0.82，金属度 0；2048px 修正颜色图保留 OSMO / POCKET 3 字样 |
+| 防滑板                 | 灰色塑料，粗糙度 0.91，保留原法线纹理和现有斜纹几何                           |
+| 云台／电机盖           | 分别使用缎光黑与灰色；粗糙度 0.57 / 0.66                                      |
+| 镜头框／镜片           | 分开绑定；镜片恢复原 atlas 中的摄影镜片，选用原 UVMap.001                     |
+| 光学保护窗             | 低透明度玻璃，避免白色表面遮住真实镜片                                        |
+| 屏幕／屏幕框           | 黑色非金属玻璃与深色外框，保留少量适合玻璃的高光                              |
+| 摇杆／功能按钮／微颗粒 | 深灰橡胶，粗糙度 0.88，修正原白色缺材质                                       |
+| 快门                   | 恢复原颜色 atlas 的深色中心与细橙环；不把整个按钮染橙                         |
+| 状态灯／接口           | 柔和绿灯、暗色接口；接口保留少量金属响应                                      |
+| 背面 DJI 印刷          | 在现有 191 个文字面上绑定浅色印刷，不新增贴花或几何                           |
 
-脚本选择两台设备的正确根节点，保留层级和原相机，裁定 0–144 帧、24 fps，以一帧一步采样所有动作。场景导出的各对象轨道合入 `CaptureDevices`，不将 Pocket 的起始帧归零。保留动画物体外的静态零件变换，去除不用的 UV 层，同时保留屏幕显式使用的 `UVMap.004`。
+原法线图的颜色空间误设为 sRGB，修复副本改为 Non-Color，并按表面分别设置法线强度。原 Pocket 网格的 custom_normal（CORNER / INT16_2D）属性损坏，导致正常灰色 PBR 也出现异常黑色受光；在复制的 110 个网格上删除此属性，让 Blender / glTF 根据原面和平滑边生成有效法线。保留顶点、拓扑、UV、平滑标记、层级、变换与全部动画曲线。修正颜色图和法线图均保持 2048px；原 atlas 的镜片与快门像素保留。
 
-图片复制时明确传递当前像素，保存 PNG 后重新载入并打包，避免 Blender 的 `Image.copy()` / 旧 packed file 把材质编辑回退成源 DDS 数据。glTF 的 `export_image_format` 使用 `AUTO` 保留 PNG；Blender 5.2 不接受 `PNG` 枚举。Pocket 色乘数使用 `ShaderNodeMix`（RGBA / MULTIPLY），旧 `ShaderNodeMixRGB` 不会被该版本 glTF 导出器正确识别。
+完整作者副本在 UV 清理、更改相机名和时间轴导出设置之前保存，保留原场景中的无人机及其他未选物体。源图片、未选材质绑定不改，当前编辑器的未保存修改不受影响。设备根节点的 portfolio_web_display_scale = 1.12 是显示偏好，不改变模型变换；网页配置应用一次。
 
-自动校验：源根节点／相机存在、无新增驱动或约束、无无人机／已知静态残留、导出含动画且共同持续 6 秒；实际嵌入图的 MIME、PNG 签名与原始尺寸集合正确；Pocket 导出颜色因子与 Blender 一致。资产回归测试还会解码真实 ORM 像素，检查 Pocket 的粗糙度／金属度，以及 Sony 非金属区域的最低粗糙度。生成的同名 `.metadata.json` 记录源文件 SHA-256、纹理尺寸与无损策略、根节点、时序、灯光及每项材质调整的前后参数；不包含绝对本机路径。当前哑光 GLB 约 52.87 MB（52,866,528 字节），仍为 172 个网格、109,938 个三角形、12 条动画通道。原尺寸贴图提高下载和显存成本，主站构建仍不包含实验资产。
+## 导出和验证
 
-重新导出后运行 `npm test`、`npm run build:video`，核对桌面／手机的第 54 帧和第 90 帧，并测试滚动往返。新增约束、骨骼、不同 UV 或调整起止帧时，需要先审查脚本，不能盲目沿用旧范围。
+脚本选取两台设备的正确根节点与原 35 mm 相机，使用 0–144 帧、24 fps、一帧一步采样。各对象轨道合入 CaptureDevices，保留 Pocket 的 36 帧起始延迟与云台动作。仅在网页导出过程清理未使用 UV；每个材质指定的原 UV 坐标保留并映射到 TEXCOORD_0。未完成无人机、未绑定的 Pocket 静态残留及 AREA 灯不进入 GLB。
+
+图片复制时传递当前像素，保存 PNG 后重新载入并打包，避免 Image.copy() / 旧 packed file 回退成源 DDS。export_image_format=AUTO 保留 PNG；Blender 5.2 不接受 PNG 枚举。颜色乘数使用现代 ShaderNodeMix（RGBA / MULTIPLY），保证 Blender 与 glTF 一致。
+
+自动校验实际 PNG 签名、MIME 和原尺寸，Pocket 各零件绑定、颜色因子、粗糙度、金属度及必需纹理；检查源根节点、相机、无新增约束／驱动、无无人机、共同动画持续 6 秒。tests/device-asset.test.mjs 解码真实 Sony ORM 与 Pocket 快门 atlas 像素，验证哑光掩码、暗中心和橙环；检查镜片 UV、关键零件表面、文字绑定及动画正反循环。
+
+当前资产为 50,079,276 字节，172 个网格、109,938 个三角形、12 条动画通道。修复作者副本重复导出得到相同 GLB SHA-256。同名 .metadata.json 记录源 SHA-256、无损策略、时序、灯光和材质修复，不包含本机绝对路径。主站构建仍不包含实验资产。
+
+重新导出后运行 npm test、npm run build、npm run build:video，检查桌面／手机、滚动往返与各姿态。新增约束、骨骼、不同 UV 或调整起止帧时，先审查导出脚本。

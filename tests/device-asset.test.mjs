@@ -39,7 +39,7 @@ function pngSize(data) {
 
 // Inspect the shipped ORM pixels: a valid PNG header alone cannot catch
 // Blender silently reusing an original packed image after material edits.
-function inspectOrm(data, inspect) {
+function inspectPng(data, inspect) {
   assert.equal(data[24], 8, 'ORM uses eight-bit channels');
   const channels = { 2: 3, 6: 4 }[data[25]];
   assert.ok(channels, 'ORM is RGB or RGBA');
@@ -78,14 +78,18 @@ function inspectOrm(data, inspect) {
       ][filter];
       row[x] = raw[offset + 1 + x] + predictor;
     }
-    for (let x = 0; x < stride; x += channels) inspect(row[x + 1], row[x + 2]);
+    for (let x = 0; x < stride; x += channels)
+      inspect(row[x], row[x + 1], row[x + 2], x / channels, y);
     [previous, row] = [row, previous];
   }
+}
+function inspectOrm(data, inspect) {
+  inspectPng(data, (_r, roughness, metallic) => inspect(roughness, metallic));
 }
 function floats(index) {
   const accessor = gltf.accessors[index];
   const view = gltf.bufferViews[accessor.bufferView];
-  const width = { SCALAR: 1, VEC3: 3, VEC4: 4 }[accessor.type];
+  const width = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4 }[accessor.type];
   assert.equal(accessor.componentType, 5126);
   const start = binaryStart + (view.byteOffset || 0) + (accessor.byteOffset || 0);
   return Array.from({ length: accessor.count * width }, (_, i) => bytes.readFloatLE(start + i * 4));
@@ -150,7 +154,6 @@ test('Device textures remain embedded lossless PNG at their native resolution', 
   for (const [name, size] of [
     ['Sony_A7RM3_Body_Mat_web_matte', 4096],
     ['Sony24_70G_Body_Mat_web_matte', 4096],
-    ['Pocket3_Body_Matte', 2048],
   ]) {
     const material = gltf.materials.find((entry) => entry.name === name);
     for (const texture of [
@@ -160,24 +163,25 @@ test('Device textures remain embedded lossless PNG at their native resolution', 
     ])
       assert.deepEqual(pngSize(texturePng(texture.index)), [size, size], name);
   }
+  for (const name of [
+    'Pocket3_Body_Graphite',
+    'Pocket3_Grip_Textured',
+    'Pocket3_Lens_Optics',
+    'Pocket3_Shutter_Ring',
+  ]) {
+    const material = gltf.materials.find((entry) => entry.name === name);
+    assert.ok(material, name);
+    assert.deepEqual(
+      pngSize(texturePng(material.pbrMetallicRoughness.baseColorTexture.index)),
+      [2048, 2048],
+    );
+    if (material.normalTexture)
+      assert.deepEqual(pngSize(texturePng(material.normalTexture.index)), [2048, 2048]);
+  }
   assert.ok(!gltf.extensionsUsed?.includes('EXT_texture_webp'));
 });
 
-test('Packed body masks and Pocket color agree with the matte authoring profile', () => {
-  const pocket = gltf.materials.find((entry) => entry.name === 'Pocket3_Body_Matte');
-  const pbr = pocket.pbrMetallicRoughness;
-  assert.equal(pbr.baseColorFactor.length, 4);
-  assert.equal(pbr.roughnessFactor ?? 1, 1);
-  assert.equal(pbr.metallicFactor ?? 1, 1);
-  assert.ok(Math.abs(pocket.extensions.KHR_materials_specular.specularFactor - 0.56) < 1e-6);
-  assert.equal(pocket.extensions.KHR_materials_clearcoat?.clearcoatFactor ?? 0, 0);
-  for (const [index, value] of pbr.baseColorFactor.entries())
-    assert.ok(Math.abs(value - [0.9, 0.9, 0.9, 1][index]) < 1e-6);
-  let badPocketPixels = 0;
-  inspectOrm(texturePng(pbr.metallicRoughnessTexture.index), (roughness, metallic) => {
-    if (roughness !== 255 || metallic !== 0) badPocketPixels++;
-  });
-  assert.equal(badPocketPixels, 0, 'Pocket plastic is matte and nonmetal throughout');
+test('Sony nonmetal ORM pixels retain the matte authoring treatment', () => {
   for (const name of ['Sony_A7RM3_Body_Mat_web_matte', 'Sony24_70G_Body_Mat_web_matte']) {
     const material = gltf.materials.find((entry) => entry.name === name);
     assert.equal(material.pbrMetallicRoughness.roughnessFactor ?? 1, 1);
@@ -190,13 +194,93 @@ test('Packed body masks and Pocket color agree with the matte authoring profile'
     );
     assert.equal(badSonyPixels, 0, name + ' retains the matte nonmetal mask');
   }
-  for (const name of ['mat_0.008', 'mat_2.006', 'mat_0.002_0.005', 'mat_0.006'])
-    assert.ok(
-      gltf.materials.some((entry) => entry.name === name),
-      name + ' stays separate',
-    );
-  const optics = gltf.materials.find((entry) => entry.name === 'Material.006');
-  assert.equal(optics.extensions.KHR_materials_clearcoat.clearcoatFactor, 1);
+});
+
+test('Pocket components use distinct reference finishes and no bare white metal', () => {
+  const expected = {
+    Object_73: ['Pocket3_Body_Graphite', 0.82, 0],
+    Object_63: ['Pocket3_Grip_Textured', 0.91, 0],
+    Object_8: ['Pocket3_Gimbal_Satin', 0.57, 0],
+    Object_11: ['Pocket3_Gimbal_Satin', 0.57, 0],
+    Object_43: ['Pocket3_Motor_Cover', 0.66, 0],
+    Object_13: ['Pocket3_Lens_Bezel_AtlasUV', 0.43, 0],
+    Object_17: ['Pocket3_Lens_Optics', 0.14, 0],
+    Object_225: ['Pocket3_Screen_Glass', 0.24, 0],
+    Object_215: ['Pocket3_Control_Rubber', 0.88, 0],
+    Object_71: ['Pocket3_Shutter_Ring', 0.57, 0],
+    Object_67: ['Pocket3_Status_Green', 0.34, 0],
+    Object_59: ['Pocket3_Connector_Dark', 0.62, 0.25],
+  };
+  for (const [name, [materialName, roughness, metallic]] of Object.entries(expected)) {
+    const node = gltf.nodes.find((node) => node.name === name);
+    const primitive = gltf.meshes[node.mesh].primitives[0];
+    const material = gltf.materials[primitive.material];
+    assert.equal(material.name, materialName, name);
+    const pbr = material.pbrMetallicRoughness;
+    assert.ok(Math.abs((pbr.roughnessFactor ?? 1) - roughness) < 1e-6, name + ' roughness');
+    assert.ok(Math.abs((pbr.metallicFactor ?? 1) - metallic) < 1e-6, name + ' metallic');
+  }
+  const pocketRecord = metadata.materialProfile.adjustments.find(
+    (r) => r.kind === 'pocket-reference',
+  );
+  assert.equal(pocketRecord.repairedMeshes, 110);
+  assert.equal(pocketRecord.removedInvalidCustomNormals.length, 110);
+  for (const binding of pocketRecord.bindings) {
+    const node = gltf.nodes.find((n) => n.name === binding.object);
+    const materials = gltf.meshes[node.mesh].primitives.map((p) => gltf.materials[p.material]);
+    assert.ok(materials.every((m) => m.name.startsWith('Pocket3_')));
+    assert.ok(materials.every((m) => (m.pbrMetallicRoughness.metallicFactor ?? 1) <= 0.25));
+  }
+  const rear = gltf.nodes.find((n) => n.name === 'Object_221');
+  const rearNames = gltf.meshes[rear.mesh].primitives.map((p) => gltf.materials[p.material].name);
+  assert.deepEqual(new Set(rearNames), new Set(['Pocket3_Grip_Textured', 'Pocket3_Rear_Print']));
+  const display = gltf.materials.find((m) => m.name === 'Pocket3_Screen_Glass');
+  assert.ok(
+    display.pbrMetallicRoughness.baseColorFactor.slice(0, 3).every((v) => v < 0.02),
+    'Screen is black glass',
+  );
+  const window = gltf.materials.find((m) => m.name === 'Pocket3_Lens_Window');
+  assert.equal(window.alphaMode, 'BLEND');
+  assert.ok(
+    Math.abs(window.pbrMetallicRoughness.baseColorFactor[3] - 0.03) < 1e-6,
+    'Lens cover does not hide optical photo',
+  );
+});
+
+test('Pocket optical photo and shutter ring use the original atlas instead of a uniform fill', () => {
+  const lens = gltf.materials.find((m) => m.name === 'Pocket3_Lens_Optics');
+  const shutter = gltf.materials.find((m) => m.name === 'Pocket3_Shutter_Ring');
+  const source = lens.pbrMetallicRoughness.baseColorTexture;
+  assert.deepEqual(
+    texturePng(shutter.pbrMetallicRoughness.baseColorTexture.index),
+    texturePng(source.index),
+    'Both retain the same source pixels with their own UV samplers',
+  );
+  assert.deepEqual(shutter.pbrMetallicRoughness.baseColorFactor ?? [1, 1, 1, 1], [1, 1, 1, 1]);
+  let orange = 0,
+    dark = 0;
+  inspectPng(texturePng(source.index), (r, g, b, x, y) => {
+    if (x > 0.13 * 2048 && x < 0.155 * 2048 && y > 0.951 * 2048 && y < 0.974 * 2048) {
+      if (r > 100 && r > g * 1.2 && g > b * 1.5) orange++;
+    }
+    if (
+      x > 0.283 * 2048 &&
+      x < 0.305 * 2048 &&
+      y > 0.978 * 2048 &&
+      y < 0.998 * 2048 &&
+      Math.max(r, g, b) < 55
+    )
+      dark++;
+  });
+  assert.ok(
+    orange > 50 && dark > 50,
+    `Shipped ring island contains orange edges and a dark center (${orange}/${dark})`,
+  );
+  const node = gltf.nodes.find((n) => n.name === 'Object_17');
+  const uv = floats(gltf.meshes[node.mesh].primitives[0].attributes.TEXCOORD_0);
+  // Blender .001 optical island sits at the top of the atlas; default UVMap
+  // selected a blank lower island and made the lens disappear.
+  for (let i = 1; i < uv.length; i += 2) assert.ok(uv[i] < 0.15, 'Restored optical UV island');
 });
 
 test('The actual Sony, Pocket and gimbal tracks return to the same pose after the final frame', () => {

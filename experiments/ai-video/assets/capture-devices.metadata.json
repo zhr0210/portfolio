@@ -4,7 +4,7 @@
   "sourceSha256": "98d83d944e723e9d1e9d5e0d4f988623a12e563dcf511b8011efb6e5db556c10",
   "exporter": "Blender 5.2.0 LTS",
   "asset": "capture-devices.glb",
-  "bytes": 52866528,
+  "bytes": 50079276,
   "roots": {
     "sony": "z轴移动",
     "pocket": "空物体"
@@ -12,8 +12,8 @@
   "camera": {
     "node": "sourceCamera",
     "type": "PERSP",
-    "lensMm": 35.0,
-    "sensorWidthMm": 36.0,
+    "lensMm": 35,
+    "sensorWidthMm": 36,
     "sourceAspect": 1.7777777777777777,
     "sourceResolution": [
       1920,
@@ -22,13 +22,13 @@
     "blenderPosition": [
       19.0730591,
       -56.6198158,
-      0.0
+      0
     ],
     "blenderQuaternionWxyz": [
       0.7071068,
       0.7071068,
-      0.0,
-      0.0
+      0,
+      0
     ],
     "gltfPerspective": {
       "aspectRatio": 1.7777777777777777,
@@ -61,13 +61,13 @@
   "sourceGeometry": {
     "meshes": 172,
     "triangles": 109938,
-    "materials": 11
+    "materials": 22
   },
   "removedUnusedUvLayers": 748,
   "gltf": {
     "nodes": 500,
     "meshes": 172,
-    "materials": 11,
+    "materials": 22,
     "animations": 1,
     "animationChannels": 12,
     "extensionsRequired": []
@@ -77,109 +77,95 @@
       "object": "x轴稳定",
       "action": "x轴稳定动作",
       "keyFrames": [
-        62.0,
-        101.0,
-        138.0
+        62,
+        101,
+        138
       ]
     },
     {
       "object": "z轴移动",
       "action": "z轴移动动作",
       "keyFrames": [
-        0.0,
-        108.0
+        0,
+        108
       ]
     },
     {
       "object": "z轴移动.001",
       "action": "z轴移动动作.005",
       "keyFrames": [
-        36.0,
-        144.0
+        36,
+        144
       ]
     },
     {
       "object": "动画控制器",
       "action": "动画控制器动作",
       "keyFrames": [
-        0.0,
-        54.0,
-        108.0
+        0,
+        54,
+        108
       ]
     },
     {
       "object": "模型三轴旋转",
       "action": "动画控制器动作.004",
       "keyFrames": [
-        36.0,
-        90.0,
-        144.0
+        36,
+        90,
+        144
       ]
     },
     {
       "object": "镜头模组",
       "action": "空物体.001动作.001",
       "keyFrames": [
-        62.0,
-        101.0,
-        138.0
+        62,
+        101,
+        138
       ]
     },
     {
       "object": "零件控制器",
       "action": "空物体.001动作",
       "keyFrames": [
-        62.0,
-        101.0,
-        138.0
+        62,
+        101,
+        138
       ]
     }
   ],
   "textures": [
     {
+      "name": "Pocket3_Reference_Color_2048",
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "webSize": [
+        2048,
+        2048
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
+      "name": "Pocket3_Reference_Normal_2048",
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "webSize": [
+        2048,
+        2048
+      ],
+      "format": "PNG",
+      "resized": false,
+      "lossyCompression": false
+    },
+    {
       "name": "000002339E020538.dds",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        2048,
-        2048
-      ],
-      "format": "PNG",
-      "resized": false,
-      "lossyCompression": false
-    },
-    {
-      "name": "000002339D2BD338.dds_web_matte",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        2048,
-        2048
-      ],
-      "format": "PNG",
-      "resized": false,
-      "lossyCompression": false
-    },
-    {
-      "name": "000002339D2BCDF8.dds",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        2048,
-        2048
-      ],
-      "format": "PNG",
-      "resized": false,
-      "lossyCompression": false
-    },
-    {
-      "name": "000002339D2BD338.dds.001",
       "sourceSize": [
         2048,
         2048
@@ -359,20 +345,6 @@
       "format": "PNG",
       "resized": false,
       "lossyCompression": false
-    },
-    {
-      "name": "000002339D2BD338.dds",
-      "sourceSize": [
-        2048,
-        2048
-      ],
-      "webSize": [
-        2048,
-        2048
-      ],
-      "format": "PNG",
-      "resized": false,
-      "lossyCompression": false
     }
   ],
   "texturePolicy": {
@@ -387,11 +359,11 @@
       "name": "聚光",
       "type": "AREA",
       "parent": "z轴移动",
-      "energy": 500.0,
+      "energy": 500,
       "color": [
-        1.0,
-        1.0,
-        1.0
+        1,
+        1,
+        1
       ],
       "size": 60.326637268066406,
       "blenderPositionAtFrame0": [
@@ -400,21 +372,21 @@
         2.4148178
       ],
       "blenderQuaternionWxyz": [
-        1.0,
-        0.0,
-        0.0,
-        0.0
+        1,
+        0,
+        0,
+        0
       ]
     },
     {
       "name": "聚光.001",
       "type": "AREA",
       "parent": "z轴移动.001",
-      "energy": 500.0,
+      "energy": 500,
       "color": [
-        1.0,
-        1.0,
-        1.0
+        1,
+        1,
+        1
       ],
       "size": 60.326637268066406,
       "blenderPositionAtFrame0": [
@@ -423,32 +395,32 @@
         -1.7651825
       ],
       "blenderQuaternionWxyz": [
-        1.0,
-        0.0,
-        0.0,
-        0.0
+        1,
+        0,
+        0,
+        0
       ]
     },
     {
       "name": "面光",
       "type": "AREA",
       "parent": "z轴移动",
-      "energy": 500.0,
+      "energy": 500,
       "color": [
-        1.0,
-        1.0,
-        1.0
+        1,
+        1,
+        1
       ],
       "size": 37.20100021362305,
       "blenderPositionAtFrame0": [
-        0.0,
+        0,
         -6.8917418,
         -39.6599846
       ],
       "blenderQuaternionWxyz": [
         0.0329788,
         0.9994547,
-        -0.0,
+        0,
         0.0016266
       ]
     },
@@ -456,11 +428,11 @@
       "name": "面光.001",
       "type": "AREA",
       "parent": "z轴移动.001",
-      "energy": 500.0,
+      "energy": 500,
       "color": [
-        1.0,
-        1.0,
-        1.0
+        1,
+        1,
+        1
       ],
       "size": 37.20100021362305,
       "blenderPositionAtFrame0": [
@@ -471,7 +443,7 @@
       "blenderQuaternionWxyz": [
         0.0329788,
         0.9994547,
-        -0.0,
+        0,
         0.0016266
       ]
     }
@@ -479,7 +451,7 @@
   "materialProfile": {
     "name": "portfolio-matte-v2",
     "displayScalePreference": 1.12,
-    "authoringCopy": "camera 无人机-web-unified.blend",
+    "authoringCopy": "camera 无人机-pocket3-reference.blend",
     "adjustments": [
       {
         "sourceMaterial": "Sony24_70G_Body_Mat",
@@ -492,13 +464,13 @@
           "metallicMean": 0.06897655129432678,
           "specularIORLevel": 0.5,
           "specularLinked": false,
-          "coatWeight": 0.0
+          "coatWeight": 0
         },
         "after": {
           "roughnessMean": 0.7182936668395996,
           "metallicMean": 0.06897655129432678,
           "specularIORLevel": 0.35,
-          "coatWeight": 0.0
+          "coatWeight": 0
         },
         "treatment": "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
       },
@@ -513,61 +485,1262 @@
           "metallicMean": 0.19009530544281006,
           "specularIORLevel": 0.5,
           "specularLinked": false,
-          "coatWeight": 0.0
+          "coatWeight": 0
         },
         "after": {
           "roughnessMean": 0.5864307880401611,
           "metallicMean": 0.19009530544281006,
           "specularIORLevel": 0.35,
-          "coatWeight": 0.0
+          "coatWeight": 0
         },
         "treatment": "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
       },
       {
-        "sourceMaterial": "mat_0.007",
-        "material": "Pocket3_Body_Matte",
-        "kind": "pocket-shell",
-        "sourceOrm": "000002339D2BD338.dds",
-        "adjustedOrm": "000002339D2BD338.dds_web_matte",
-        "before": {
-          "roughnessMean": 0.4200957715511322,
-          "metallicMean": 0.5749496221542358,
-          "specularIORLevel": 0.5,
-          "specularLinked": true,
-          "coatWeight": 0.0
-        },
-        "after": {
-          "roughnessMean": 1.0,
-          "metallicMean": 0.0,
-          "specularIORLevel": 0.28,
-          "coatWeight": 0.0
-        },
-        "treatment": "Unified graphite plastic shell: roughness 1, metallic 0, coat 0, specular 0.28; reference source mat_0.002_0.005/mat_0.006 matte finish, preserve shell albedo/normal/AO, apply neutral 0.9 color tint.",
-        "referenceMaterials": [
-          "mat_0.002_0.005",
-          "mat_0.006"
+        "kind": "pocket-reference",
+        "profile": "pocket3-reference-v1",
+        "reference": "bin-render-04.webp",
+        "sourceColorAtlas": "000002339E020538.dds",
+        "sourceNormalAtlas": "000002339D2BCDF8.dds",
+        "nativeSize": [
+          2048,
+          2048
         ],
-        "baseColorFactor": [
-          0.9,
-          0.9,
-          0.9,
-          1.0
+        "repairedMeshes": 110,
+        "removedInvalidCustomNormals": [
+          "Object_101",
+          "Object_103",
+          "Object_105",
+          "Object_107",
+          "Object_109",
+          "Object_11",
+          "Object_111",
+          "Object_113",
+          "Object_115",
+          "Object_117",
+          "Object_119",
+          "Object_121",
+          "Object_123",
+          "Object_125",
+          "Object_127",
+          "Object_129",
+          "Object_13",
+          "Object_131",
+          "Object_133",
+          "Object_135",
+          "Object_137",
+          "Object_139",
+          "Object_141",
+          "Object_143",
+          "Object_145",
+          "Object_147",
+          "Object_149",
+          "Object_15",
+          "Object_151",
+          "Object_153",
+          "Object_155",
+          "Object_157",
+          "Object_159",
+          "Object_161",
+          "Object_163",
+          "Object_165",
+          "Object_167",
+          "Object_169",
+          "Object_17",
+          "Object_171",
+          "Object_173",
+          "Object_175",
+          "Object_177",
+          "Object_179",
+          "Object_181",
+          "Object_183",
+          "Object_185",
+          "Object_187",
+          "Object_189",
+          "Object_19",
+          "Object_191",
+          "Object_193",
+          "Object_195",
+          "Object_197",
+          "Object_199",
+          "Object_201",
+          "Object_203",
+          "Object_205",
+          "Object_207",
+          "Object_209",
+          "Object_21",
+          "Object_211",
+          "Object_213",
+          "Object_215",
+          "Object_217",
+          "Object_219",
+          "Object_221",
+          "Object_223",
+          "Object_225",
+          "Object_23",
+          "Object_25",
+          "Object_27",
+          "Object_29",
+          "Object_31",
+          "Object_33",
+          "Object_35",
+          "Object_37",
+          "Object_39",
+          "Object_41",
+          "Object_43",
+          "Object_45",
+          "Object_47",
+          "Object_49",
+          "Object_5",
+          "Object_51",
+          "Object_53",
+          "Object_55",
+          "Object_57",
+          "Object_59",
+          "Object_61",
+          "Object_63",
+          "Object_65",
+          "Object_67",
+          "Object_69",
+          "Object_71",
+          "Object_73",
+          "Object_75",
+          "Object_77",
+          "Object_79",
+          "Object_8",
+          "Object_81",
+          "Object_83",
+          "Object_85",
+          "Object_87",
+          "Object_89",
+          "Object_91",
+          "Object_93",
+          "Object_95",
+          "Object_97",
+          "Object_99"
         ],
-        "preservedRoles": [
-          "mat_0.008 display/button UV",
-          "Material.006 lens coating",
-          "mat_2.006 lens elements",
-          "mat_0.002_0.005 and mat_0.006 lettering/marks"
-        ]
+        "restoredLensUv": [
+          "Object_13",
+          "Object_15",
+          "Object_17",
+          "Object_19"
+        ],
+        "bindings": [
+          {
+            "object": "Object_101",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_103",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_105",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_107",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_109",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_11",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_111",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_113",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_115",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_117",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_119",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_121",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_123",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_125",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_127",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_129",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_13",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "bezel",
+            "material": "Pocket3_Lens_Bezel_AtlasUV",
+            "uvMap": "UVMap.001"
+          },
+          {
+            "object": "Object_131",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_133",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_135",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_137",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_139",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_141",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_143",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_145",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_147",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_149",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_15",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "bezel",
+            "material": "Pocket3_Lens_Bezel_AtlasUV",
+            "uvMap": "UVMap.001"
+          },
+          {
+            "object": "Object_151",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_153",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_155",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_157",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_159",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_161",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_163",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_165",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_167",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_169",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_17",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "lens",
+            "material": "Pocket3_Lens_Optics",
+            "uvMap": "UVMap.001"
+          },
+          {
+            "object": "Object_171",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_173",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_175",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_177",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_179",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_181",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_183",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_185",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_187",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_189",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_19",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "lens_interior",
+            "material": "Pocket3_Lens_Interior_AtlasUV",
+            "uvMap": null
+          },
+          {
+            "object": "Object_191",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_193",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_195",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_197",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_199",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_201",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_203",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_205",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_207",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_209",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_21",
+            "sourceMaterials": [
+              "mat_2.006"
+            ],
+            "role": "lens_window",
+            "material": "Pocket3_Lens_Window",
+            "uvMap": null
+          },
+          {
+            "object": "Object_211",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_213",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_215",
+            "sourceMaterials": [
+              "mat_0.008"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_217",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "connector",
+            "material": "Pocket3_Connector_Dark",
+            "uvMap": null
+          },
+          {
+            "object": "Object_219",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_221",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "grip",
+            "material": "Pocket3_Grip_Textured",
+            "uvMap": "UVMap",
+            "secondaryMaterials": [
+              {
+                "role": "label",
+                "material": "Pocket3_Rear_Print",
+                "faces": 191
+              }
+            ]
+          },
+          {
+            "object": "Object_223",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "screen_frame",
+            "material": "Pocket3_Screen_Frame",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_225",
+            "sourceMaterials": [
+              "mat_0.008"
+            ],
+            "role": "screen",
+            "material": "Pocket3_Screen_Glass",
+            "uvMap": null
+          },
+          {
+            "object": "Object_23",
+            "sourceMaterials": [
+              "Material.006"
+            ],
+            "role": "lens_window",
+            "material": "Pocket3_Lens_Window",
+            "uvMap": null
+          },
+          {
+            "object": "Object_25",
+            "sourceMaterials": [
+              "mat_2.006"
+            ],
+            "role": "lens_interior",
+            "material": "Pocket3_Lens_Interior",
+            "uvMap": null
+          },
+          {
+            "object": "Object_27",
+            "sourceMaterials": [
+              "mat_2.006"
+            ],
+            "role": "lens_window",
+            "material": "Pocket3_Lens_Window",
+            "uvMap": null
+          },
+          {
+            "object": "Object_29",
+            "sourceMaterials": [
+              "Material.006"
+            ],
+            "role": "lens_window",
+            "material": "Pocket3_Lens_Window",
+            "uvMap": null
+          },
+          {
+            "object": "Object_31",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "lens_window",
+            "material": "Pocket3_Lens_Window",
+            "uvMap": null
+          },
+          {
+            "object": "Object_33",
+            "sourceMaterials": [
+              "Material.006"
+            ],
+            "role": "lens_window",
+            "material": "Pocket3_Lens_Window",
+            "uvMap": null
+          },
+          {
+            "object": "Object_35",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_37",
+            "sourceMaterials": [
+              "mat_0.008"
+            ],
+            "role": "bezel",
+            "material": "Pocket3_Lens_Bezel",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_39",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_41",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_43",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "motor",
+            "material": "Pocket3_Motor_Cover",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_45",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_47",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "connector",
+            "material": "Pocket3_Connector_Dark",
+            "uvMap": null
+          },
+          {
+            "object": "Object_49",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "connector",
+            "material": "Pocket3_Connector_Dark",
+            "uvMap": null
+          },
+          {
+            "object": "Object_5",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_51",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_53",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_55",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_57",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_59",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "connector",
+            "material": "Pocket3_Connector_Dark",
+            "uvMap": null
+          },
+          {
+            "object": "Object_61",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "body",
+            "material": "Pocket3_Body_Graphite",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_63",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "grip",
+            "material": "Pocket3_Grip_Textured",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_65",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_67",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "led",
+            "material": "Pocket3_Status_Green",
+            "uvMap": null
+          },
+          {
+            "object": "Object_69",
+            "sourceMaterials": [
+              "mat_0.008"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_71",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "shutter",
+            "material": "Pocket3_Shutter_Ring",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_73",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "body",
+            "material": "Pocket3_Body_Graphite",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_75",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "grip",
+            "material": "Pocket3_Grip_Textured",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_77",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_79",
+            "sourceMaterials": [
+              "mat_0.006"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_8",
+            "sourceMaterials": [
+              "mat_0.007"
+            ],
+            "role": "gimbal",
+            "material": "Pocket3_Gimbal_Satin",
+            "uvMap": "UVMap"
+          },
+          {
+            "object": "Object_81",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_83",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_85",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_87",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_89",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_91",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_93",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_95",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_97",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          },
+          {
+            "object": "Object_99",
+            "sourceMaterials": [
+              "mat_0.002_0.005"
+            ],
+            "role": "rubber",
+            "material": "Pocket3_Control_Rubber",
+            "uvMap": null
+          }
+        ],
+        "surfaces": {
+          "body": {
+            "name": "Pocket3_Body_Graphite",
+            "color": "303536",
+            "roughness": 0.82,
+            "specular": 0.28,
+            "atlas": "corrected",
+            "normal": 0.45
+          },
+          "grip": {
+            "name": "Pocket3_Grip_Textured",
+            "color": "414649",
+            "roughness": 0.91,
+            "specular": 0.25,
+            "atlas": "corrected",
+            "normal": 0.7
+          },
+          "gimbal": {
+            "name": "Pocket3_Gimbal_Satin",
+            "color": "1F2325",
+            "roughness": 0.57,
+            "specular": 0.3,
+            "normal": 0.25
+          },
+          "motor": {
+            "name": "Pocket3_Motor_Cover",
+            "color": "41474A",
+            "roughness": 0.66,
+            "specular": 0.3,
+            "normal": 0.3
+          },
+          "bezel": {
+            "name": "Pocket3_Lens_Bezel",
+            "color": "303638",
+            "roughness": 0.43,
+            "specular": 0.35,
+            "normal": 0.3
+          },
+          "lens": {
+            "name": "Pocket3_Lens_Optics",
+            "color": "FFFFFF",
+            "roughness": 0.14,
+            "specular": 0.4,
+            "coat": 0.35,
+            "atlas": "source",
+            "normal": 0.15
+          },
+          "lens_interior": {
+            "name": "Pocket3_Lens_Interior",
+            "color": "141A18",
+            "roughness": 0.38,
+            "specular": 0.3
+          },
+          "lens_window": {
+            "name": "Pocket3_Lens_Window",
+            "color": "71897B",
+            "roughness": 0.13,
+            "specular": 0.4,
+            "coat": 0.45,
+            "alpha": 0.03
+          },
+          "screen_frame": {
+            "name": "Pocket3_Screen_Frame",
+            "color": "242B2D",
+            "roughness": 0.48,
+            "specular": 0.3,
+            "normal": 0.25
+          },
+          "screen": {
+            "name": "Pocket3_Screen_Glass",
+            "color": "10191B",
+            "roughness": 0.24,
+            "specular": 0.35,
+            "coat": 0.25
+          },
+          "rubber": {
+            "name": "Pocket3_Control_Rubber",
+            "color": "303638",
+            "roughness": 0.88,
+            "specular": 0.25
+          },
+          "shutter": {
+            "name": "Pocket3_Shutter_Ring",
+            "color": "FFFFFF",
+            "roughness": 0.57,
+            "specular": 0.3,
+            "atlas": "source"
+          },
+          "led": {
+            "name": "Pocket3_Status_Green",
+            "color": "68A078",
+            "roughness": 0.34,
+            "specular": 0.3,
+            "emission": 0.12
+          },
+          "connector": {
+            "name": "Pocket3_Connector_Dark",
+            "color": "252B2D",
+            "roughness": 0.62,
+            "specular": 0.3,
+            "metallic": 0.25
+          },
+          "label": {
+            "name": "Pocket3_Rear_Print",
+            "color": "BBC0BD",
+            "roughness": 0.8,
+            "specular": 0.25
+          }
+        },
+        "treatment": "Per-component graphite plastic, rubber grip, satin gimbal, black display, restored lens photo, orange shutter ring and green LED. Correct non-color normal atlas. Keep all geometry and original motion."
       }
     ],
     "preserved": [
       "Sony lens glass and viewfinder",
-      "Pocket mat_0.008 optical/display material",
-      "Pocket Material.006 optical coating",
-      "separate Pocket metal materials",
+      "Pocket lens photo and shutter-ring atlas",
+      "Pocket original geometry and UV coordinates",
       "metal pixels in Sony body/barrel ORM",
-      "base-color and normal textures",
+      "native texture dimensions",
       "all source transforms and animation curves",
       "unselected materials, including drone"
     ]
@@ -579,7 +1752,7 @@
   ],
   "rendering": {
     "sourceViewTransform": "AgX",
-    "sourceExposure": 0.0,
+    "sourceExposure": 0,
     "note": "Use the exported camera and a shared timeline. Do not add a second DOM translation or fit each model to its bounds."
   }
 }

@@ -18,6 +18,9 @@ import tempfile
 import bpy
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pocket_materials import ATLAS_BASE, apply_pocket_reference, linear, rgb
+
 
 ROOT_NAMES = {"sony": "z轴移动", "pocket": "空物体"}
 FRAME_START = 0
@@ -29,7 +32,6 @@ DISPLAY_SCALE = 1.12
 BODY_MATERIALS = {
     "Sony_A7RM3_Body_Mat": "sony-body",
     "Sony24_70G_Body_Mat": "sony-lens-barrel",
-    "mat_0.007": "pocket-shell",
 }
 
 
@@ -137,10 +139,9 @@ def set_unlinked_value(material, shader, name, value):
 def apply_matte_profile(meshes, roots, temporary_directory):
     """Change selected body material copies, never shared drone/source materials.
 
-    Sony's ORM metal mask still preserves metal rings and contacts. Pocket's
-    imported shell atlas misclassifies much of its plastic as metal, so only
-    that material gets a nonmetal matte mask. Screens, optical coatings, the
-    viewfinder and separate small metal materials retain their source nodes.
+    Sony's ORM metal mask preserves metal rings and contacts. Its optical
+    materials retain their source nodes. Pocket is repaired separately by
+    component in pocket_materials.py.
     """
     records = []
     copied = {}
@@ -165,7 +166,7 @@ def apply_matte_profile(meshes, roots, temporary_directory):
                 slot.material = copied[source_material]
                 continue
             material = source_material.copy()
-            material.name = "Pocket3_Body_Matte" if kind == "pocket-shell" else original_name + "_web_matte"
+            material.name = original_name + "_web_matte"
             material["portfolio_source_material"] = original_name
             material["portfolio_material_profile"] = MATTE_PROFILE
             shader = principled(material)
@@ -190,33 +191,10 @@ def apply_matte_profile(meshes, roots, temporary_directory):
                       "specularIORLevel": float(shader.inputs["Specular IOR Level"].default_value),
                       "specularLinked": shader.inputs["Specular IOR Level"].is_linked,
                       "coatWeight": float(shader.inputs["Coat Weight"].default_value)}
-            if kind == "pocket-shell":
-                # Source mat_0.002_0.005 and mat_0.006 have roughness=1, coat=0.
-                # They are lettering/marks, so use their finish as a reference,
-                # keeping the shell's own high-resolution albedo, normal and AO.
-                values[:, 1] = 1.0
-                values[:, 2] = 0.0
-                specular = 0.28
-                treatment = "Unified graphite plastic shell: roughness 1, metallic 0, coat 0, specular 0.28; reference source mat_0.002_0.005/mat_0.006 matte finish, preserve shell albedo/normal/AO, apply neutral 0.9 color tint."
-                base = shader.inputs["Base Color"]
-                color_link = base.links[0]
-                # Blender 5.2 glTF recognizes the modern Mix node's constant
-                # multiplier; legacy MixRGB renders in Blender but loses its
-                # tint on export.
-                tint = material.node_tree.nodes.new("ShaderNodeMix")
-                tint.label = "Unified graphite body color"
-                tint.data_type = "RGBA"
-                tint.blend_type = "MULTIPLY"
-                next(s for s in tint.inputs if s.type == "VALUE" and s.name == "Factor").default_value = 1.0
-                color_inputs = [s for s in tint.inputs if s.type == "RGBA"]
-                color_inputs[1].default_value = (0.9, 0.9, 0.9, 1.0)
-                material.node_tree.links.new(color_link.from_socket, color_inputs[0])
-                material.node_tree.links.new(next(s for s in tint.outputs if s.type == "RGBA"), base)
-            else:
-                nonmetal = values[:, 2] < 0.5
-                values[nonmetal, 1] = np.minimum(1.0, np.maximum(0.64, values[nonmetal, 1] * 0.9 + 0.14))
-                specular = 0.35
-                treatment = "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
+            nonmetal = values[:, 2] < 0.5
+            values[nonmetal, 1] = np.minimum(1.0, np.maximum(0.64, values[nonmetal, 1] * 0.9 + 0.14))
+            specular = 0.35
+            treatment = "Nonmetal body/barrel ORM roughness: max(0.64, source * 0.9 + 0.14), capped at 1; keep metal-mask pixels unchanged."
             adjusted_image = packed_png_copy(original_image, original_image.name + "_web_matte",
                                              Path(temporary_directory) / f"matte-orm-{len(copied)}.png", pixels)
             # Body AO and metallic nodes may reference the same atlas; reconnect
@@ -234,10 +212,6 @@ def apply_matte_profile(meshes, roots, temporary_directory):
                                 "metallicMean": float(sample[:, 2].mean()),
                                 "specularIORLevel": specular, "coatWeight": 0.0},
                       "treatment": treatment}
-            if kind == "pocket-shell":
-                record["referenceMaterials"] = ["mat_0.002_0.005", "mat_0.006"]
-                record["baseColorFactor"] = [0.9, 0.9, 0.9, 1.0]
-                record["preservedRoles"] = ["mat_0.008 display/button UV", "Material.006 lens coating", "mat_2.006 lens elements", "mat_0.002_0.005 and mat_0.006 lettering/marks"]
             material["portfolio_material_record"] = json.dumps(record)
             records.append(record)
             copied[source_material] = material
@@ -274,8 +248,8 @@ def remove_unused_uv_layers(meshes):
         )
         if named_maps and chosen not in uv_layers:
             raise RuntimeError(f"Required UV map {chosen} is missing on {obj.name}")
-        # Pocket's screen explicitly uses UVMap.004. Keep its coordinates,
-        # discard the four unused sets, and let glTF map it to TEXCOORD_0.
+        # Keep each material's selected source UV coordinates (including the
+        # restored Pocket lens .001), then map the sole set to TEXCOORD_0.
         for layer in list(uv_layers):
             if not has_texture or layer.name != chosen:
                 uv_layers.remove(layer)
@@ -326,6 +300,9 @@ def main():
     if args.material_profile == "matte":
         with tempfile.TemporaryDirectory(prefix="portfolio-device-matte-") as temporary_directory:
             material_records = apply_matte_profile(meshes, roots, temporary_directory)
+            pocket_meshes = [obj for obj in roots["pocket"].children_recursive if obj.type == "MESH"]
+            material_records.append(apply_pocket_reference(roots["pocket"], pocket_meshes,
+                                                         packed_png_copy, temporary_directory))
             if blend_copy:
                 blend_copy.parent.mkdir(parents=True, exist_ok=True)
                 # Save before changing camera names, timeline settings, UV sets
@@ -454,9 +431,9 @@ def main():
                             "displayScalePreference": DISPLAY_SCALE if args.material_profile == "matte" else 1.0,
                             "authoringCopy": blend_copy.name if blend_copy else None,
                             "adjustments": material_records,
-                            "preserved": ["Sony lens glass and viewfinder", "Pocket mat_0.008 optical/display material",
-                                          "Pocket Material.006 optical coating", "separate Pocket metal materials",
-                                          "metal pixels in Sony body/barrel ORM", "base-color and normal textures",
+                            "preserved": ["Sony lens glass and viewfinder", "Pocket lens photo and shutter-ring atlas",
+                                          "Pocket original geometry and UV coordinates",
+                                          "metal pixels in Sony body/barrel ORM", "native texture dimensions",
                                           "all source transforms and animation curves", "unselected materials, including drone"]},
         "excluded": ["无人机 collection", "Pocket unparented original fragments", "AREA lights"],
         "rendering": {"sourceViewTransform": scene.view_settings.view_transform,
@@ -508,12 +485,33 @@ def validate_texture_export(path, gltf, texture_records, material_records):
         if size not in source_sizes:
             raise RuntimeError(f"Unexpected exported texture dimensions: {size}")
     for record in material_records:
-        if record["kind"] != "pocket-shell":
+        if record["kind"] != "pocket-reference":
             continue
-        material = next(m for m in gltf["materials"] if m["name"] == record["material"])
-        factor = material.get("pbrMetallicRoughness", {}).get("baseColorFactor", [1.0] * 4)
-        if any(abs(a - b) > 1e-6 for a, b in zip(factor, record["baseColorFactor"])):
-            raise RuntimeError("Pocket body color differs between Blender and glTF")
+        by_name = {m["name"]:m for m in gltf["materials"]}
+        nodes = {n["name"]:n for n in gltf["nodes"]}
+        for binding in record["bindings"]:
+            material = by_name[binding["material"]]
+            spec = record["surfaces"][binding["role"]]
+            pbr = material["pbrMetallicRoughness"]
+            if abs(pbr.get("roughnessFactor", 1) - spec["roughness"]) > 1e-6 or abs(pbr.get("metallicFactor", 1) - spec.get("metallic", 0)) > 1e-6:
+                raise RuntimeError(f"Pocket surface parameters differ: {binding['object']}")
+            if spec.get("atlas") and "baseColorTexture" not in pbr:
+                raise RuntimeError(f"Pocket color texture is missing: {binding['object']}")
+            if spec.get("normal") and "normalTexture" not in material:
+                raise RuntimeError(f"Pocket normal texture is missing: {binding['object']}")
+            color = linear(rgb(spec["color"]))
+            if spec.get("atlas") == "corrected":
+                color = color / linear(rgb(ATLAS_BASE))
+            elif spec.get("atlas") == "source":
+                color = np.ones(3)
+            expected_factor = [*color, spec.get("alpha", 1)]
+            actual_factor = pbr.get("baseColorFactor", [1.0] * 4)
+            if any(abs(a-b) > 1e-6 for a,b in zip(expected_factor, actual_factor)):
+                raise RuntimeError(f"Pocket color differs between Blender and glTF: {binding['object']}")
+            primitives = gltf["meshes"][nodes[binding["object"]]["mesh"]]["primitives"]
+            expected = {binding["material"]} | {m["material"] for m in binding.get("secondaryMaterials", [])}
+            if {gltf["materials"][p["material"]]["name"] for p in primitives} != expected:
+                raise RuntimeError(f"Pocket material binding differs: {binding['object']}")
 
 
 if __name__ == "__main__":
