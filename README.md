@@ -56,6 +56,8 @@ TypeScript 严格检查新增入口、调参文件和全景生命周期。继承
 
 视频实验运行 `npm run dev:video`（4184）；独立构建为 `npm run build:video`，输出 `dist-experiments/`。Three.js 用于实验中的相机／Pocket 滚动动画和 AI 生成画面，主站没有引入它。原 Blender 文件不作为网页资源或 Git 素材上传。
 
+`experiments/cinematic-portfolio/` 是 AFTERIMAGE「余像」独立设计预览，保留原 Hero 与全景，重设五个叙事章节和附属界面。运行 `npm run dev:design`（4190），整站入口 `/`，单章入口 `/chapters.html?chapter=profile`。独立构建 `npm run build:design` 输出 `dist-design-preview/`，不并入主站 `dist/`，详见实验目录 README。
+
 其他完整本地副本：
 
 - `G:\zuopingji\Portfolio-pre-continuum-20260929\Editorial Vanguard\code`

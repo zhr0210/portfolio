@@ -1,0 +1,1651 @@
+/* AFTERIMAGE / cinematic study. Hero and panorama retain their copied styles. */
+.afterimage-preview {
+  --film-ink: #080808;
+  --film-paper: #eeeeea;
+  --film-muted: #92928f;
+  --film-rule: #ffffff24;
+}
+.afterimage-edition .ct-theatre {
+  background: var(--ct-ink);
+}
+.film-story {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--film-paper);
+  font-family: 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.film-scene-layer {
+  position: absolute;
+  inset: 0;
+}
+.film-chapter {
+  position: absolute;
+  inset: 0;
+  background: var(--film-ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+.film-chapter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  border: 1px solid #ffffff04;
+}
+.film-chapter button {
+  pointer-events: auto;
+}
+.film-chapter img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.film-scene-heading {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #b5b5af;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  z-index: 12;
+}
+.film-scene-heading > span {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.film-scene-heading i,
+.film-selected-bottom i {
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  background: var(--film-rule);
+}
+.film-overline {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #aeaeaa;
+  margin: 0 0 25px;
+}
+.film-title {
+  margin: 0;
+  font-size: clamp(50px, 5.5vw, 88px);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -0.065em;
+  text-wrap: nowrap;
+}
+.film-reveal-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.film-reveal-phrase {
+  display: block;
+  transform-origin: 0 50%;
+}
+.film-statement {
+  margin: 28px 0 0;
+  font-size: 15px;
+  line-height: 1.9;
+  letter-spacing: 0.035em;
+}
+.film-body {
+  font-size: 13px;
+  line-height: 2;
+  color: var(--film-muted);
+  letter-spacing: 0.025em;
+  text-wrap: pretty;
+}
+.film-ghost-word {
+  position: absolute;
+  bottom: 5%;
+  left: 4.5%;
+  font-size: 17.8vw;
+  letter-spacing: -0.075em;
+  line-height: 1;
+  font-weight: 400;
+  color: #ffffff06;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: -1;
+}
+.film-image-window {
+  position: absolute;
+  margin: 0;
+  top: 23%;
+  height: 54%;
+  overflow: hidden;
+  background: #141414;
+}
+.film-image-window img {
+  object-position: 50% 50%;
+}
+.film-image-window::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #08080844, transparent 24%, transparent 75%, #08080810);
+  pointer-events: none;
+}
+.film-image-window figcaption {
+  position: absolute;
+  left: 25px;
+  right: 25px;
+  bottom: 23px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-shadow: 0 1px 6px #000;
+  z-index: 2;
+}
+.film-image-window figcaption span {
+  font-size: 8px;
+}
+.film-image-corner {
+  position: absolute;
+  top: 23px;
+  right: 25px;
+  border-top: 1px solid #fff9;
+  border-right: 1px solid #fff9;
+  padding: 10px 10px 0 0;
+  color: #fff;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  z-index: 2;
+}
+.film-profile-copy {
+  position: absolute;
+  left: 6%;
+  top: 24%;
+  z-index: 4;
+  width: 43%;
+  text-shadow: 0 2px 20px #08080866;
+}
+.film-profile-copy .film-body {
+  margin-top: 14px;
+  max-width: 300px;
+}
+.film-frame-rule {
+  position: absolute;
+  left: 6%;
+  top: 83%;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #8e8e89;
+}
+.film-frame-rule i {
+  height: 1px;
+  width: 80px;
+  background: var(--film-rule);
+}
+.film-method-copy {
+  position: absolute;
+  top: 24%;
+  left: 6%;
+  z-index: 4;
+}
+.film-cut-stage {
+  position: absolute;
+  left: 36%;
+  top: 24%;
+  width: 57%;
+  height: 44%;
+}
+.film-cut-slice {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 33.3333%;
+  overflow: hidden;
+  background: #171717;
+  box-shadow: 0 16px 35px #0006;
+}
+.film-cut-slice img {
+  position: absolute;
+  top: 0;
+  width: 300%;
+  max-width: none;
+  object-fit: cover;
+}
+.film-composition-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 0.5;
+  pointer-events: none;
+}
+.film-grid-corners {
+  stroke-width: 1.2;
+}
+.film-cut-note {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -47px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--film-muted);
+}
+.film-method-steps {
+  position: absolute;
+  top: 76%;
+  left: 6%;
+  right: 6%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 35px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.film-method-steps li {
+  padding-top: 15px;
+  border-top: 1px solid var(--film-rule);
+  color: #747471;
+}
+.film-method-steps li.is-current {
+  color: var(--film-paper);
+  border-color: #dadad3;
+}
+.film-method-steps li > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+.film-method-steps small {
+  font-size: 9px;
+}
+.film-method-steps h3 {
+  font-size: 22px;
+  font-weight: 400;
+  margin: 12px 0 8px;
+}
+.film-method-steps p {
+  max-width: 220px;
+  font-size: 12px;
+  line-height: 1.85;
+  margin: 0;
+}
+.film-practice-title {
+  position: absolute;
+  left: 6%;
+  top: 22%;
+  z-index: 4;
+}
+.film-practice-title .film-title {
+  font-size: clamp(42px, 4.65vw, 76px);
+}
+.film-practice-title .film-statement {
+  margin-top: 20px;
+}
+.film-practice-stage {
+  position: absolute;
+  top: 26%;
+  left: 40%;
+  width: 53%;
+  height: 51%;
+}
+.film-practice-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  margin: 0;
+  background: #151515;
+}
+.film-practice-frame img {
+  object-position: 50% 36%;
+}
+.film-practice-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 70%, #0008);
+}
+.film-practice-frame figcaption {
+  position: absolute;
+  z-index: 1;
+  bottom: 25px;
+  left: 25px;
+  right: 25px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+}
+.film-practice-frame figcaption span:last-child {
+  font-size: 25px;
+}
+.film-practice-info {
+  position: absolute;
+  top: 51%;
+  left: 6%;
+  width: 27%;
+  z-index: 5;
+}
+.film-practice-info ol {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px;
+}
+.film-practice-info li {
+  border-bottom: 1px solid #ffffff1a;
+}
+.film-practice-info li button {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  width: 100%;
+  padding: 10px 0;
+  background: none;
+  border: 0;
+  color: #6e6e69;
+  text-align: left;
+}
+.film-practice-info li.is-current button {
+  color: var(--film-paper);
+}
+.film-practice-info button > span {
+  font-size: 24px;
+}
+.film-practice-info button > small {
+  font-size: 9px;
+  letter-spacing: 0.13em;
+}
+.film-practice-info button > i {
+  margin-left: auto;
+  font-style: normal;
+}
+.film-practice-info > .film-body {
+  min-height: 72px;
+}
+.film-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 30px;
+  padding: 8px 0;
+  color: var(--film-paper);
+  border: 0;
+  border-bottom: 1px solid #ffffff40;
+  background: transparent;
+  font-size: 12px;
+}
+.film-practice-info > .film-text-link {
+  margin-top: 9px;
+}
+.film-selected-heading {
+  position: absolute;
+  top: 19%;
+  left: 6%;
+  right: 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 50px;
+}
+.film-selected-heading .film-title {
+  font-size: clamp(42px, 4.5vw, 70px);
+}
+.film-selected-heading .film-reveal-line {
+  display: inline-block;
+}
+.film-selected-heading > div {
+  max-width: 330px;
+}
+.film-selected-heading .film-statement {
+  margin-top: 0;
+}
+.film-selected-heading .film-body {
+  margin-bottom: 0;
+}
+.film-strip-window {
+  position: absolute;
+  top: 36%;
+  left: 0;
+  width: 100%;
+  height: 45%;
+  overflow: clip;
+  --card-width: clamp(260px, 28vw, 405px);
+  --card-gap: 36px;
+}
+.film-strip {
+  position: absolute;
+  left: calc(50% - var(--card-width) / 2);
+  top: 0;
+  display: flex;
+  gap: var(--card-gap);
+  width: max-content;
+  transform: translateX(calc(var(--strip) * -6 * (var(--card-width) + var(--card-gap))));
+}
+.film-work-frame {
+  width: var(--card-width);
+  padding: 0;
+  border: 0;
+  color: var(--film-paper);
+  background: none;
+  text-align: left;
+  flex: none;
+}
+.film-perforation {
+  height: 16px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 5px,
+    #eeeeea60 5px 12px,
+    transparent 12px 22px
+  );
+  background-size: 22px 5px;
+  background-repeat: repeat-x;
+  background-position: 0 6px;
+}
+.film-work-image {
+  height: clamp(200px, 31vh, 315px);
+  position: relative;
+  overflow: hidden;
+}
+.film-work-image img {
+  object-position: 50% 25%;
+}
+.film-work-image > span {
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  font-size: 25px;
+  color: white;
+  text-shadow: 0 2px 9px #0008;
+}
+.film-work-caption {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 17px;
+}
+.film-work-caption > span {
+  font-size: 11px;
+  color: var(--film-muted);
+}
+.film-work-caption > span:last-child {
+  margin-left: auto;
+  font-size: 17px;
+}
+.film-work-caption h3 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.film-work-caption small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.09em;
+  color: var(--film-muted);
+  margin-top: 3px;
+}
+.film-work-caption + .film-perforation {
+  margin-top: 15px;
+}
+.film-selected-bottom {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 11.5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+.film-selected-bottom > span,
+.film-selected-bottom > div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.film-selected-bottom > div > button:not(.film-text-link) {
+  border: 1px solid #ffffff28;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  color: var(--film-paper);
+}
+.film-selected-bottom button:disabled {
+  opacity: 0.2;
+}
+.film-end-image {
+  position: absolute;
+  inset: 0;
+}
+.film-end-image img {
+  object-position: 50% 50%;
+}
+.film-end-copy {
+  position: absolute;
+  left: 22%;
+  top: 24%;
+  z-index: 3;
+}
+.film-end-copy .film-title {
+  font-size: clamp(65px, 7.5vw, 120px);
+}
+.film-end-actions {
+  display: flex;
+  align-items: center;
+  gap: 55px;
+  margin-top: 37px;
+}
+.film-end-actions > button:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 100px;
+  border: 0;
+  border-bottom: 1px solid #eeeeea90;
+  padding: 0 0 14px;
+  background: none;
+  color: var(--film-paper);
+  font-size: 24px;
+  font-weight: 400;
+}
+.film-end-actions > button:first-child span {
+  font-size: 35px;
+}
+.film-end-services {
+  margin-top: 25px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--film-muted);
+}
+.film-colophon {
+  position: absolute;
+  bottom: 13%;
+  left: 6%;
+  right: 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--film-muted);
+  border-top: 1px solid var(--film-rule);
+  padding-top: 20px;
+}
+.film-colophon strong {
+  font-size: 14px;
+  color: var(--film-paper);
+  font-weight: 400;
+}
+.film-progress {
+  position: absolute;
+  bottom: 26px;
+  left: 6%;
+  right: 6%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 25;
+  color: #aeaeaa;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.film-progress-rule {
+  height: 1px;
+  width: 96px;
+  background: #ffffff21;
+  overflow: hidden;
+}
+.film-progress-rule i {
+  display: block;
+  height: 100%;
+  background: #ecece7;
+  transform-origin: left;
+}
+.film-progress > button {
+  margin-left: auto;
+  pointer-events: auto;
+  background: transparent;
+  border: 0;
+  color: #c6c6bf;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 6px 0;
+}
+body[data-space='about']:not([data-chapter='hero']) .afterimage-edition .space-dock-wrap {
+  visibility: hidden;
+  pointer-events: none;
+}
+body[data-space='about']:not([data-chapter='hero']) .afterimage-edition .flow-edge-diffusion {
+  display: none;
+}
+.afterimage-preview button:focus-visible,
+.afterimage-preview a:focus-visible {
+  outline: 1px solid #eeeeea;
+  outline-offset: 6px;
+}
+.film-menu-toggle {
+  pointer-events: auto;
+  margin-left: auto;
+}
+.film-menu-motion {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  overflow: hidden;
+}
+.film-menu-motion.is-open {
+  pointer-events: auto;
+}
+.film-menu-layer {
+  position: absolute;
+  inset: 0;
+  background: #292929;
+}
+.film-menu-layer:nth-child(2) {
+  background: #141414;
+}
+.film-menu-panel {
+  position: absolute;
+  inset: 0;
+  background: #080808;
+  color: #eeeeea;
+  padding: 42px 6%;
+}
+.film-menu-panel button {
+  background: none;
+  border: 0;
+  color: inherit;
+}
+.film-menu-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.film-menu-top > button {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 0;
+  font-size: 15px;
+}
+.film-menu-top > button span {
+  font-size: 28px;
+  line-height: 1;
+}
+.film-menu-intro {
+  position: absolute;
+  top: 25%;
+  left: 6%;
+  width: 30%;
+}
+.film-menu-intro p {
+  font-weight: 300;
+  font-size: clamp(30px, 3.3vw, 55px);
+  line-height: 1.6;
+  letter-spacing: -0.035em;
+}
+.film-menu-intro > span {
+  display: block;
+  font-size: 9px;
+  line-height: 2.2;
+  letter-spacing: 0.15em;
+  margin-top: 50px;
+  color: #858581;
+}
+.film-menu-links {
+  position: absolute;
+  top: 22%;
+  right: 6%;
+  width: 48%;
+}
+.film-menu-links > div {
+  overflow: hidden;
+  border-bottom: 1px solid #ffffff26;
+}
+.film-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 25px;
+  padding: 20px 0;
+  text-align: left;
+}
+.film-menu-item small {
+  font-size: 10px;
+  color: #91918b;
+}
+.film-menu-item > span {
+  font-size: clamp(24px, 2.5vw, 41px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+.film-menu-item em {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  font-style: normal;
+  margin-left: auto;
+  color: #91918b;
+}
+.film-menu-item i {
+  font-size: 25px;
+  font-style: normal;
+}
+.film-menu-item[aria-current] {
+  color: #fff;
+}
+.film-menu-item:hover {
+  color: #fff;
+}
+.film-menu-bottom {
+  position: absolute;
+  bottom: 42px;
+  left: 6%;
+  right: 6%;
+  display: flex;
+  gap: 45px;
+  border-top: 1px solid #ffffff26;
+  padding-top: 22px;
+  font-size: 11px;
+}
+.film-menu-bottom span {
+  margin-left: auto;
+  color: #858581;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.film-lab-nav {
+  position: fixed;
+  top: 25px;
+  left: 6%;
+  right: 6%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 40;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+}
+.film-lab-nav a {
+  color: #eeeeea;
+  text-decoration: none;
+}
+.film-lab-nav a:first-child {
+  display: flex;
+  gap: 20px;
+}
+.film-lab-nav span {
+  color: #888883;
+  font-size: 9px;
+}
+.film-lab-chapters {
+  position: fixed;
+  top: 67px;
+  left: 6%;
+  display: flex;
+  gap: 24px;
+  z-index: 40;
+}
+.film-lab-chapters a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #8c8c86;
+  font-size: 10px;
+  text-decoration: none;
+}
+.film-lab-chapters a[aria-current] {
+  color: #eeeeea;
+}
+.film-lab-chapters small {
+  font-size: 8px;
+}
+.chapter-preview .film-scene-heading {
+  top: 17%;
+}
+.chapter-preview .film-profile-copy {
+  top: 29%;
+}
+.chapter-preview .film-image-window {
+  top: 29%;
+  height: 50%;
+}
+.chapter-preview .film-method-copy {
+  top: 29%;
+}
+.chapter-preview .film-practice-title {
+  top: 27%;
+}
+.chapter-preview .film-selected-heading {
+  top: 23%;
+}
+.chapter-preview .film-strip-window {
+  top: 40%;
+  height: 43%;
+}
+/* The copied dialog behaviors now sit on a matte screening desk. */
+.afterimage-preview .dialog-backdrop {
+  background: #080808ed;
+  backdrop-filter: blur(8px);
+}
+.afterimage-preview .dialog-panel {
+  background: #0f0f0f;
+  border: 1px solid #eeeeea26;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 35px;
+  color: #eeeeea;
+  max-width: 650px;
+}
+.afterimage-preview .dialog-panel::before,
+.afterimage-preview .dialog-panel::after {
+  display: none;
+}
+.afterimage-preview .dialog-panel h2 {
+  font-weight: 300;
+  font-size: clamp(32px, 4vw, 54px);
+  letter-spacing: -0.045em;
+}
+.afterimage-preview .dialog-panel h2 em {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+}
+.afterimage-preview .dialog-header {
+  padding-bottom: 19px;
+  border-bottom: 1px solid #ffffff24;
+}
+.afterimage-preview .contact-form input,
+.afterimage-preview .contact-form textarea,
+.afterimage-preview .contact-form select {
+  background: transparent;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid #ffffff35;
+  padding: 11px 0;
+  color: #eeeeea;
+  box-shadow: none;
+}
+.afterimage-preview .contact-form select option {
+  background: #151515;
+}
+.afterimage-preview .dialog-panel .primary-button {
+  border-radius: 0;
+  background: #eeeeea;
+  color: #080808;
+  padding: 13px 20px;
+  font-weight: 400;
+}
+.afterimage-preview .content-note {
+  color: #94948f;
+  font-size: 11px;
+  line-height: 1.85;
+}
+.afterimage-preview .round-button {
+  background: transparent;
+  border-radius: 0;
+  border: 0;
+}
+.afterimage-preview .profile-skills > div {
+  border-radius: 0;
+  background: transparent;
+  border-bottom: 1px solid #ffffff24;
+}
+.afterimage-preview .artwork-layer {
+  padding: 36px 5vw;
+  background: #080808f7;
+}
+.afterimage-preview .artwork-shade {
+  background: transparent;
+  backdrop-filter: none;
+}
+.afterimage-preview .artwork-edge-blur,
+.afterimage-preview .artwork-glass-gradient,
+.afterimage-preview .artwork-glass-grain {
+  display: none;
+}
+.afterimage-preview .artwork-card {
+  background: #111;
+  border-radius: 0;
+  border: 1px solid #ffffff26;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.afterimage-preview .artwork-card.layout-portrait {
+  width: min(100%, 1120px);
+  height: min(86dvh, 850px);
+  max-width: 1120px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.8fr);
+  gap: 0;
+  padding: 0;
+}
+.afterimage-preview .artwork-card::before,
+.afterimage-preview .artwork-card::after {
+  display: none;
+}
+.afterimage-preview .artwork-media-pane {
+  border-radius: 0;
+  background: #080808;
+  padding: 24px;
+  min-height: 0;
+}
+.afterimage-preview .artwork-reader {
+  border-radius: 0;
+  background: #080808;
+  scrollbar-width: thin;
+}
+.afterimage-preview .artwork-information {
+  padding: 42px 36px 28px;
+}
+.afterimage-preview .artwork-copy h2 {
+  font-size: 38px;
+  font-weight: 300;
+  letter-spacing: -0.035em;
+}
+.afterimage-preview .artwork-description {
+  font-size: 13px;
+  line-height: 2;
+}
+.afterimage-preview .artwork-category,
+.afterimage-preview .artwork-record {
+  color: #9b9b94;
+}
+.afterimage-preview .artwork-close {
+  border-radius: 0;
+  background: #171717;
+  border: 1px solid #ffffff20;
+  right: 10px;
+  top: 10px;
+}
+.afterimage-preview .artwork-tags span {
+  border-radius: 0;
+  background: none;
+  border: 1px solid #ffffff20;
+  padding: 6px 8px;
+}
+.afterimage-preview .artwork-scroll-cue svg {
+  animation: none;
+}
+/* A readable document replaces the theatre when reduced motion is requested. */
+.afterimage-edition.reduce-motion .about-hero-run {
+  height: auto !important;
+}
+.afterimage-edition.reduce-motion .ct-theatre {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}
+.afterimage-edition.reduce-motion .global-canvas.about-hero-stage {
+  position: relative;
+  height: 100dvh;
+}
+.afterimage-edition.reduce-motion .about-flow {
+  position: relative;
+  inset: auto;
+}
+.film-story.is-static {
+  position: relative;
+  inset: auto;
+}
+.is-static .film-scene-layer {
+  position: relative;
+  inset: auto;
+}
+.is-static .film-chapter {
+  position: relative;
+  min-height: 950px;
+}
+.is-static .film-scene-heading {
+  top: 95px;
+}
+.chapter-preview .is-static .film-scene-heading {
+  top: 140px;
+}
+.is-static .film-selected-heading {
+  top: 155px;
+}
+.is-static .film-practice-stage {
+  display: none;
+}
+.is-static .film-practice-info {
+  width: 45%;
+}
+.is-static .film-practice-info li p {
+  padding-bottom: 15px;
+}
+.is-static .film-strip-window {
+  position: relative;
+  top: auto;
+  height: auto;
+  padding: 300px 6% 90px;
+}
+.is-static .film-strip {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: auto;
+  transform: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 35px;
+}
+.is-static .film-work-frame {
+  width: auto;
+}
+.is-static .film-selected-bottom {
+  position: relative;
+  bottom: auto;
+  left: 6%;
+  right: auto;
+  width: 88%;
+  padding-bottom: 45px;
+}
+.is-static .film-selected-bottom > span,
+.is-static .film-selected-bottom > div > button:not(.film-text-link) {
+  display: none;
+}
+.is-static .film-image-window {
+  left: 43%;
+  width: 51%;
+}
+.is-static .film-cut-slice {
+  transform: none !important;
+}
+@media (min-width: 768px) and (max-height: 760px) {
+  .film-title {
+    font-size: clamp(42px, 5vw, 65px);
+  }
+  .film-method-steps {
+    top: 75%;
+  }
+  .film-method-steps p {
+    font-size: 10px;
+  }
+  .film-method-steps h3 {
+    font-size: 17px;
+    margin: 7px 0;
+  }
+  .film-practice-info {
+    top: 53%;
+  }
+  .film-practice-info li button {
+    padding: 6px 0;
+  }
+  .film-practice-info > .film-body {
+    font-size: 11px;
+    min-height: 54px;
+  }
+  .film-end-copy {
+    top: 22%;
+  }
+  .film-end-actions {
+    margin-top: 25px;
+  }
+}
+@media (max-width: 767px) {
+  .film-scene-heading {
+    top: 13%;
+    font-size: 8px;
+    left: 7%;
+    right: 7%;
+    letter-spacing: 0.09em;
+  }
+  .film-scene-heading > span {
+    gap: 9px;
+  }
+  .film-scene-heading i {
+    width: 20px;
+  }
+  .film-title {
+    font-size: 12vw;
+    line-height: 1.22;
+    letter-spacing: -0.07em;
+  }
+  .film-overline {
+    font-size: 8px;
+    margin-bottom: 18px;
+    letter-spacing: 0.1em;
+  }
+  .film-statement {
+    font-size: 12px;
+    line-height: 1.85;
+    margin-top: 15px;
+  }
+  .film-body {
+    font-size: 11px;
+    line-height: 1.9;
+  }
+  .film-ghost-word {
+    bottom: 9%;
+    font-size: 28vw;
+    left: 6%;
+  }
+  .film-profile-copy {
+    top: 22%;
+    left: 7%;
+    width: 86%;
+  }
+  .film-profile-copy .film-body {
+    max-width: 290px;
+  }
+  .film-image-window {
+    top: 51%;
+    height: 30%;
+  }
+  .film-image-window figcaption {
+    left: 17px;
+    right: 17px;
+    bottom: 15px;
+    font-size: 7px;
+  }
+  .film-image-window figcaption span {
+    display: none;
+  }
+  .film-image-corner {
+    top: 14px;
+    right: 16px;
+    font-size: 7px;
+  }
+  .film-frame-rule {
+    left: 7%;
+    top: 87%;
+    gap: 18px;
+    font-size: 7px;
+  }
+  .film-frame-rule i {
+    width: 35px;
+  }
+  .film-method-copy {
+    top: 21%;
+    left: 7%;
+  }
+  .film-cut-stage {
+    left: 10%;
+    width: 80%;
+    top: 45%;
+    height: 25%;
+  }
+  .film-cut-note {
+    bottom: -42px;
+    font-size: 7px;
+  }
+  .film-method-steps {
+    top: 77%;
+    left: 7%;
+    right: 7%;
+    display: block;
+  }
+  .film-method-steps li {
+    display: none;
+    padding-top: 13px;
+  }
+  .film-method-steps li.is-current {
+    display: block;
+  }
+  .film-method-steps h3 {
+    display: inline-block;
+    font-size: 21px;
+    margin: 7px 15px 0 0;
+  }
+  .film-method-steps p {
+    display: inline;
+    font-size: 11px;
+    max-width: none;
+  }
+  .film-practice-title {
+    top: 21%;
+    left: 7%;
+  }
+  .film-practice-title .film-title {
+    font-size: 10.7vw;
+  }
+  .film-practice-title .film-statement {
+    margin-top: 12px;
+  }
+  .film-practice-stage {
+    top: 42%;
+    left: 7%;
+    width: 86%;
+    height: 29%;
+  }
+  .film-practice-frame figcaption {
+    bottom: 16px;
+    left: 17px;
+    right: 17px;
+    font-size: 8px;
+  }
+  .film-practice-frame figcaption span:last-child {
+    font-size: 19px;
+  }
+  .film-practice-info {
+    top: 75%;
+    left: 7%;
+    width: 86%;
+  }
+  .film-practice-info ol {
+    display: flex;
+    gap: 22px;
+    margin-bottom: 10px;
+  }
+  .film-practice-info li {
+    flex: 1;
+    border-bottom: 0;
+  }
+  .film-practice-info li button {
+    padding: 0;
+    display: block;
+  }
+  .film-practice-info button > span {
+    font-size: 20px;
+  }
+  .film-practice-info button > small {
+    font-size: 7px;
+    display: block;
+    margin-top: 4px;
+  }
+  .film-practice-info button > i {
+    display: none;
+  }
+  .film-practice-info > .film-body {
+    min-height: 0;
+    font-size: 10px;
+    margin: 6px 0;
+    line-height: 1.6;
+  }
+  .film-practice-info > .film-text-link {
+    margin-top: 2px;
+    padding: 3px 0;
+    font-size: 9px;
+  }
+  .film-selected-heading {
+    top: 21%;
+    left: 7%;
+    right: 7%;
+    display: block;
+  }
+  .film-selected-heading .film-title {
+    font-size: 10.5vw;
+  }
+  .film-selected-heading > div {
+    max-width: none;
+  }
+  .film-selected-heading .film-statement {
+    margin-top: 10px;
+    font-size: 11px;
+  }
+  .film-selected-heading .film-body {
+    display: none;
+  }
+  .film-strip-window {
+    top: 38%;
+    height: 43%;
+    --card-width: 68vw;
+    --card-gap: 25px;
+  }
+  .film-work-image {
+    height: 29vh;
+  }
+  .film-work-caption {
+    gap: 13px;
+    margin-top: 11px;
+  }
+  .film-work-caption h3 {
+    font-size: 15px;
+  }
+  .film-work-caption small {
+    font-size: 7px;
+  }
+  .film-work-caption + .film-perforation {
+    margin-top: 10px;
+  }
+  .film-selected-bottom {
+    left: 7%;
+    right: 7%;
+    bottom: 12%;
+    font-size: 8px;
+  }
+  .film-selected-bottom > span {
+    gap: 8px;
+  }
+  .film-selected-bottom i {
+    width: 15px;
+  }
+  .film-selected-bottom > div {
+    gap: 8px;
+  }
+  .film-selected-bottom > div > button:not(.film-text-link) {
+    width: 25px;
+    height: 25px;
+  }
+  .film-selected-bottom .film-text-link {
+    font-size: 9px;
+    margin-left: 6px;
+    gap: 6px;
+  }
+  .film-end-copy {
+    left: 7%;
+    top: 25%;
+  }
+  .film-end-copy .film-title {
+    font-size: 15vw;
+  }
+  .film-end-copy .film-statement {
+    font-size: 12px;
+    margin-top: 22px;
+  }
+  .film-end-actions {
+    display: block;
+    margin-top: 42px;
+  }
+  .film-end-actions > button:first-child {
+    font-size: 24px;
+    gap: 100px;
+  }
+  .film-end-actions > .film-text-link {
+    margin-top: 24px;
+  }
+  .film-end-services {
+    font-size: 9px;
+    margin-top: 28px;
+  }
+  .film-colophon {
+    left: 7%;
+    right: 7%;
+    bottom: 12%;
+    padding-top: 15px;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 7px;
+  }
+  .film-colophon strong {
+    width: 100%;
+    font-size: 13px;
+  }
+  .film-progress {
+    left: 7%;
+    right: 7%;
+    bottom: 22px;
+    gap: 13px;
+    font-size: 7px;
+    letter-spacing: 0.04em;
+  }
+  .film-progress-rule {
+    width: 36px;
+  }
+  .film-progress > button {
+    font-size: 8px;
+  }
+  .film-menu-panel {
+    padding: 30px 7%;
+  }
+  .film-menu-top {
+    font-size: 9px;
+  }
+  .film-menu-top > button {
+    font-size: 12px;
+    gap: 16px;
+  }
+  .film-menu-intro {
+    left: 7%;
+    top: 13%;
+    width: 86%;
+  }
+  .film-menu-intro p {
+    font-size: 30px;
+    line-height: 1.5;
+  }
+  .film-menu-intro > span {
+    display: none;
+  }
+  .film-menu-links {
+    top: 33%;
+    right: 7%;
+    width: 86%;
+  }
+  .film-menu-item {
+    padding: 18px 0;
+    gap: 15px;
+  }
+  .film-menu-item > span {
+    font-size: 25px;
+  }
+  .film-menu-item small {
+    font-size: 8px;
+  }
+  .film-menu-item em {
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+  .film-menu-item i {
+    font-size: 19px;
+  }
+  .film-menu-bottom {
+    bottom: 30px;
+    left: 7%;
+    right: 7%;
+    gap: 25px;
+    font-size: 10px;
+  }
+  .film-menu-bottom span {
+    display: none;
+  }
+  .film-lab-nav {
+    left: 7%;
+    right: 7%;
+    top: 24px;
+    font-size: 9px;
+  }
+  .film-lab-nav a:first-child {
+    display: block;
+  }
+  .film-lab-nav span {
+    display: block;
+    margin-top: 5px;
+    font-size: 7px;
+  }
+  .film-lab-chapters {
+    left: 7%;
+    right: 7%;
+    top: 77px;
+    gap: 0;
+    justify-content: space-between;
+  }
+  .film-lab-chapters a {
+    font-size: 9px;
+    gap: 4px;
+  }
+  .film-lab-chapters small {
+    font-size: 6px;
+  }
+  .chapter-preview .film-scene-heading {
+    top: 17%;
+  }
+  .chapter-preview .film-profile-copy {
+    top: 24%;
+  }
+  .chapter-preview .film-image-window {
+    top: 54%;
+    height: 28%;
+  }
+  .chapter-preview .film-method-copy {
+    top: 24%;
+  }
+  .chapter-preview .film-practice-title {
+    top: 24%;
+  }
+  .chapter-preview .film-selected-heading {
+    top: 24%;
+  }
+  .chapter-preview .film-strip-window {
+    top: 42%;
+    height: 40%;
+  }
+  .afterimage-preview .dialog-panel {
+    width: calc(100vw - 30px);
+    max-height: 90dvh;
+    padding: 25px 22px;
+  }
+  .afterimage-preview .dialog-panel h2 {
+    font-size: 34px;
+  }
+  .afterimage-preview .artwork-layer {
+    padding: 14px;
+  }
+  .afterimage-preview .artwork-card.layout-portrait {
+    display: grid;
+    width: 100%;
+    height: 92dvh;
+    max-height: 92dvh;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .afterimage-preview .layout-portrait .artwork-media-pane {
+    width: 100%;
+    min-height: 0;
+    height: 100%;
+    padding: 14px;
+  }
+  .afterimage-preview .artwork-reader {
+    height: 100%;
+  }
+  .afterimage-preview .artwork-information {
+    padding: 17px 20px 16px;
+    height: auto;
+    overflow: visible;
+  }
+  .afterimage-preview .artwork-info-top {
+    font-size: 8px;
+    margin-bottom: 10px;
+  }
+  .afterimage-preview .artwork-copy h2 {
+    font-size: 24px;
+  }
+  .afterimage-preview .artwork-en {
+    font-size: 8px;
+  }
+  .afterimage-preview .artwork-description {
+    font-size: 10px;
+    line-height: 1.7;
+    margin: 9px 0;
+  }
+  .afterimage-preview .artwork-hairline,
+  .afterimage-preview .artwork-tags {
+    display: none;
+  }
+  .afterimage-preview .artwork-info-bottom {
+    margin-top: 12px;
+  }
+  .afterimage-preview .artwork-meta {
+    font-size: 8px;
+  }
+  .afterimage-preview .artwork-actions {
+    margin-top: 12px;
+  }
+  .afterimage-preview .artwork-close {
+    top: 6px;
+    right: 6px;
+  }
+  .is-static .film-chapter {
+    min-height: 960px;
+  }
+  .is-static .film-profile-copy {
+    top: 22%;
+  }
+  .is-static .film-image-window {
+    top: 53%;
+    left: 7%;
+    width: 86%;
+    height: 28%;
+  }
+  .is-static .film-practice-info {
+    top: 40%;
+    width: 86%;
+  }
+  .is-static .film-practice-info ol {
+    display: block;
+  }
+  .is-static .film-practice-info li {
+    margin-bottom: 20px;
+  }
+  .is-static .film-practice-info li button {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .is-static .film-practice-info button > small {
+    margin: 0;
+  }
+  .is-static .film-practice-info li p {
+    padding: 0;
+    font-size: 12px;
+  }
+  .is-static .film-method-steps {
+    top: 73%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .is-static .film-method-steps li {
+    display: block;
+  }
+  .is-static .film-method-steps p {
+    display: block;
+  }
+  .is-static .film-strip-window {
+    padding: 280px 7% 60px;
+  }
+  .is-static .film-strip {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .is-static .film-work-image {
+    height: 300px;
+  }
+  .is-static .film-selected-heading {
+    top: 170px;
+  }
+}
+@media (max-width: 767px) and (max-height: 700px) {
+  .film-title {
+    font-size: 10.5vw;
+  }
+  .film-profile-copy .film-body {
+    font-size: 10px;
+  }
+  .film-practice-info > .film-body {
+    display: none;
+  }
+  .film-menu-intro p {
+    font-size: 24px;
+  }
+  .film-menu-links {
+    top: 31%;
+  }
+  .film-menu-item {
+    padding: 12px 0;
+  }
+  .film-end-copy .film-title {
+    font-size: 13vw;
+  }
+  .film-end-actions {
+    margin-top: 25px;
+  }
+}

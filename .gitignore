@@ -1,6 +1,7 @@
 node_modules/
 dist/
 dist-experiments/
+dist-design-preview/
 __pycache__/
 *.pyc
 .env*
