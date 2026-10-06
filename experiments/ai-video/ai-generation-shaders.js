@@ -41,7 +41,9 @@ export const generationShader = /* glsl */ `
   uniform sampler2D uSequenceFlow;
   uniform float uHasSequence;
   uniform float uHasSequenceFlow;
+  uniform float uSequenceBaked;
   uniform vec2 uSequenceGrid;
+  uniform vec2 uSequenceTileSize;
   uniform vec4 uSequenceCrop;
   uniform float uSequenceFrameCount;
   uniform float uSequencePosterFrame;
@@ -109,7 +111,8 @@ export const generationShader = /* glsl */ `
   vec2 sequenceAtlasUV(float index, vec2 imageUV) {
     vec2 slot = vec2(mod(index, uSequenceGrid.x),
       uSequenceGrid.y - 1.0 - floor(index / uSequenceGrid.x));
-    return (slot + clamp(imageUV, vec2(0.003), vec2(0.997))) / uSequenceGrid;
+    vec2 edge = 0.5 / uSequenceTileSize;
+    return (slot + clamp(imageUV, edge, 1.0 - edge)) / uSequenceGrid;
   }
   vec3 sequenceImage(float index, vec2 imageUV) {
     vec3 result = vec3(0.0);
@@ -122,6 +125,23 @@ export const generationShader = /* glsl */ `
     return result;
   }
   vec3 reconstructSequence(vec2 pixel, float raw, float binaryGrain) {
+    if (uSequenceBaked > 0.5) {
+      // Every integer step is a baked image. Do not add residual grain, local
+      // timing offsets, or another warp on top of the authored trajectory.
+      float iteration = raw * (uSequenceFrameCount - 1.0);
+      float index = floor(iteration);
+      vec2 imageUV = uSequenceCrop.xy + vUv * uSequenceCrop.zw;
+      vec3 previous = texture2D(uSequenceAtlas, sequenceAtlasUV(index, imageUV)).rgb;
+      vec3 next = texture2D(uSequenceAtlas, sequenceAtlasUV(
+        min(index + 1.0, uSequenceFrameCount - 1.0), imageUV)).rgb;
+      vec3 prediction = previous + smoothstep(0.0, 1.0, fract(iteration)) * (next - previous);
+      // Restore only the cover's fine-detail residual toward the end, keeping
+      // full-resolution completion aligned with the exported low-res endpoint.
+      vec3 sharp = texture2D(uPoster, uPosterUV.xy + vUv * uPosterUV.zw).rgb;
+      vec3 low = texture2D(uSequenceAtlas, sequenceAtlasUV(uSequencePosterFrame, imageUV)).rgb;
+      prediction += (sharp - low) * smoothstep(0.72, 1.0, raw);
+      return clamp(prediction, 0.0, 1.0);
+    }
     float maxStep = max(1.0, uDenoiseSteps);
     float iteration = raw * maxStep;
     float preview = (floor(iteration) + smoothstep(0.0, 1.0, fract(iteration))) / maxStep;
@@ -211,7 +231,14 @@ export const generationShader = /* glsl */ `
     float swept = clamp(uScan * (cells.x * cells.y + 1.0) - readingOrder, 0.0, 1.0);
     // Let the small child glyphs stay legible before the final pixel-sized subdivision.
     float pixelMorph = smoothstep(0.78, 1.0, uSplit);
-    vec3 codeColor = mix(vec3(0.77, 0.82, 0.82), vec3(binaryGrain), pixelMorph);
+    vec3 noiseColor = vec3(binaryGrain);
+    if (uHasSequence > 0.5 && uSequenceBaked > 0.5 && uSplit > 0.0) {
+      // End the character subdivision in the authored initial noise image,
+      // so the sequence starts directly at frame zero without a noise overlay.
+      vec2 imageUV = uSequenceCrop.xy + vUv * uSequenceCrop.zw;
+      noiseColor = texture2D(uSequenceAtlas, sequenceAtlasUV(0.0, imageUV)).rgb;
+    }
+    vec3 codeColor = mix(vec3(0.77, 0.82, 0.82), noiseColor, pixelMorph);
     float codeAlpha = mix(glyph, 1.0, pixelMorph);
     vec3 color = mix(vec3(1.0), codeColor, swept);
     float alpha = mix(uWhite, codeAlpha, swept);

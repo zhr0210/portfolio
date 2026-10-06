@@ -75,6 +75,8 @@ test('Sequence validation bounds shader indexing and permits a missing optional 
     { posterFrame: 4 },
     { flowRange: 0 },
     { atlas: '' },
+    { mode: 'unknown' },
+    { mode: 'baked' },
   ])
     assert.throws(() => normalizeSequence({ ...definition, ...patch }));
   const full = normalizeSequence({
@@ -83,8 +85,14 @@ test('Sequence validation bounds shader indexing and permits a missing optional 
     rows: 7,
     steps: Array.from({ length: 51 }, (_, i) => i),
     posterFrame: 50,
+    mode: 'baked',
   });
   assert.equal(full.frameCount, 51, 'Real exported per-step frames can use the same interface');
+  assert.equal(full.mode, 'baked');
+  for (let step = 0; step <= 50; step++) {
+    const sample = sequenceInterval(step / 50, full);
+    assert.equal(sample.mix === 1 ? sample.to : sample.from, step);
+  }
 });
 
 test('Both sequence textures match the recorded atlas layout and the fixed cover provenance', () => {

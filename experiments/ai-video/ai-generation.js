@@ -242,6 +242,12 @@ export function createAIGenerationLayer(
         const definition = normalizeSequence(next.sequence);
         if (definition) {
           const atlas = await textureFor({ src: definition.atlas });
+          if (
+            (definition.mode === 'baked' &&
+              (atlas.image.width % definition.columns || atlas.image.height % definition.rows)) ||
+            Math.max(atlas.image.width, atlas.image.height) > renderer.capabilities.maxTextureSize
+          )
+            throw new Error('Sequence atlas layout exceeds this renderer or has partial cells');
           atlas.generateMipmaps = false;
           atlas.minFilter = runtime.LinearFilter;
           let flow = null;
@@ -299,7 +305,11 @@ export function createAIGenerationLayer(
       references.clear();
       poster = displayPoster;
       sequence = nextSequence;
-      stats.sequence = sequence ? 'authored-flow' : 'iterative';
+      stats.sequence = sequence
+        ? sequence.definition.mode === 'baked'
+          ? 'baked-imagegen'
+          : 'authored-flow'
+        : 'iterative';
       stats.sequenceFrames = sequence?.definition.frameCount || 0;
       stats.sequenceError = sequenceError;
       try {
@@ -342,9 +352,14 @@ export function createAIGenerationLayer(
       uniforms.uSequenceFlow.value = sequence?.flow || poster.texture;
       uniforms.uHasSequence.value = sequence ? 1 : 0;
       uniforms.uHasSequenceFlow.value = sequence?.flow ? 1 : 0;
+      uniforms.uSequenceBaked.value = sequence?.definition.mode === 'baked' ? 1 : 0;
       if (sequence) {
         const d = sequence.definition;
         uniforms.uSequenceGrid.value.set(d.columns, d.rows);
+        uniforms.uSequenceTileSize.value.set(
+          sequence.atlas.image.width / d.columns,
+          sequence.atlas.image.height / d.rows,
+        );
         uniforms.uSequenceFrameCount.value = d.frameCount;
         uniforms.uSequencePosterFrame.value = d.posterFrame;
         uniforms.uSequenceSteps.value = d.keySteps;
@@ -432,6 +447,8 @@ export function createAIGenerationLayer(
             uSequenceSteps: { value: new Float32Array(maximumSequenceFrames).fill(1) },
             uSequenceFlowRange: { value: 0.16 },
             uSequenceFlowStrength: { value: config.sequenceFlowStrength },
+            uSequenceBaked: { value: 0 },
+            uSequenceTileSize: { value: new THREE.Vector2(1, 1) },
             uSequenceRegionLag: { value: config.sequenceRegionLag },
             uHasSolver: { value: 0 },
             uSolverAtlas: { value: null },

@@ -24,6 +24,8 @@ export function denoiseFrame(progress, config) {
 export function normalizeSequence(value) {
   if (!value) return null;
   const { columns, rows, steps, posterFrame } = value;
+  const mode = value.mode ?? 'flow';
+  if (!['flow', 'baked'].includes(mode)) throw new Error('Unknown sequence sampling mode');
   if (typeof value.atlas !== 'string' || !value.atlas)
     throw new Error('Sequence atlas must have a source URL');
   if (!Number.isInteger(columns) || !Number.isInteger(rows) || columns < 1 || rows < 1)
@@ -42,6 +44,8 @@ export function normalizeSequence(value) {
     throw new Error('Sequence steps must start at zero and strictly increase');
   if (!Number.isInteger(posterFrame) || posterFrame !== steps.length - 1)
     throw new Error('The final sequence frame must be the unchanged cover');
+  if (mode === 'baked' && steps.some((step, i) => step !== i))
+    throw new Error('A baked sequence must include every consecutive step');
   const keySteps = new Float32Array(maximumSequenceFrames).fill(1);
   steps.forEach((step, index) => {
     keySteps[index] = step / steps.at(-1);
@@ -49,7 +53,7 @@ export function normalizeSequence(value) {
   const flowRange = value.flowRange ?? 0.16;
   if (!Number.isFinite(flowRange) || flowRange <= 0)
     throw new Error('Sequence flow range must be positive');
-  return { ...value, flowRange, frameCount: steps.length, keySteps };
+  return { ...value, mode, flowRange, frameCount: steps.length, keySteps };
 }
 
 export function sequenceInterval(normalized, sequence) {

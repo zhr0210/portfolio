@@ -66,3 +66,17 @@ Sony 源 Specular IOR Level 为 0.5，Coat 为 0。机身 ORM 粗糙度最低约
 当前资产为 50,099,584 字节，172 个网格、109,938 个三角形、12 条动画通道。修复作者副本重复导出得到相同 GLB SHA-256。同名 .metadata.json 记录源 SHA-256、无损策略、时序、灯光和材质修复，不包含本机绝对路径。主站构建仍不包含实验资产。
 
 重新导出后运行 npm test、npm run build、npm run build:video，检查桌面／手机、滚动往返与各姿态。新增约束、骨骼、不同 UV 或调整起止帧时，先审查导出脚本。
+
+## 生图关键帧与 51 帧素材
+
+`bake-authored-sequence.py` 将 image_gen 的 14 张关键图与原封面对齐，使用有界双向 Farneback 光流计算过渡，离线导出 0…50 的 51 张 PNG 和一张无损图集。它是动画素材装配，不运行 RF-Inversion、FLUX 或任何学习模型。原图只读；PNG 的压缩只减少文件编码大小，不使用有损压缩。素材记录保留每个生图提示词、原始文件 SHA-256、图集 SHA-256 与每个步骤的像素 SHA-256。
+
+生成原图、`checkpoint-manifest.json`、逐帧 PNG 与预览保存在本机 `output/ai-generation/atonement-v2/`，通过 `.gitignore` 排除；网页只引用 `assets/atonement-generation-50-v2.png`。Python / OpenCV / Pillow 都不是网页依赖。原 9 图例及光流保留且不进入默认构建。
+
+在仓库根目录、已安装 numpy / Pillow / OpenCV 的 Python 中运行：
+
+```powershell
+python experiments/ai-video/tools/bake-authored-sequence.py --checkpoints output/ai-generation/atonement-v2/checkpoint-manifest.json --assets experiments/ai-video/assets --output output/ai-generation/atonement-v2
+```
+
+脚本拒绝覆盖已有版本的图集；重新加工时在脚本中使用新版本名，先保留原版。生成完检查 51 个不同状态、原封面保留、末态一致和固定裁切。`tests/ai-authored-assets.test.mjs` 实际解码已提交的 PNG，验证每个格子的像素校验值及顺序。

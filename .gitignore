@@ -11,4 +11,5 @@ __pycache__/
 *.log
 .playwright-cli/
 output/playwright/
+output/ai-generation/
 .DS_Store

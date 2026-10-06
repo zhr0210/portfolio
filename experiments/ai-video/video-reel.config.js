@@ -112,8 +112,16 @@ export const reelWorks = [
     eyebrow: 'AI FILM / 02',
     parameters: ['IMAGE TO VIDEO', '参考画面 · AI 创作'],
     video: '',
-    // 默认由代码从封面计算51个状态，不需要中间图片。
-    // generationSequence 仍可选配真实模型导出的逐步预览。
+    // 14 张生图关键帧离线补成 0–50 共 51 张固定画面；属于艺术模拟。
+    // 原封面作为最后一帧，载入其他本地视频时自动改用封面求解器。
+    generationSequence: {
+      atlas: new URL('./assets/atonement-generation-50-v2.png', import.meta.url).href,
+      columns: 8,
+      rows: 7,
+      steps: Array.from({ length: 51 }, (_, i) => i),
+      posterFrame: 50,
+      mode: 'baked',
+    },
   },
 ];
 

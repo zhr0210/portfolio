@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { solveDenoise } from '../experiments/ai-video/ai-denoise-solver.js';
-import { reelWorks } from '../experiments/ai-video/video-reel.config.js';
 
 const width = 32,
   height = 18;
@@ -33,10 +32,6 @@ function frame(result, step) {
   }
   return bytes;
 }
-
-test('Default AI work uses computed iterations with no authored prediction images', () => {
-  assert.equal(reelWorks.find((work) => work.type === 'ai').generationSequence, undefined);
-});
 
 test('All 51 predictions are actually computed, reproducible and distinct', () => {
   const original = rgba.slice();

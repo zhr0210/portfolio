@@ -1,0 +1,589 @@
+{
+  "schemaVersion": 2,
+  "kind": "imagegen-authored-baked-sequence",
+  "simulation": true,
+  "generator": "Built-in image_gen",
+  "modelInference": false,
+  "reference": {
+    "asset": "vertical-film-sheet.jpg",
+    "crop": [
+      843,
+      500,
+      2196,
+      1184
+    ],
+    "sha256": "7b69802f175e13557d65c141ae4f97e8ca9b862ab29beb31497cf95597d70e50"
+  },
+  "atlas": {
+    "asset": "atonement-generation-50-v2.png",
+    "width": 4096,
+    "height": 1932,
+    "columns": 8,
+    "rows": 7,
+    "cellWidth": 512,
+    "cellHeight": 276,
+    "bytes": 13522133,
+    "sha256": "06a1824181a5c03e2d878791da8592db3d84a7a7408b0ef7879977eb8df9070b",
+    "lossless": true
+  },
+  "sequence": {
+    "steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50
+    ],
+    "posterFrame": 50,
+    "maximumStep": 50,
+    "mode": "baked"
+  },
+  "authoredCheckpoints": [
+    {
+      "step": 0,
+      "file": "checkpoint-000.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 0/50.\nThis state: Only dense black and white pixel noise with slightly correlated larger gray clumps. No recognizable person, arch, foliage, color, or photo underneath. This is an undecoded initial state.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. For early stages respect uncertainty instead of rendering a complete clean photograph.",
+      "sha256": "23fcb52909ea59d881df1b499a80f048cc0e69351ebe74fa598a7a4e9065aa6d"
+    },
+    {
+      "step": 2,
+      "file": "checkpoint-002.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 2/50.\nThis state: Very early uncertain latent prediction. Nearly monochrome charcoal/gray speckled field and coarse barely olive blobs; the scene's broad light-dark layout only faintly hinted at. No recognizable woman yet. Soft irregular correlated islands replacing some fine static.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. For early stages heavily disrupt semantic detail rather than simply soften a photo.",
+      "sha256": "41d30ebd00a258a018ef4c6cec7f12f149e00ab01b0d2f3d014cda7f0f34881d"
+    },
+    {
+      "step": 5,
+      "file": "checkpoint-005.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 5/50.\nThis state: Abstract latent prediction: coarse dark olive masses forming an uncertain arch around a dark central void, a pale mint-gray body-sized smear in the lower center, muted yellow-green in upper right. No proper body, hair, dress, or leaf outlines. Dense clumpy mottled artifacts, not a photograph with grain.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. For early stages respect uncertainty instead of rendering a complete clean photograph.",
+      "sha256": "60bef2b01896674419e579786b1b6c334437474cf75d2430b9db3d8da9d7f7dc"
+    },
+    {
+      "step": 8,
+      "file": "checkpoint-008.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 8/50.\nThis state: First ambiguous back-view person silhouette starts to appear, head a dark imprecise oval in same position as target, shoulders asymmetrical and unfinished, lower torso a pale amorphous form. Provisional soft vine arch composed of muddy green masses; obvious local reconstruction artifacts and unresolved patches.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. For early stages heavily disrupt semantic detail rather than simply soften a photo.",
+      "sha256": "f6a26ddf19ba468a92371d24b472049348a4fc7f686bd82746079a3fc9eb9ef6"
+    },
+    {
+      "step": 12,
+      "file": "checkpoint-012.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 12/50.\nThis state: Rough semantic layout: a single bob-haired woman seen from behind in the correct lower center, unfinished shoulder contours and dress proportions, vines only rough branching clumps. Provisional distorted clay-like forms, mottled and aliased structure, mixed local resolutions, some fine static. Do not reveal reference details yet.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. For early stages respect uncertainty instead of rendering a complete clean photograph.",
+      "sha256": "da1a9af1a94f31c3e1e7f087dea855c24d57cd3c88afb01624f6d3d60909c3ea"
+    },
+    {
+      "step": 16,
+      "file": "checkpoint-016.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 16/50.\nThis state: A recognizably constructed back-view woman and vine tunnel, but synthetic intermediate shapes still being revised. Correct camera and fixed center. Neck and sleeve contours almost stable; hair coarse mass, pale dress broad uneven folds; foliage arch partially resolved with misplaced smeared leaves and irregular grain.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. For early stages heavily disrupt semantic detail rather than simply soften a photo.",
+      "sha256": "afc75a9ef3cbcba49a55869e2bc480fb1d2f5448626f2c3c411b435c4dd2a7d7"
+    },
+    {
+      "step": 21,
+      "file": "checkpoint-021.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 21/50.\nThis state: Mid reconstruction. Subject and arch close to target positions, bob haircut and shoulder silhouette more stable, folds exist but rough, pale collar only provisional; foliage structural clumps turn into individually suggested leaves. Locally inconsistent texture, some painterly flat patches, residual clumped noise.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. For early stages heavily disrupt semantic detail rather than simply soften a photo.",
+      "sha256": "190fc6847eed8ceafbf76089c6d3688216515585b91fe06c7e215a69da2c6510"
+    },
+    {
+      "step": 26,
+      "file": "checkpoint-026.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 26/50.\nThis state: Late middle reconstruction. Scene identity now stable, dark ivy arch and pale dress have coherent shapes. New texture emerges in patches: hair strands in some regions but broad smoothed masses in others, coarse folds and leaf clusters. Residual fine mottling with local unresolved islands. Still looks like an incomplete decoder preview.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. Preserve head/shoulder/arch geometry precisely. Progressively constructed photographic materials, not an oil painting. Intermediate defects must be local rather than a uniform global haze.",
+      "sha256": "1ee26e75950d630f903f1788a37b6767c781f0f06504cf31e759955ac5dc8a24"
+    },
+    {
+      "step": 31,
+      "file": "checkpoint-031.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 31/50.\nThis state: Strongly converged scene, fixed woman back-view and arch. Fine cloth seams begin forming; hair strands becoming consistent; leaves have distinct edges, but some regions remain softly synthesized and over-smoothed. Very small local shape corrections and light residual grain; keep reference's original lens blur at sides.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. Preserve head/shoulder/arch geometry precisely. Progressively constructed photographic materials, not an oil painting. Intermediate defects must be local rather than a uniform global haze.",
+      "sha256": "62308e489989a42bae69f7c480832a11924699e24968b31e407d48af385a7f56"
+    },
+    {
+      "step": 36,
+      "file": "checkpoint-036.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 36/50.\nThis state: Nearly photoreal reconstruction close to input. Same exact camera, lower-center woman, bob haircut, pale mint dress and ivy arch. Fine hair, fabric buttons and collar begin matching reference, foliage and sunlight structure nearly settled; a few mild unresolved waxy leaf clusters and tiny grain islands.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. Preserve head/shoulder/arch geometry precisely. Progressively constructed photographic materials, not an oil painting. Intermediate defects must be local rather than a uniform global haze.",
+      "sha256": "af040b4f109f400a5bdd2d6972d470bf70691fa68b2fd5245faab86860feb6fb"
+    },
+    {
+      "step": 40,
+      "file": "checkpoint-040.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 40/50.\nThis state: High fidelity reconstruction extremely close to reference, same pixel locations for head, shoulders, collar, arch opening and leaf masses. Fine texture largely established; very light residual mottling in dark ivy, tiny locally unfinished leaf edges. Do not sharpen away original side lens blur.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. Preserve head/shoulder/arch geometry precisely. Progressively constructed photographic materials, not an oil painting. Intermediate defects must be local rather than a uniform global haze.",
+      "sha256": "4887030694893d1fb84bcc5fc35eddb27ed133dd5b7a0362a98a9b8b8b21dcc3"
+    },
+    {
+      "step": 44,
+      "file": "checkpoint-044.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 44/50.\nThis state: Near-complete reconstruction. Preserve reference composition precisely, neckline, shoulders, bob haircut, pale dress, dark ivy tunnel and warm upper-right sunlight. Only tiny low-contrast residual grain and slight microtexture uncertainty in foliage remain. No semantic or camera change.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. Reproduce reference geometry and palette with maximum fidelity. No painterly brushwork. Do not redesign details of the collar, neckline, or dress. Maintain the original soft film/lens character.",
+      "sha256": "1a0a2861a214f054dd98e5b0a5b1e598ec10fccd95fa32f3de15230867783d30"
+    },
+    {
+      "step": 47,
+      "file": "checkpoint-047.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 47/50.\nThis state: Almost final reconstruction, match the target scene and geometry tightly. Fine natural photographic details, original soft film grain and side motion blur. Only imperceptibly unfinished small foliage textures. Fixed full-frame composition and crop.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. Reproduce reference geometry and palette with maximum fidelity. No painterly brushwork. Do not redesign details of the collar, neckline, or dress. Maintain the original soft film/lens character.",
+      "sha256": "a3b779d2ffa51b20028a713993f09136b00a97c2cc9bc500de6949171338347d"
+    },
+    {
+      "step": 49,
+      "file": "checkpoint-049.png",
+      "prompt": "Use case: scientific-educational / identity-preserve.\nAsset type: ONE full-frame 1024x552 landscape checkpoint for an artistic diffusion reconstruction sequence in a portfolio website; produce a SINGLE image, never a grid/contact sheet.\nInput image 1 is the exact final target cover and geometry reference. Simulate an intermediate decoded prediction that progressively constructs this scene, not a finished photo covered by an opacity noise layer.\nInvariant final geometry: one woman strictly seen from behind in lower center, short dark brown bob, pale mint vintage dress with small collar and back-button seam; dark dense ivy arch surrounds head, olive foliage left, sunlit yellow-green foliage right. Match target camera, framing, crop, head position, scale and palette. Original side lens/motion blur is part of the final image.\nRequested checkpoint of a 0–50 artistic sequence: 49/50.\nThis state: Final faithful reconstruction at one step before completion. Reproduce input reference's exact subject, colors, camera, crop, hair, dress collar/button seam, dark arch, warm green sunlight and lens blur as closely as possible. No newly invented objects and no added noise or sharpening.\nConstraints: full-bleed single landscape image, no margins, no text, no numbers, no watermark, no extra people, no face, no camera movement. Reproduce reference geometry and palette with maximum fidelity. No painterly brushwork. Do not redesign details of the collar, neckline, or dress. Maintain the original soft film/lens character.",
+      "sha256": "66281651934c9d380a80c2921a308f65d955ef60c274b25a11b09cfee24ac946"
+    }
+  ],
+  "bake": {
+    "algorithm": "bounded bidirectional Farneback correspondence and aligned residual interpolation",
+    "opencvVersion": "4.13.0",
+    "maximumMotionPixels": 12
+  },
+  "frames": [
+    {
+      "step": 0,
+      "sha256": "58b4a7f98a17d2b1e36cdff42620c681933126df342867a4995d5bedaddec71e",
+      "pixelsSha256": "ea6252f09b767b9c72d5662525a0bee75ab6cc6cfcc01ba44b07bda268551060",
+      "authoredCheckpoint": true,
+      "from": 0,
+      "to": 2
+    },
+    {
+      "step": 1,
+      "sha256": "b877af0cec1bc79a7f5a92fe46eecdabee497ffa02bebf024ce221900c135271",
+      "pixelsSha256": "af1e11491e80fe278c0e2fcdb3f0b2fc70d5970002d30d3e8327b8724492fea4",
+      "authoredCheckpoint": false,
+      "from": 0,
+      "to": 2
+    },
+    {
+      "step": 2,
+      "sha256": "8318edef2006cfccfae04af6b2701186557a2deaf53b4359ab7db96e07b392ae",
+      "pixelsSha256": "49c4733213a6e4cd573f29c814e4bde4b79ab6605df9d12f61794c2932e19c54",
+      "authoredCheckpoint": true,
+      "from": 0,
+      "to": 2
+    },
+    {
+      "step": 3,
+      "sha256": "082f3db7fd96cd790f25abbd5081037bf143fb00263be3de7d66322863293b3e",
+      "pixelsSha256": "4d046f14383a0a706bc96b7be049469e633c99c7a97137cbb6024cdcc229fd70",
+      "authoredCheckpoint": false,
+      "from": 2,
+      "to": 5
+    },
+    {
+      "step": 4,
+      "sha256": "27efd3cd71713774c9c9e2d89cf8eb64e454e46cc9acee9656618d1b0656d0ab",
+      "pixelsSha256": "5ba45ad3a625cea7bf8a22a4518b5270d63776ee5756534f133ba6f38ffdbb40",
+      "authoredCheckpoint": false,
+      "from": 2,
+      "to": 5
+    },
+    {
+      "step": 5,
+      "sha256": "9f145fd6de05e7a831b035b6ebf60cb88e489a33cbb41c7f1873c1bd996da0dd",
+      "pixelsSha256": "b2af896c0717896098c0c28a72d7ac2044390bbf574ce0eb6a96dabfdd280158",
+      "authoredCheckpoint": true,
+      "from": 2,
+      "to": 5
+    },
+    {
+      "step": 6,
+      "sha256": "06f7613243ef1f6cb8bcbf9669a17c8306faac8f740eced6e3bf167531553293",
+      "pixelsSha256": "5474e703a078799506c5301d5e0d047ef4f6f14a115a01c04d35bf34aa59b5d7",
+      "authoredCheckpoint": false,
+      "from": 5,
+      "to": 8
+    },
+    {
+      "step": 7,
+      "sha256": "0937ba66abdf79fa4d868a03cf50f0d80ea6a2754d07034339f172e79475e4a3",
+      "pixelsSha256": "ef920df29285d29be13556fbd8c4bda9b433677b8e7a01a1fc33d78f26377e83",
+      "authoredCheckpoint": false,
+      "from": 5,
+      "to": 8
+    },
+    {
+      "step": 8,
+      "sha256": "3d8ed8446754f83e9435bfc5cb3dda0e27bda68a772dfabc130fbe4f5ca70801",
+      "pixelsSha256": "4156bb8ce41732d7824f835e14caf6bab07eba0c529a80a9ff18004f6e5d9441",
+      "authoredCheckpoint": true,
+      "from": 5,
+      "to": 8
+    },
+    {
+      "step": 9,
+      "sha256": "8becfa5833885f2e5677834cbb86c3056375309ca8b29890d17bdee23ee5f137",
+      "pixelsSha256": "3fa87ca11144d05f189b481dc98781c5c2acd7bc90b47cdccbe1cd487fa9fdcc",
+      "authoredCheckpoint": false,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 10,
+      "sha256": "93b165876d28289a8ab3ee1b1f3478b42844d43a7350b9c45385840a9a36ee0e",
+      "pixelsSha256": "29e7b59ef971e5b749f7873fad188a8fabd8c515b5e72f7cbdfa41eee614da5e",
+      "authoredCheckpoint": false,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 11,
+      "sha256": "9f72a444a3265332930d09950c0da351e889f157accf7147784d638f2af17989",
+      "pixelsSha256": "31fbf6f83727705d829fddcb9eae6876ec1e490aa7b3ec92a598c4956c1a256d",
+      "authoredCheckpoint": false,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 12,
+      "sha256": "2f6f8e3f93eecfd515f290ba94ec8b5a710798a7bd0f349f3011af5d09d2dae8",
+      "pixelsSha256": "8a55df57a0e1b63b97360c35a839d24eb2e4ea7f5e263b3f80530ed3f4b41e76",
+      "authoredCheckpoint": true,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 13,
+      "sha256": "45c8a341555f04a46434cb140a93c1bc5d6c7b7119779c7a48dc112969896b57",
+      "pixelsSha256": "dc217b7d8d2fdde6c4fd7b08a4de6bfbf334b15a522a761e39b916f0f2cb326c",
+      "authoredCheckpoint": false,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 14,
+      "sha256": "3d68ad9b55f802167cc01790e94ec82a64e95e3834882654b0ec07474e43d0c2",
+      "pixelsSha256": "b128401e1d5662bd8668fdfe3f91b556b8e8a4f017a5a450e7dc34522d447339",
+      "authoredCheckpoint": false,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 15,
+      "sha256": "e03231f5005dae462911db52a95cd0aa0c4ee511f28ef7ca1d86b6fef25f24a9",
+      "pixelsSha256": "cc8c271a8eb90e6713bee7cb848cffc938091bbed2145647dc99fc872c6915a5",
+      "authoredCheckpoint": false,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 16,
+      "sha256": "6129b2ba0b4c42ddfd91ea44a2d463dd4ae47a231ce9b8040e39a3add81f6013",
+      "pixelsSha256": "87115585abb09ab7e89c1a64779888816e417ca93a41b04acb3a80779cb8f492",
+      "authoredCheckpoint": true,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 17,
+      "sha256": "1a13a811640e783ddff7a1424caaee94cf9023e2879696423a95da0cc38bc613",
+      "pixelsSha256": "c199f3a20ec07d5070ad039788833d69e28f84a187ce8c8b757b189f9c8ef873",
+      "authoredCheckpoint": false,
+      "from": 16,
+      "to": 21
+    },
+    {
+      "step": 18,
+      "sha256": "a7e4ce40724f795f3e246a151f97becb8509e3e018e0a585414155017061ba9d",
+      "pixelsSha256": "d8b2d28d8f67eeb5666bf42ecc5d9e03e1cff4e329a1ba9834d499193571714d",
+      "authoredCheckpoint": false,
+      "from": 16,
+      "to": 21
+    },
+    {
+      "step": 19,
+      "sha256": "7d364440afc4a9646bd6e5964108657965f26b4111b5fd4d9b15387a0ad7afea",
+      "pixelsSha256": "73326c5e5daff42591bb11476846b63641da4a2225b5f478a0872f0caf0bfa97",
+      "authoredCheckpoint": false,
+      "from": 16,
+      "to": 21
+    },
+    {
+      "step": 20,
+      "sha256": "c6645cd04902968dbde0e599eebe8bf8c42b0994b15ec8bce5cd90fffbdbd40a",
+      "pixelsSha256": "33e3654ab210db99b21633f262cc1ea7ac5dfc67fce2f26533c2afb0b2d3f9d2",
+      "authoredCheckpoint": false,
+      "from": 16,
+      "to": 21
+    },
+    {
+      "step": 21,
+      "sha256": "0583f92bce1e62360efc701f038413d450c154a6519995198e1c0891d3d9bdee",
+      "pixelsSha256": "f95298ecad346d1c9f1cec4f4cc7f305fc4b8504f287f2283cfea60b5a7ca8e5",
+      "authoredCheckpoint": true,
+      "from": 16,
+      "to": 21
+    },
+    {
+      "step": 22,
+      "sha256": "37d5675337af8d22bec2da69aed41aa85a561cfb6b023640c3377001e08a3b9b",
+      "pixelsSha256": "27ef431ca71048106e4efc3415fd738d7cc0e9c4ec4a49e2a8c531838f57181c",
+      "authoredCheckpoint": false,
+      "from": 21,
+      "to": 26
+    },
+    {
+      "step": 23,
+      "sha256": "f3410b6b4cecf175229d05c5a352177dcb69e95c7b1756a7da4de700f6890d05",
+      "pixelsSha256": "a122e7484ca10c6cc2476236d7f925676ace14acc37306f9be2f839432d67f6f",
+      "authoredCheckpoint": false,
+      "from": 21,
+      "to": 26
+    },
+    {
+      "step": 24,
+      "sha256": "f998e8193af34a0654d779236e1d195ed77108e441862e5a1f668f8f8d10d317",
+      "pixelsSha256": "e88ae930f6bd61f6c092e03155403875a1d806d6a95a6b2cbfa8a25d85c59784",
+      "authoredCheckpoint": false,
+      "from": 21,
+      "to": 26
+    },
+    {
+      "step": 25,
+      "sha256": "16f9ddaf2a378a730ce7b94bded128d7d8d2fe2165af41680cda65deb08a0464",
+      "pixelsSha256": "9e6a020b7319f190cdc7fc51601cfa401e1476e5eca01db8c4444c2e7114d3be",
+      "authoredCheckpoint": false,
+      "from": 21,
+      "to": 26
+    },
+    {
+      "step": 26,
+      "sha256": "c177c028ab55514f2dd2bb022b6e1bcec969b7dba042d4936f7cb9a152c790c7",
+      "pixelsSha256": "e8cb4d6c0484e48f925b8faa78aa06e65d1e1371734b6dcd073b410d7026516f",
+      "authoredCheckpoint": true,
+      "from": 21,
+      "to": 26
+    },
+    {
+      "step": 27,
+      "sha256": "1e0745ab5459ca603f252267b1c7795cf5b41a76488f58bc48d444737aeb16d1",
+      "pixelsSha256": "c4ef5628f1a551c732912583e3cb0cf068710ef40b98bc84ab0a7763ec0d4ac2",
+      "authoredCheckpoint": false,
+      "from": 26,
+      "to": 31
+    },
+    {
+      "step": 28,
+      "sha256": "539b80ef1b33f868ebce8d7c7d90f351158d14c0f7fe0907c72079779578f718",
+      "pixelsSha256": "6c685dcdbd8456338b44656e98c57e883e62a1523dd19180fc0c1bb2da751bf2",
+      "authoredCheckpoint": false,
+      "from": 26,
+      "to": 31
+    },
+    {
+      "step": 29,
+      "sha256": "354199caeb4baa473558de06da787582f0a08efec643244501da3d9a501b87a3",
+      "pixelsSha256": "13e52787321c11d363e77d1202e294f0b41cfdcbb2fa2d37dc03fc8a8140f77d",
+      "authoredCheckpoint": false,
+      "from": 26,
+      "to": 31
+    },
+    {
+      "step": 30,
+      "sha256": "19680750ad08474d0f434eaeed8d58494f5ee67adce0bf081784e71cc14bd29d",
+      "pixelsSha256": "908d3df2ee028028f23302384a2939b2b087c83463b4a7cf974875f927cf5b7f",
+      "authoredCheckpoint": false,
+      "from": 26,
+      "to": 31
+    },
+    {
+      "step": 31,
+      "sha256": "b9661ebe303d9ce2bd9785894ca6333ce66bdf5ffbfceab76063641a3a9898b3",
+      "pixelsSha256": "b66bfdff4f1f893420ae273cb05a4b0a6c0fd06b133594428bb63d0ba2d96e66",
+      "authoredCheckpoint": true,
+      "from": 26,
+      "to": 31
+    },
+    {
+      "step": 32,
+      "sha256": "bd9c3595d2b0a94b4d03a644c56e0808c30bccdeb5b4f927f0734eebd8c2a764",
+      "pixelsSha256": "54f1d758b1b45f0870ea9593f28b9809e6a8ef8b3e4817936dd3fdfe6e472e76",
+      "authoredCheckpoint": false,
+      "from": 31,
+      "to": 36
+    },
+    {
+      "step": 33,
+      "sha256": "8372d52b6c0d7e916351b716bfda890d1e9c894ec1474bee6ecb3c6ef867cab0",
+      "pixelsSha256": "c7ddcf5c053d16d541d0350c735c587461158619db0dd23c4c22b488b6613d18",
+      "authoredCheckpoint": false,
+      "from": 31,
+      "to": 36
+    },
+    {
+      "step": 34,
+      "sha256": "da23b1f88f5f3ca0adb74c9cea255a76809ea4b12c8d4c512b9725eee4a9f22f",
+      "pixelsSha256": "dde3b3f75bb91741f54e43d37cfdbee2d86974cea4e8c9e61512879289bc3a1c",
+      "authoredCheckpoint": false,
+      "from": 31,
+      "to": 36
+    },
+    {
+      "step": 35,
+      "sha256": "6fa7e296cc5dc506c3a54038476f5653b9c877716be0e0e9e486dbe25d86b6e3",
+      "pixelsSha256": "e6a66f2ef4501b4a7ca78142a8a6e609db24740e658a3af316c87e577de75e31",
+      "authoredCheckpoint": false,
+      "from": 31,
+      "to": 36
+    },
+    {
+      "step": 36,
+      "sha256": "abaf7ae0f86a067aae3ce14bc6103a24ac8097fb4f26ecc40ff53cceb819f624",
+      "pixelsSha256": "97932831f7817bbc8e5dde356f3c194f878187d417badd57905b6daf3f71a382",
+      "authoredCheckpoint": true,
+      "from": 31,
+      "to": 36
+    },
+    {
+      "step": 37,
+      "sha256": "88e5617eaaebbcf5ba30d0cb56aca27969454d7de56ce7af48f7bde639662afd",
+      "pixelsSha256": "712e9c2f94461ba898de04a518a47862c27d273a7d9cc09993a887e210ab38cc",
+      "authoredCheckpoint": false,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 38,
+      "sha256": "caf91f56b745f35d58e9e3ad6f22182a8f2e304e3c63640bc83c1a41ebb56165",
+      "pixelsSha256": "d6e0f4fa3d81a7f0146b5917a9567c66f9fca7b7aee35480cdeb5efe013e0295",
+      "authoredCheckpoint": false,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 39,
+      "sha256": "5155473a45c2376b73029c3dbed08b264c06d81086f676041257c0385a7553f0",
+      "pixelsSha256": "9fee186fd30503f592c5289db0632f14694ea718286f0bcb773181f64917dec9",
+      "authoredCheckpoint": false,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 40,
+      "sha256": "b9cf9eedc6af5ea4e48c8fbc46b1f4f26bfd6c664c31d4098794a4aec4b13efa",
+      "pixelsSha256": "2be9e265743446564248ae83e0538c1b27f9e77758891eb613ab4c2e853c13d8",
+      "authoredCheckpoint": true,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 41,
+      "sha256": "922fa6d09ed5d31c170543aa43845222615ff3d1216436f377b1e542591ac5cb",
+      "pixelsSha256": "5a2b879f3ec378c99cbb9eeb56396ee260c18b337909f6a980143c7e1c34952e",
+      "authoredCheckpoint": false,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 42,
+      "sha256": "4a60c76a2f36b2c75a5f621747ccf1ac7b10ff2ce5110842830e0e8fc7695957",
+      "pixelsSha256": "723c01ec4f4e6c4f20955e2fe471741eb6eb25c2e9781a431692249e53f77f9f",
+      "authoredCheckpoint": false,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 43,
+      "sha256": "67e62e7dd951c48ca90984f8f264de9c75261671fa4a8c51b292b50c8c9c798a",
+      "pixelsSha256": "0be21c51b844c860e91db3441d8d0bc18275ca2b173aa756bdacdce915d2e7aa",
+      "authoredCheckpoint": false,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 44,
+      "sha256": "c674d9f54f70d7f176f4b527df49dd63c35fe5006ebeaec42e02bd0b7a75aae0",
+      "pixelsSha256": "85014c3bf29e043d9bf8dbfc04efd8ea4a4a5e180f7de7623a9a43c3cf902dbd",
+      "authoredCheckpoint": true,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 45,
+      "sha256": "faaf13a388e66bf9938bf21804b3c1979b51ae1ef884ebc3310ff0834322d97b",
+      "pixelsSha256": "73465fba87c8df1a88821a44ba53c2d3578fea531695e391fac1adf6f5698d5c",
+      "authoredCheckpoint": false,
+      "from": 44,
+      "to": 47
+    },
+    {
+      "step": 46,
+      "sha256": "5e9e6adc713e246a3aa7677bbec5dc6dcbd5110350cf00313e34f9cd57bc25ea",
+      "pixelsSha256": "9634712a10042593993c5adc060f34eece201045ef47ef26caf7307389e8facf",
+      "authoredCheckpoint": false,
+      "from": 44,
+      "to": 47
+    },
+    {
+      "step": 47,
+      "sha256": "f7d0a25f9de3baa4e9ce7f2718889f1432611a919c06caf540893354d18abc0b",
+      "pixelsSha256": "9267df869d95de4f991e4efa6f71db185795211943d2d75488d7f849cee02aaf",
+      "authoredCheckpoint": true,
+      "from": 44,
+      "to": 47
+    },
+    {
+      "step": 48,
+      "sha256": "455432f5659bafdf8aab373b22ac71b36e9d1a0f4b2d67b04c4f0331773b803a",
+      "pixelsSha256": "4f7ff40c0955054858aae96d786d7e54b2a47a653cf0917963ee2918d87c152a",
+      "authoredCheckpoint": false,
+      "from": 47,
+      "to": 49
+    },
+    {
+      "step": 49,
+      "sha256": "afb88fbcbbbe30cfc4f1fb41b1ee7b05e236d83250e9f5e5334490f07f2331cd",
+      "pixelsSha256": "3f0e2ac1979ae53d7117f41f1a9fb6c30e69bc1f6d9849da36c0bd22d7b71104",
+      "authoredCheckpoint": true,
+      "from": 47,
+      "to": 49
+    },
+    {
+      "step": 50,
+      "sha256": "d01473294530606f41256b03b084beddac8874d266284e0d0cab1d9ceb526252",
+      "pixelsSha256": "a4d0531a6ef1d17931d3c3a72b409b61c7f6873c195ffc7e628d3aeb94ff7913",
+      "authoredCheckpoint": true,
+      "from": 49,
+      "to": 50
+    }
+  ],
+  "note": "14 image_gen checkpoints plus the original cover are interpolated offline into 51 fixed artistic states. These are not 50 independent image_gen calls, RF inversion, FLUX inference outputs, or the original image's generation history."
+}
