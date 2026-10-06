@@ -18,7 +18,7 @@ npm run dev:video
 - 视频保持中等尺寸，展示区占窗口高度的 40%，宽度达到桌面 24px／手机 16px 安全边距时只限制宽度，保持原比例并居中裁切。实拍与设备的尺寸、灯光、动画采样和进出场区间保持 rev=16。实拍画面、标题与参数保持不透明，随滚动上移出画面；参数的视差速度较慢，全部内容移出后才隐藏场景。画面上下的暗角帮助文字和菜单保持清晰。
 - AI 参考图在实拍退出时从窗口下方上移进入四周构图，大小、倾角与透明度各异，入场不渐显。每张图用不同深度速度移动，图片内部裁切也随滚动位移，形成视差。到达生成起点后按次序向中央移动、放大、对齐并叠加增亮。28% 汇聚为纯白矩形，28–32% 保留白色；32–50% 从左上角逐字符、逐行扫描，留下铺满矩形的透明底浅色代码，保留正常词间空格；50–65% 每个字符逐级分裂成更小的子字符，最后演变为黑白噪点；65–96% 先形成模糊色块与主体构图，再稳定轮廓、降低残余噪声并恢复细节；96–100% 保持清晰封面并衔接视频。所有百分比都是艺术动画的滚动进度，不代表真实加载或 AI 推理。
 - 生成矩形沿用视频尺寸并保持居中。桌面参考图以视频高度为构图基准，缩窄窗口时允许自然裁切；手机以错落的上下两组为主。途中改变窗口尺寸只重算布局，不重置进度。原左右节点与流光连线已经移除。
-- AI 使用独立透明 Three.js／GLSL 画布，不继承模型灯光或色调映射。每帧清空叠加缓冲，使用固定种子与进度计算轨迹、字符更新、分裂与噪点；同一进度的正向／反向画面一致，停止后不继续计算。去噪借鉴 [FLUX.1 的逐步 Live Preview](https://github.com/IonDen/mlx-taef#mflux-live-previews) 与 [Diffusion](https://diffusion.cobanov.dev/) 的构图与形体逐步收敛。当前示意作品使用内置 image_gen 制作的 9 阶段预测图集，关键步为 0、4、9、15、22、30、38、44、50；OpenCV Farneback 双向光流让人物和植被在相邻预测间变形修正，固定种子的局部残余与错峰推进补齐 0–50 步。它是艺术化模拟序列，并非 FLUX 的真实推理输出；前端不运行 AI 模型。第 50 步替换为未经修改的原封面，避免将生成近似图作为最终作品。素材与完整提示记录在 [生成记录](assets/atonement-generation.metadata.json)。两张新增纹理合计约 3.63 MB，按需加载。
+- AI 使用独立透明 Three.js／GLSL 画布，不继承模型灯光或色调映射。每帧清空叠加缓冲，使用固定种子与进度计算轨迹、字符更新、分裂与噪点；同一进度的正向／反向画面一致，停止后不继续绘制。去噪借鉴 [FLUX.1 的逐步 Live Preview](https://github.com/IonDen/mlx-taef#mflux-live-previews) 与 [Diffusion](https://diffusion.cobanov.dev/) 的构图与形体逐步收敛。默认不读取原来的 9 张作者预测图，也不调用生图接口。独立 Worker 从种子噪声实际计算 50 次条件重构：每步根据上一 RGB 场、多尺度低通封面、渐弱形变、邻域扩散与退火扰动求新状态。51 个结果只缓存在内存，滚动按绝对进度采样相邻步骤的残差；不是两幅独立生成图片之间的长区间叠化。后期补回原图高频细节，完成态直接使用未经修改的原封面。这是已知封面的条件重构艺术模拟，并非 FLUX 的真实语义推理；没有增加模型或中间图片下载。源码研究和边界见 [调研记录](../../docs/AI_DENOISE_RESEARCH.md)。旧图集和光流留作可恢复的示例与导入测试，不进入默认实验构建。
 - 实拍保留原滚动坐标。AI 参考图从 0.35 提前开始上移，生成从 1.0 开始，占 1.4 单位，完成于 2.4，桌面累计滚轮输入约 2940px。生成阶段不自动吸附。MENU 的 AI 入口定位生成起点，End 抵达清晰完成态，Home 返回实拍。AI 标题与参数在最后阶段渐显并保留视差。
 - 视频标题位于左上方，参数位于右下方。二者随视频移动，使用独立速度产生视差，并始终留在画面外侧。
 - 鼠标滚轮缓动、上下方向键、Page Up / Down、Home / End、触屏纵向拖动均可浏览。反向输入立即取消原方向的等待距离。停止后结束逐帧计算；后台暂停媒体与渲染。减少动态或 WebGL 不可用时，AI 显示静态封面，视频仍可播放。
@@ -28,9 +28,9 @@ npm run dev:video
 
 ## 修改参数与内容
 
-编辑 `video-reel.config.js`：`reelWorks` 配置标题、类型、视频路径和参数；每个 AI 作品可选 `poster`（封面路径）、`references`（参考图数组）与 `generationSequence`。后者包含 `atlas / flowAtlas`、网格 `columns / rows`、严格递增且始于 0 的 `steps`、对应末帧的 `posterFrame` 及 `flowRange`，最多支持 64 张预测；可接入 ComfyUI / Diffusers 导出的真实逐步预览图集。当前配置为生成素材的模拟序列。载入本地视频时自动解除原示意图集，使用新视频首帧的程序兼容效果，避免内容串片；匹配该影片的真实生成序列需按作品配置。序列或光流加载失败时保留兼容画面。参考图默认使用 `referenceFrames`，其 `src` 或 `poster` 指定静态画面；`scale / opacity / tilt` 控制大小、透明度和倾角，`scatter: { x, y }` 覆盖种子分布。自定义资源在此文件使用字面量 `new URL('./assets/filename.ext', import.meta.url).href`，确保 Vite 打包。
+编辑 `video-reel.config.js`：`reelWorks` 配置标题、类型、视频路径和参数；每个 AI 作品可选 `poster`（封面路径）、`references`（参考图数组）与 `generationSequence`。默认使用代码求解器；后者只在显式配置时导入 `atlas / flowAtlas`、网格 `columns / rows`、严格递增且始于 0 的 `steps`、对应末帧的 `posterFrame` 及 `flowRange`，最多支持 64 张预测，可接入 ComfyUI / Diffusers 导出的真实逐步预览。载入本地视频时取消已配置序列，并为新视频的无损首帧重新计算完整 50 步，避免内容串片；过期 Worker 和纹理释放。Worker 不可用时保留程序兼容效果，WebGL 不可用时显示封面。参考图默认使用 `referenceFrames`，其 `src` 或 `poster` 指定静态画面；`scale / opacity / tilt` 控制大小、透明度和倾角，`scatter: { x, y }` 覆盖种子分布。自定义资源在此文件使用字面量 `new URL('./assets/filename.ext', import.meta.url).href`，确保 Vite 打包。
 
-AI 调参集中在 `reelConfig.aiGeneration`：`scrollSpan` 为行程，`stages` 为阶段边界，`seed` 控制稳定的随机分布；`fontSize / mobileFontSize`、`subdivisionLevels`、`noiseStrength` 控制字符大小、分裂级数与噪声强度；`referenceSpread / mobileReferenceSpread`、`referenceScale / referenceOpacity` 控制参考图分布、大小和透明度。`referenceEntrySpan / referenceEntryTravel` 控制提前入场区间和上移距离，`referenceImageParallax / referenceOverscan` 控制图片内位移与裁切余量。`denoiseSteps` 为最大模拟步数，当前 50（含第 0 步共 51 个状态），可改为 25；`sequenceFlowStrength / sequenceRegionLag` 控制相邻预测的形变强度和区域错峰步数，`denoiseBlur / denoiseWarp` 控制无图集兼容效果。桌面像素比上限 1.5、手机 1。原图片、封面与模型贴图均不压缩，Python / OpenCV 只用于离线烘焙，不进入网页依赖。
+AI 调参集中在 `reelConfig.aiGeneration`：`scrollSpan` 为行程，`stages` 为阶段边界，`seed` 控制稳定的随机分布；`fontSize / mobileFontSize`、`subdivisionLevels`、`noiseStrength` 控制字符大小、分裂级数与噪声强度；`referenceSpread / mobileReferenceSpread`、`referenceScale / referenceOpacity` 控制参考图分布、大小和透明度。`referenceEntrySpan / referenceEntryTravel` 控制提前入场区间和上移距离，`referenceImageParallax / referenceOverscan` 控制图片内位移与裁切余量。`denoiseSteps` 为实际迭代次数，当前 50（含第 0 步共 51 个状态），可改为 25，支持 2–63；`solverWidth / solverMobileWidth` 控制内部计算分辨率，默认 384 / 256，完成态仍使用原图；`solverWarp / solverNoise` 控制早期形体修正与退火扰动。桌面状态缓存约 18 MB，手机约 8 MB，含图集空格和条件纹理，不含临时数组及原图。窗口缩放只改变采样裁切、不重算状态；素材变更才重算，后台暂停 Worker、停止绘制，退出时终止任务并释放纹理。`sequenceFlowStrength / sequenceRegionLag` 只控制可选导入序列，`denoiseBlur / denoiseWarp` 控制 Worker 失败时的兼容效果。桌面像素比上限 1.5、手机 1。原图片、封面与模型贴图均不压缩；Python / OpenCV 只保留给可选光流烘焙，不进入网页依赖。
 
 设备调参也集中在 `reelConfig`：
 
@@ -54,7 +54,7 @@ AI 调参集中在 `reelConfig.aiGeneration`：`scrollSpan` 为行程，`stages`
 | `deviceLayer.maxPixelRatio/mobileMaxPixelRatio`           | 桌面／手机渲染清晰度上限                                              |
 | `deviceLayer.reducedProgress`                             | 减少动态时固定姿态的时间轴位置                                        |
 
-`video-reel.css` 管理字体、层级与菜单；`video-reel.js` 管理滚动输入、导航与媒体衔接；`reel-motion.js` 保留实拍几何和按实际内容范围计算的进退场。`ai-generation-motion.js` 计算分段时间轴、种子轨迹、入场视差与统一封面 UV；`ai-generation-code.js` 生成保留词间空格的满行代码；`ai-generation-sequence.js` 验证预测图集、映射 0–50 步及相邻区间；`ai-generation.js` 管理透明渲染层、素材加载和资源释放；`ai-generation-shaders.js` 实现亮度叠加、透明字符、双向光流预测与兼容去噪。生成层接口为 `update({ progress, arrival, geometry, visible, reduced })`、`setAssets({ poster, fallback, references, sequence })` 与 `dispose()`；`arrival` 为 0–1 的入场进度，省略时按 1 处理。序列及光流纹理复用缓存，更换素材或销毁时释放；异步结果受版本保护。不建立自己的动画计时器。设备模块与 Blender 资产保持不变，详情见下面说明。
+`video-reel.css` 管理字体、层级与菜单；`video-reel.js` 管理滚动输入、导航与媒体衔接；`reel-motion.js` 保留实拍几何和按实际内容范围计算的进退场。`ai-generation-motion.js` 计算分段时间轴、种子轨迹、入场视差与统一封面 UV；`ai-generation-code.js` 生成保留词间空格的满行代码；`ai-generation-sequence.js` 验证可选图集、映射 0–50 步及相邻区间；`ai-denoise-solver.js` 为纯像素迭代算法，`ai-denoise.worker.js` 在独立线程运行并分批让出事件循环；`ai-generation.js` 管理透明渲染层、素材加载、求解任务与资源释放；`ai-generation-shaders.js` 实现亮度叠加、透明字符、计算步骤采样、高频恢复与可选导入序列。生成层接口为 `update({ progress, arrival, geometry, visible, reduced })`、`setAssets({ poster, fallback, references, sequence })` 与 `dispose()`；`arrival` 为 0–1 的入场进度，省略时按 1 处理。异步结果受版本保护。不建立自己的动画计时器。设备模块与 Blender 资产保持不变，详情见下面说明。
 
 ## Blender 资产
 
@@ -72,3 +72,5 @@ AI 调参集中在 `reelConfig.aiGeneration`：`scrollSpan` 为行程，`stages`
 用户的实拍设计图作为一张共享图集保存为 `assets/vertical-film-sheet.jpg`。网页通过 CSS 裁切中央画面和两台相机，保持原始文件不变，避免重复保存多份素材。AI 设计图只用于布局参照。
 
 `npm test` 包含实拍视频尺寸与进退时序、AI 独立行程、阶段边界连续性、确定性轨迹、手机上下分布及封面裁切一致性的检查。上一版纵向设计副本保存在 `G:\zuopingji\Portfolio-before-tv-reveal-20261001`，也可通过 Git 提交 `abe9148` 恢复。撤回的电视开机版本保存在 `G:\zuopingji\Portfolio-tv-reference-20261001`。旧横向设计副本仍在 `G:\zuopingji\Portfolio-before-vertical-video-20260930`。
+
+2026-10-06 代码迭代版验收：60 项测试通过，主站和实验构建通过；开发与打包页面的 51 个 GPU 状态均唯一，正向／反向像素哈希一致，停帧 RAF 为 0。封面边界的平均通道差约 0.006 / 255。1280×720 桌面首次 Worker 计算约 0.6–0.7 秒、缓存 18.1 MB；390×844 模拟手机约 0.33 秒、缓存 8.05 MB，这些不是所有设备的性能保证。检查了窄屏拖动倒放、途中缩放保留进度、全尺寸封面及视频完成／回滑衔接、Worker 失败兼容、模拟后台暂停／恢复，以及退出后零画布、纹理释放。主站桌面／手机首页、菜单、作品浏览、详情加载及返回正常。实拍、设备文件和灯光配置未修改，相关动画与素材测试通过。默认实验构建不包含旧图集及光流，减少约 3.63 MB 下载；原图片和模型贴图没有修改。

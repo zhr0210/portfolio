@@ -30,8 +30,12 @@ export const reelConfig = {
     referenceEntryTravel: 1.45,
     referenceImageParallax: 0.07,
     referenceOverscan: 1.22,
-    // 借鉴 FLUX 的逐步预览节奏：先建立构图，再收敛纹理细节。
+    // 固定种子迭代：每步修正上一帧，先收敛低频结构，再恢复细节。
     denoiseSteps: 50,
+    solverWidth: 384,
+    solverMobileWidth: 256,
+    solverWarp: 0.2,
+    solverNoise: 0.36,
     denoiseBlur: 6.5,
     denoiseWarp: 0.07,
     sequenceFlowStrength: 1,
@@ -108,15 +112,8 @@ export const reelWorks = [
     eyebrow: 'AI FILM / 02',
     parameters: ['IMAGE TO VIDEO', '参考画面 · AI 创作'],
     video: '',
-    generationSequence: {
-      atlas: new URL('./assets/atonement-generation-atlas-v1.png', import.meta.url).href,
-      flowAtlas: new URL('./assets/atonement-generation-flow-v1.png', import.meta.url).href,
-      columns: 3,
-      rows: 3,
-      steps: [0, 4, 9, 15, 22, 30, 38, 44, 50],
-      posterFrame: 8,
-      flowRange: 0.16,
-    },
+    // 默认由代码从封面计算51个状态，不需要中间图片。
+    // generationSequence 仍可选配真实模型导出的逐步预览。
   },
 ];
 

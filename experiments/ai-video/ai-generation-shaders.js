@@ -49,6 +49,12 @@ export const generationShader = /* glsl */ `
   uniform float uSequenceFlowRange;
   uniform float uSequenceFlowStrength;
   uniform float uSequenceRegionLag;
+  uniform float uHasSolver;
+  uniform sampler2D uSolverAtlas;
+  uniform sampler2D uSolverSource;
+  uniform vec2 uSolverGrid;
+  uniform vec2 uSolverTileSize;
+  uniform float uSolverSteps;
   uniform vec4 uPosterUV;
   uniform vec2 uFrameSize;
   uniform float uProgress;
@@ -146,6 +152,29 @@ export const generationShader = /* glsl */ `
     prediction = clamp(prediction + vec3(residual), 0.0, 1.0);
     return mix(vec3(binaryGrain), prediction, smoothstep(0.0, 3.0, iteration));
   }
+  vec3 iterationField(float step, vec2 imageUV) {
+    vec2 slot = vec2(mod(step, uSolverGrid.x), uSolverGrid.y - 1.0 - floor(step / uSolverGrid.x));
+    vec2 edge = 0.5 / uSolverTileSize;
+    // Half-texel bounds keep neighboring cached iterations out of the sample.
+    vec2 uv = (slot + clamp(imageUV, edge, 1.0 - edge)) / uSolverGrid;
+    return texture2D(uSolverAtlas, uv).rgb;
+  }
+  vec3 reconstructIterations(float raw, float binaryGrain) {
+    float iteration = raw * uSolverSteps;
+    float step = floor(iteration), fraction = smoothstep(0.0, 1.0, fract(iteration));
+    vec2 imageUV = uPosterUV.xy + vUv * uPosterUV.zw;
+    vec3 previous = iterationField(step, imageUV);
+    vec3 correction = iterationField(min(step + 1.0, uSolverSteps), imageUV) - previous;
+    // Integrate a fraction of the *computed next correction*, not authored pictures.
+    vec3 prediction = previous + fraction * correction;
+    // The solver works at a bounded resolution; the original cover provides only
+    // the late high-frequency residual. At step 50 the sum equals the original.
+    vec3 sharp = texture2D(uPoster, imageUV).rgb;
+    vec3 low = texture2D(uSolverSource, imageUV).rgb;
+    prediction += (sharp - low) * smoothstep(0.6, 1.0, raw);
+    prediction = clamp(prediction, 0.0, 1.0);
+    return mix(vec3(binaryGrain), prediction, smoothstep(0.0, 1.5, iteration));
+  }
   void main() {
     vec2 pixel = vec2(vUv.x, 1.0 - vUv.y) * uFrameSize;
     // Uniform branches skip expensive noise and image sampling in the earlier stages.
@@ -160,6 +189,12 @@ export const generationShader = /* glsl */ `
       return;
     }
     float binaryGrain = step(0.5, grain(floor(pixel / 1.15), uProgress * 96.0));
+    if (uHasSolver > 0.5 && uProgress >= uStageDenoise.x) {
+      float raw = clamp((uProgress - uStageDenoise.x) / (uStageDenoise.y - uStageDenoise.x), 0.0, 1.0);
+      gl_FragColor = vec4(reconstructIterations(raw, binaryGrain), 1.0);
+      #include <colorspace_fragment>
+      return;
+    }
     if (uHasSequence > 0.5 && uProgress >= uStageDenoise.x) {
       float raw = clamp((uProgress - uStageDenoise.x) / (uStageDenoise.y - uStageDenoise.x), 0.0, 1.0);
       gl_FragColor = vec4(reconstructSequence(pixel, raw, binaryGrain), 1.0);

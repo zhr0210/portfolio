@@ -2,6 +2,8 @@
 
 ## AI 生成序列的光流烘焙
 
+默认生成效果已经改为 `ai-denoise-solver.js` 和 Worker 实时计算 50 次条件重构，不使用本节的图片或 Python 工具。下面保留旧版图集的可恢复烘焙方式及可选序列接口，只有作品显式配置 `generationSequence` 时才会加载。
+
 `build-denoise-flow.py` 使用 OpenCV Farneback 计算每对预测图的正向、反向位移。生成图集与原作品均只读，末张预测替换为原作品封面；脚本输出用于 GLSL 的无损 RGBA 向量数据，并更新元数据中的尺寸、版本与运动量。网页只读取纹理，不依赖 Python 或 OpenCV。
 
 在安装了 `opencv-python-headless` 与 NumPy 的 Python 环境中运行：

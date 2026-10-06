@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { reelConfig, reelWorks } from '../experiments/ai-video/video-reel.config.js';
+import { reelConfig } from '../experiments/ai-video/video-reel.config.js';
 import {
   denoiseFrame,
   normalizeSequence,
@@ -9,7 +9,22 @@ import {
 } from '../experiments/ai-video/ai-generation-sequence.js';
 
 const config = reelConfig.aiGeneration;
-const definition = reelWorks[1].generationSequence;
+// The previous authored example remains a fixture for the optional import interface.
+const definition = {
+  atlas: new URL(
+    '../experiments/ai-video/assets/atonement-generation-atlas-v1.png',
+    import.meta.url,
+  ).href,
+  flowAtlas: new URL(
+    '../experiments/ai-video/assets/atonement-generation-flow-v1.png',
+    import.meta.url,
+  ).href,
+  columns: 3,
+  rows: 3,
+  steps: [0, 4, 9, 15, 22, 30, 38, 44, 50],
+  posterFrame: 8,
+  flowRange: 0.16,
+};
 
 test('All 0–50 iterations map deterministically from the existing scroll interval', () => {
   const states = [];

@@ -77,6 +77,9 @@ export function createAIGenerationLayer(
     poster = null,
     sequence = null,
     textures = new Map();
+  let solverWorker = null,
+    solverAtlas = null,
+    solverSource = null;
   let latest = { progress: 0, arrival: 1, geometry: null, visible: false, reduced: false };
   let pendingAssets = assets,
     renderKey = null,
@@ -115,6 +118,117 @@ export function createAIGenerationLayer(
       asset.width || texture.image.naturalWidth || texture.image.width,
       asset.height || texture.image.naturalHeight || texture.image.height,
     ];
+  }
+
+  function releaseSolver() {
+    solverWorker?.terminate();
+    solverWorker = null;
+    solverAtlas?.dispose();
+    solverSource?.dispose();
+    solverAtlas = solverSource = null;
+    stats.solver = 'idle';
+    stats.solverFrames = 0;
+    stats.solverBytes = 0;
+    stats.solverMilliseconds = null;
+    stats.solverErrors = null;
+    stats.solverError = null;
+    if (layer) {
+      const u = layer.material.uniforms;
+      u.uHasSolver.value = 0;
+      u.uSolverAtlas.value = u.uSolverSource.value = poster?.texture || null;
+    }
+  }
+
+  function buildSolver(version) {
+    releaseSolver();
+    if (sequence || disposed) return;
+    const [sourceWidth, sourceHeight] = assetSize(poster.asset, poster.texture);
+    const steps = Math.max(2, Math.min(63, Math.round(config.denoiseSteps)));
+    const columns = Math.min(8, steps + 1),
+      rows = Math.ceil((steps + 1) / columns);
+    const limit = renderer.capabilities.maxTextureSize;
+    const requested = latest.geometry?.mobile ? config.solverMobileWidth : config.solverWidth;
+    const width = Math.max(
+      2,
+      Math.floor(
+        Math.min(
+          requested || 384,
+          sourceWidth,
+          limit / columns,
+          ((limit / rows) * sourceWidth) / sourceHeight,
+        ),
+      ),
+    );
+    const height = Math.max(2, Math.round((width * sourceHeight) / sourceWidth));
+    const input = document.createElement('canvas');
+    input.width = width;
+    input.height = height;
+    const ctx = input.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(poster.texture.image, 0, 0, width, height);
+    const pixels = ctx.getImageData(0, 0, width, height).data;
+    stats.solver = 'building';
+    const start = performance.now();
+    const worker = new Worker(new URL('./ai-denoise.worker.js', import.meta.url), {
+      type: 'module',
+    });
+    solverWorker = worker;
+    const failed = (error) => {
+      if (disposed || version !== assetVersion || worker !== solverWorker) return;
+      worker.terminate();
+      solverWorker = null;
+      stats.solver = 'failed';
+      stats.solverError = String(error.message || error);
+      renderKey = null;
+      onInvalidate();
+    };
+    worker.onerror = failed;
+    worker.onmessage = ({ data }) => {
+      if (disposed || version !== assetVersion || worker !== solverWorker) return;
+      if (data.error) return failed(data.error);
+      worker.terminate();
+      solverWorker = null;
+      const makeTexture = (rgba, w, h) => {
+        const texture = new runtime.DataTexture(rgba, w, h);
+        texture.colorSpace = runtime.SRGBColorSpace;
+        // Worker arrays have top-to-bottom rows, matching the input canvas.
+        texture.flipY = true;
+        texture.magFilter = texture.minFilter = runtime.LinearFilter;
+        texture.generateMipmaps = false;
+        texture.needsUpdate = true;
+        return texture;
+      };
+      solverAtlas = makeTexture(new Uint8Array(data.pixels), data.width, data.height);
+      solverSource = makeTexture(new Uint8Array(pixels), width, height);
+      const u = layer.material.uniforms;
+      u.uHasSolver.value = 1;
+      u.uSolverAtlas.value = solverAtlas;
+      u.uSolverSource.value = solverSource;
+      u.uSolverGrid.value.set(data.columns, data.rows);
+      u.uSolverTileSize.value.set(width, height);
+      u.uSolverSteps.value = data.steps;
+      stats.solver = 'ready';
+      stats.solverFrames = data.steps + 1;
+      stats.solverMilliseconds = Math.round(performance.now() - start);
+      stats.solverBytes = data.pixels.byteLength + pixels.byteLength;
+      stats.solverErrors = data.errors;
+      renderKey = null;
+      onInvalidate();
+    };
+    // Keep the conditioning source for the exact full-resolution detail residual.
+    const rgba = pixels.slice().buffer;
+    worker.postMessage({ pause: document.hidden });
+    worker.postMessage(
+      {
+        rgba,
+        width,
+        height,
+        steps,
+        seed: config.seed,
+        warp: config.solverWarp,
+        noise: config.noiseStrength * config.solverNoise,
+      },
+      [rgba],
+    );
   }
 
   async function applyAssets() {
@@ -185,9 +299,17 @@ export function createAIGenerationLayer(
       references.clear();
       poster = displayPoster;
       sequence = nextSequence;
-      stats.sequence = sequence ? 'authored-flow' : 'procedural';
+      stats.sequence = sequence ? 'authored-flow' : 'iterative';
       stats.sequenceFrames = sequence?.definition.frameCount || 0;
       stats.sequenceError = sequenceError;
+      try {
+        buildSolver(version);
+      } catch (error) {
+        // Worker / canvas restrictions retain the inexpensive cover renderer.
+        releaseSolver();
+        stats.solver = 'failed';
+        stats.solverError = String(error.message || error);
+      }
       cards = loaded.map(({ reference, asset, texture }) => {
         const material = new runtime.ShaderMaterial({
           vertexShader,
@@ -311,6 +433,12 @@ export function createAIGenerationLayer(
             uSequenceFlowRange: { value: 0.16 },
             uSequenceFlowStrength: { value: config.sequenceFlowStrength },
             uSequenceRegionLag: { value: config.sequenceRegionLag },
+            uHasSolver: { value: 0 },
+            uSolverAtlas: { value: null },
+            uSolverSource: { value: null },
+            uSolverGrid: { value: new THREE.Vector2(1, 1) },
+            uSolverTileSize: { value: new THREE.Vector2(1, 1) },
+            uSolverSteps: { value: config.denoiseSteps },
             uPosterUV: { value: new THREE.Vector4() },
             uFrameSize: { value: new THREE.Vector2() },
             uProgress: { value: 0 },
@@ -435,6 +563,14 @@ export function createAIGenerationLayer(
     },
     { signal: abort.signal },
   );
+
+  document.addEventListener(
+    'visibilitychange',
+    () => {
+      solverWorker?.postMessage({ pause: document.hidden });
+    },
+    { signal: abort.signal },
+  );
   canvas.addEventListener(
     'webglcontextrestored',
     () => {
@@ -474,6 +610,7 @@ export function createAIGenerationLayer(
       pendingAssets = next;
       // Invalidate a pending load immediately, including before Three.js resolves.
       assetVersion++;
+      releaseSolver();
       if (runtime && renderer) void applyAssets();
     },
     dispose() {
@@ -481,6 +618,7 @@ export function createAIGenerationLayer(
       disposed = true;
       assetVersion++;
       abort.abort();
+      releaseSolver();
       for (const card of cards) card.mesh.material.dispose();
       layer?.material.dispose();
       composite?.material.dispose();
