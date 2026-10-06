@@ -15,11 +15,11 @@ npm run dev:video
 独立打包运行 `npm run build:video`，结果在 `dist-experiments/`；运行 `npm run preview:video` 可验证打包后的页面和资源。实验配置关闭 `publicDir`，不复制主站作品素材。主站仍只发布 `dist/`。
 
 - 相机与 Pocket 使用一个独立的透明 Three.js 背景画布，始终位于视频和参考节点下方。两台设备只在第一部实拍视频的固定区间各进入、退出一次，滚出顶部后不会重新出现在后续影片或空白画面；反向滚动可以回看。设备从下向上移动，不使用透明度渐隐，完整的旋转动画随滚动播放一次。云台和镜头动作按原时间轴播放一次。桌面双投影把设备放在 16:9 构图的左右两侧，设备大小系数保持 1.12；窄窗口保持构图并允许自然裁切。手机同一画布上下错峰展示，不重置旋转姿态。静态设备仅用于加载中或 WebGL / 模型加载失败时的兼容画面，也遵循固定的进出场区间。
-- 视频保持中等尺寸，展示区占窗口高度的 40%，宽度达到桌面 24px／手机 16px 安全边距时只限制宽度，保持原比例并居中裁切。实拍与设备的尺寸、灯光、动画采样和进出场区间保持 rev=16。画面上下的暗角帮助文字和菜单保持清晰。
-- AI 参考图分布在背景四周，每张保留独立大小、透明度与倾角，按次序向中央视频区域移动、放大、对齐并叠加增亮。28% 汇聚为纯白矩形，28–32% 保留白色；32–50% 从左上角逐行扫描，白色退去，留下透明底浅色代码；50–65% 字符逐级分裂、缩小并增加密度，演变为黑白噪点；65–96% 形成模糊色块、主体轮廓与细节；96–100% 收敛为清晰封面。所有百分比都是艺术动画的滚动进度，不代表真实加载或 AI 推理。
+- 视频保持中等尺寸，展示区占窗口高度的 40%，宽度达到桌面 24px／手机 16px 安全边距时只限制宽度，保持原比例并居中裁切。实拍与设备的尺寸、灯光、动画采样和进出场区间保持 rev=16。实拍画面、标题与参数保持不透明，随滚动上移出画面；参数的视差速度较慢，全部内容移出后才隐藏场景。画面上下的暗角帮助文字和菜单保持清晰。
+- AI 参考图在实拍退出时从窗口下方上移进入四周构图，大小、倾角与透明度各异，入场不渐显。每张图用不同深度速度移动，图片内部裁切也随滚动位移，形成视差。到达生成起点后按次序向中央移动、放大、对齐并叠加增亮。28% 汇聚为纯白矩形，28–32% 保留白色；32–50% 从左上角逐字符、逐行扫描，留下铺满矩形的透明底浅色代码，保留正常词间空格；50–65% 每个字符逐级分裂成更小的子字符，最后演变为黑白噪点；65–96% 先形成模糊色块与主体构图，再稳定轮廓、降低残余噪声并恢复细节；96–100% 保持清晰封面并衔接视频。所有百分比都是艺术动画的滚动进度，不代表真实加载或 AI 推理。
 - 生成矩形沿用视频尺寸并保持居中。桌面参考图以视频高度为构图基准，缩窄窗口时允许自然裁切；手机以错落的上下两组为主。途中改变窗口尺寸只重算布局，不重置进度。原左右节点与流光连线已经移除。
-- AI 使用独立透明 Three.js／GLSL 画布，不继承模型灯光或色调映射。每帧清空叠加缓冲，使用固定种子与进度计算轨迹、字符更新、分裂与噪点；同一进度的正向／反向画面一致，停止后不继续计算。借鉴 [Diffusion](https://diffusion.cobanov.dev/) 的逐步去噪视觉，前端不运行 AI 模型。
-- 实拍保留原滚动坐标。AI 生成从 1.0 开始，占 1.4 单位，完成于 2.4，桌面累计滚轮输入约 2940px。生成阶段不自动吸附。MENU 的 AI 入口定位生成起点，End 抵达清晰完成态，Home 返回实拍。标题与参数在最后阶段渐显并保留视差。
+- AI 使用独立透明 Three.js／GLSL 画布，不继承模型灯光或色调映射。每帧清空叠加缓冲，使用固定种子与进度计算轨迹、字符更新、分裂与噪点；同一进度的正向／反向画面一致，停止后不继续计算。去噪借鉴 [FLUX.1 的 26 步 Live Preview](https://github.com/IonDen/mlx-taef#mflux-live-previews) 的构图先行、细节收敛节奏，以及 [Diffusion](https://diffusion.cobanov.dev/) 的逐步展示。对共享图集的封面先在内存中按原尺寸裁出独立纹理，再生成低频预览，避免其他图集区域混入模糊色块；原素材不改动。前端仍使用封面模拟视觉，不运行 AI 模型。
+- 实拍保留原滚动坐标。AI 参考图从 0.35 提前开始上移，生成从 1.0 开始，占 1.4 单位，完成于 2.4，桌面累计滚轮输入约 2940px。生成阶段不自动吸附。MENU 的 AI 入口定位生成起点，End 抵达清晰完成态，Home 返回实拍。AI 标题与参数在最后阶段渐显并保留视差。
 - 视频标题位于左上方，参数位于右下方。二者随视频移动，使用独立速度产生视差，并始终留在画面外侧。
 - 鼠标滚轮缓动、上下方向键、Page Up / Down、Home / End、触屏纵向拖动均可浏览。反向输入立即取消原方向的等待距离。停止后结束逐帧计算；后台暂停媒体与渲染。减少动态或 WebGL 不可用时，AI 显示静态封面，视频仍可播放。
 - GLB 为 0–252 帧、24 fps 的完整动画。Sony 主控制器从原 0–108 帧延长至 216 帧，Pocket 从 36–144 帧延长至 252 帧，有效时长均为 9 秒。新增段保持末段 X、Z 递减、Y 递增的旋转方向，以累计整圈的 Euler 角结束于初始朝向。保留原关键姿态，调整旧尾帧的切线连接惯性，并计算新的中段与尾段曲线，最后减速停稳。升降父级行程加倍，距离和 Pocket 的 36 帧延迟不变；云台曲线原样保留。网页只绝对采样对应的完整区间。滚动到首部或末部后停止，设备不会延伸网页行程。停止滚动就停止三维绘制，不自动播放；后台暂停。加载时采样完整行程的组合姿态，测量投影包围范围，完整滚出视口后结束展示。减少动态模式固定姿态，并在视频区间之外隐藏设备。
@@ -30,7 +30,7 @@ npm run dev:video
 
 编辑 `video-reel.config.js`：`reelWorks` 配置标题、类型、视频路径和参数；每个 AI 作品可选 `poster`（封面路径）与 `references`（参考图数组），默认使用 `referenceFrames`。参考图的 `src` 或 `poster` 指定静态画面；视频参考可填写其 `poster`。`scale / opacity / tilt` 控制大小、透明度和倾角，`scatter: { x, y }` 可覆盖种子分布（以画面中心为原点、以虚拟画布宽高为单位）。自定义资源建议在此文件使用字面量 `new URL('./assets/filename.ext', import.meta.url).href`，确保 Vite 打包。
 
-AI 调参集中在 `reelConfig.aiGeneration`：`scrollSpan` 为行程，`stages` 为阶段边界，`seed` 控制稳定的随机分布；`fontSize / mobileFontSize`、`subdivisionLevels`、`noiseStrength` 分别控制字符大小、分裂级数与噪声强度；`referenceSpread / mobileReferenceSpread`、`referenceScale / referenceOpacity` 控制参考图分布、大小和透明度。桌面像素比上限 1.5、手机 1。原图片与模型贴图均不压缩，不新增大型动画素材。
+AI 调参集中在 `reelConfig.aiGeneration`：`scrollSpan` 为行程，`stages` 为阶段边界，`seed` 控制稳定的随机分布；`fontSize / mobileFontSize`、`subdivisionLevels`、`noiseStrength` 分别控制字符大小、分裂级数与噪声强度；`referenceSpread / mobileReferenceSpread`、`referenceScale / referenceOpacity` 控制参考图分布、大小和透明度。`referenceEntrySpan / referenceEntryTravel` 控制提前入场区间和上移距离，`referenceImageParallax / referenceOverscan` 控制图片内位移与裁切余量；`denoiseSteps / denoiseBlur / denoiseWarp` 控制去噪预览步数、初期模糊与构图扰动。桌面像素比上限 1.5、手机 1。原图片与模型贴图均不压缩，不新增大型动画素材。
 
 设备调参也集中在 `reelConfig`：
 
@@ -54,7 +54,7 @@ AI 调参集中在 `reelConfig.aiGeneration`：`scrollSpan` 为行程，`stages`
 | `deviceLayer.maxPixelRatio/mobileMaxPixelRatio`           | 桌面／手机渲染清晰度上限                                              |
 | `deviceLayer.reducedProgress`                             | 减少动态时固定姿态的时间轴位置                                        |
 
-`video-reel.css` 管理字体、层级与菜单；`video-reel.js` 管理滚动输入、导航与媒体衔接；`reel-motion.js` 保留实拍几何和渐显时序。`ai-generation-motion.js` 计算分段时间轴、种子轨迹与统一封面 UV；`ai-generation.js` 管理透明渲染层、素材加载和资源释放；`ai-generation-shaders.js` 实现线性亮度叠加、透明字符与多尺度去噪。生成层接口为 `update({ progress, geometry, visible, reduced })`、`setAssets({ poster, fallback, references })` 与 `dispose()`，不建立自己的动画计时器。设备模块与 Blender 资产保持不变，详情见下面说明。异步结果在销毁后不会重新挂载。
+`video-reel.css` 管理字体、层级与菜单；`video-reel.js` 管理滚动输入、导航与媒体衔接；`reel-motion.js` 保留实拍几何和按实际内容范围计算的进退场。`ai-generation-motion.js` 计算分段时间轴、种子轨迹、入场视差与统一封面 UV；`ai-generation-code.js` 生成保留词间空格的满行代码；`ai-generation.js` 管理透明渲染层、素材加载和资源释放；`ai-generation-shaders.js` 实现线性亮度叠加、透明字符与多尺度去噪。生成层接口为 `update({ progress, arrival, geometry, visible, reduced })`、`setAssets({ poster, fallback, references })` 与 `dispose()`；`arrival` 为 0–1 的入场进度，省略时按 1 处理。不建立自己的动画计时器。设备模块与 Blender 资产保持不变，详情见下面说明。异步结果在销毁后不会重新挂载。
 
 ## Blender 资产
 

@@ -15,6 +15,10 @@ export function generationProgress(position, segment) {
   return clamp((position - segment.entry) / (segment.end - segment.entry));
 }
 
+export function referenceArrival(position, segment, config) {
+  return clamp((position - segment.entry + config.referenceEntrySpan) / config.referenceEntrySpan);
+}
+
 export function generationState(value, config) {
   const progress = clamp(Number.isFinite(value) ? value : 0);
   const s = config.stages;
@@ -67,7 +71,7 @@ const desktopSlots = [
   [0.26, 0.21],
 ];
 
-export function referencePose(value, reference, index, count, geometry, config) {
+export function referencePose(value, reference, index, count, geometry, config, arrival = 1) {
   const p = clamp(value),
     f = geometry.frame;
   const random = (slot) => seededUnit(config.seed, index * 7 + slot);
@@ -87,16 +91,23 @@ export function referencePose(value, reference, index, count, geometry, config) 
   const u = range(delay, delay + 0.112, p);
   const arc = Math.sin(Math.PI * u) * (random(3) - 0.5) * virtualHeight * 0.14;
   const mix = (a, b) => a + (b - a) * u;
+  const depth = 0.86 + random(5) * 0.32;
+  const entryDistance = Math.max(
+    geometry.H * config.referenceEntryTravel * depth,
+    geometry.H - startY + width,
+  );
+  const entry = 1 - clamp(arrival);
+  const imageDrift =
+    (entry * 0.7 + (p / config.stages.gather) * (1 - u)) * config.referenceImageParallax;
   return {
     x: mix(startX, geometry.W / 2) + arc,
-    y: mix(startY, geometry.H / 2) - Math.abs(arc) * 0.55,
+    y: mix(startY, geometry.H / 2) - Math.abs(arc) * 0.55 + entry * entryDistance,
     w: mix(width, f.w),
     h: mix(width / 1.855, f.h),
     tilt: ((reference.tilt ?? 0) + (random(4) - 0.5) * 8) * (1 - u),
-    opacity:
-      config.referenceOpacity *
-      (reference.opacity ?? 1) *
-      (1 - range(config.stages.gather - 0.009, config.stages.gather, p)),
+    opacity: config.referenceOpacity * (reference.opacity ?? 1),
+    imageX: imageDrift * (random(6) - 0.5),
+    imageY: imageDrift * depth,
     exposure: 0.88 + u * u * 1.15,
     progress: u,
   };

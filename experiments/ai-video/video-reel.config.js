@@ -25,6 +25,15 @@ export const reelConfig = {
     mobileReferenceSpread: 0.62,
     referenceScale: 0.22,
     referenceOpacity: 0.7,
+    // 提前从下方上移入场；不同深度的图片有不同移动速度，图片内部也有视差。
+    referenceEntrySpan: 0.65,
+    referenceEntryTravel: 1.45,
+    referenceImageParallax: 0.07,
+    referenceOverscan: 1.22,
+    // 借鉴 FLUX 的逐步预览节奏：先建立构图，再收敛纹理细节。
+    denoiseSteps: 26,
+    denoiseBlur: 6.5,
+    denoiseWarp: 0.07,
     maxPixelRatio: 1.5,
     mobileMaxPixelRatio: 1,
   },

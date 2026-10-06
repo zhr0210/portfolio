@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { reelConfig, filmCrop } from '../experiments/ai-video/video-reel.config.js';
-import { reelLayout, scenePose } from '../experiments/ai-video/reel-motion.js';
+import { reelLayout, scenePose, sceneInView } from '../experiments/ai-video/reel-motion.js';
 
 for (const [W, H] of [
   [2048, 1152],
@@ -25,10 +25,21 @@ test('The original live film enters and exits once and reverses continuously', (
   const samples = [0.1, 0.3, 0.6, 0.3, 0.1].map((p) => scenePose(p, 0, g, reelConfig));
   assert.deepEqual(samples[0], samples[4]);
   assert.deepEqual(samples[1], samples[3]);
-  assert.equal(scenePose(-0.9, 0, g, reelConfig).opacity, 0);
-  assert.equal(scenePose(0, 0, g, reelConfig).opacity, 1);
-  assert.equal(scenePose(0.9, 0, g, reelConfig).opacity, 0);
-  assert.equal(scenePose(2.4, 0, g, reelConfig).opacity, 0);
+  for (const position of [-0.9, 0, 0.35, 0.9, 1.06, 2.4])
+    assert.equal(scenePose(position, 0, g, reelConfig).opacity, 1);
+  const captions = {
+    title: { top: g.frame.y - 70, height: 60 },
+    parameters: { top: g.frame.y + g.frame.h + 20, height: 48 },
+  };
+  const leaving = scenePose(1.06, 0, g, reelConfig);
+  assert.ok(g.frame.y + leaving.y + g.frame.h < 0);
+  assert.equal(
+    sceneInView(leaving, g, captions),
+    true,
+    'Keep slower caption parallax after the film leaves',
+  );
+  assert.equal(sceneInView(scenePose(1.4, 0, g, reelConfig), g, captions), false);
+  assert.equal(sceneInView(scenePose(0.9, 0, g, reelConfig), g, captions), true);
 });
 
 test('Narrowing preserves the restored film height and limits only its width', () => {

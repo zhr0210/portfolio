@@ -1,4 +1,5 @@
 import { generationState, referencePose, mediaUV } from './ai-generation-motion.js';
+import { createCodePixels } from './ai-generation-code.js';
 import {
   vertexShader,
   referenceShader,
@@ -27,30 +28,8 @@ function glyphAtlas(THREE) {
 }
 
 function codeAtlas(THREE, seed) {
-  const snippets = [
-    '// reconstruct a moment from memory',
-    'const seed = ' + seed + ';',
-    'const frames = references.map(encode);',
-    'const latent = condition(frames, context);',
-    'for (let step = 0; step < schedule.length; step++) {',
-    '  const residual = predictNoise(latent, step);',
-    '  latent = resolve(latent, residual, schedule[step]);',
-    '  attention.update(context, features);',
-    '  pixels = decode(latent, precision);',
-    '}',
-    'return compose(pixels, light, motion);',
-    '',
-  ];
-  const pixels = new Uint8Array(128 * 64 * 4);
-  for (let row = 0; row < 64; row++) {
-    const line = snippets[row % snippets.length];
-    for (let col = 0; col < 128; col++) {
-      const i = (row * 128 + col) * 4;
-      pixels[i] = Math.max(0, (line[col % 80]?.charCodeAt(0) ?? 32) - 32);
-      pixels[i + 3] = 255;
-    }
-  }
-  const map = new THREE.DataTexture(pixels, 128, 64);
+  const { pixels, columns, rows } = createCodePixels(seed);
+  const map = new THREE.DataTexture(pixels, columns, rows);
   map.needsUpdate = true;
   return map;
 }
@@ -91,7 +70,7 @@ export function createAIGenerationLayer(
   let cards = [],
     poster = null,
     textures = new Map();
-  let latest = { progress: 0, geometry: null, visible: false, reduced: false };
+  let latest = { progress: 0, arrival: 1, geometry: null, visible: false, reduced: false };
   let pendingAssets = assets,
     renderKey = null,
     sizeKey = null;
@@ -151,9 +130,26 @@ export function createAIGenerationLayer(
         }),
       );
       if (disposed || version !== assetVersion) return;
+      let displayPoster = { asset: next.poster, texture: posterTexture, owned: false };
+      if (next.poster.crop) {
+        // Isolate the cover before generating mipmaps: coarse previews must not
+        // include neighboring device images or black margins from the shared atlas.
+        const [x, y, width, height] = next.poster.crop;
+        const cover = document.createElement('canvas');
+        cover.width = width;
+        cover.height = height;
+        cover
+          .getContext('2d')
+          .drawImage(posterTexture.image, x, y, width, height, 0, 0, width, height);
+        const texture = new runtime.CanvasTexture(cover);
+        texture.colorSpace = runtime.SRGBColorSpace;
+        texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+        displayPoster = { asset: { width, height }, texture, owned: true };
+      }
+      if (poster?.owned) poster.texture.dispose();
       for (const card of cards) card.mesh.material.dispose();
       references.clear();
-      poster = { asset: next.poster, texture: posterTexture };
+      poster = displayPoster;
       cards = loaded.map(({ reference, asset, texture }) => {
         const material = new runtime.ShaderMaterial({
           vertexShader,
@@ -161,6 +157,7 @@ export function createAIGenerationLayer(
           uniforms: {
             uImage: { value: texture },
             uUV: { value: new runtime.Vector4() },
+            uParallax: { value: new runtime.Vector2() },
             uOpacity: { value: 0 },
             uExposure: { value: 1 },
           },
@@ -179,7 +176,7 @@ export function createAIGenerationLayer(
         references.add(mesh);
         return { reference, asset, texture, mesh };
       });
-      layer.material.uniforms.uPoster.value = posterTexture;
+      layer.material.uniforms.uPoster.value = poster.texture;
       // Retain shared preview/reference textures, release obsolete uploaded covers.
       const used = new Set([
         next.poster.image || next.poster.src,
@@ -246,6 +243,7 @@ export function createAIGenerationLayer(
             uPoster: { value: null },
             uGlyphs: { value: glyphs },
             uCode: { value: code },
+            uCodeSize: { value: new THREE.Vector2(code.image.width, code.image.height) },
             uPosterUV: { value: new THREE.Vector4() },
             uFrameSize: { value: new THREE.Vector2() },
             uProgress: { value: 0 },
@@ -256,6 +254,9 @@ export function createAIGenerationLayer(
             uFontSize: { value: config.fontSize },
             uLevels: { value: config.subdivisionLevels },
             uNoiseStrength: { value: config.noiseStrength },
+            uDenoiseSteps: { value: config.denoiseSteps },
+            uDenoiseBlur: { value: config.denoiseBlur },
+            uDenoiseWarp: { value: config.denoiseWarp },
             uSeed: { value: config.seed },
             uStageDenoise: { value: new THREE.Vector2(config.stages.split, config.stages.denoise) },
           },
@@ -291,7 +292,7 @@ export function createAIGenerationLayer(
       devicePixelRatio || 1,
       g.mobile ? config.mobileMaxPixelRatio : config.maxPixelRatio,
     );
-    const key = [g.W, g.H, g.frame.w, g.frame.h, ratio, latest.progress].join(':');
+    const key = [g.W, g.H, g.frame.w, g.frame.h, ratio, latest.progress, latest.arrival].join(':');
     if (key === renderKey) return;
     const size = [g.W, g.H, ratio].join(':');
     if (size !== sizeKey) {
@@ -308,13 +309,22 @@ export function createAIGenerationLayer(
     const s = generationState(latest.progress, config);
     references.visible = s.progress < config.stages.gather;
     for (const [i, card] of cards.entries()) {
-      const pose = referencePose(s.progress, card.reference, i, cards.length, g, config);
+      const pose = referencePose(
+        s.progress,
+        card.reference,
+        i,
+        cards.length,
+        g,
+        config,
+        latest.arrival,
+      );
       card.mesh.position.set(pose.x, g.H - pose.y, 0);
       card.mesh.scale.set(pose.w, pose.h, 1);
       card.mesh.rotation.z = (-pose.tilt * Math.PI) / 180;
       const [w, h] = assetSize(card.asset, card.texture);
-      const uv = mediaUV({ w: pose.w, h: pose.h }, w, h, card.asset.crop, 1);
+      const uv = mediaUV({ w: pose.w, h: pose.h }, w, h, card.asset.crop, config.referenceOverscan);
       card.mesh.material.uniforms.uUV.value.set(uv.x, uv.y, uv.w, uv.h);
+      card.mesh.material.uniforms.uParallax.value.set(pose.imageX, pose.imageY);
       card.mesh.material.uniforms.uOpacity.value = pose.opacity;
       card.mesh.material.uniforms.uExposure.value = pose.exposure;
     }
@@ -366,9 +376,10 @@ export function createAIGenerationLayer(
     stats,
     update(value) {
       if (disposed) return;
-      latest = value;
+      latest = { ...value, arrival: value.arrival ?? 1 };
       const s = generationState(value.progress, config);
       stats.progress = s.progress;
+      stats.arrival = latest.arrival;
       stats.phase = s.phase;
       const show =
         value.visible && !value.reduced && !s.complete && !lost && stats.state !== 'failed';
@@ -396,6 +407,7 @@ export function createAIGenerationLayer(
       geometry?.dispose();
       glyphs?.dispose();
       code?.dispose();
+      if (poster?.owned) poster.texture.dispose();
       for (const promise of textures.values())
         promise.then(
           (texture) => texture.dispose(),

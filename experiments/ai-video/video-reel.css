@@ -71,7 +71,6 @@
 }
 .reel-generation-layer {
   z-index: 4;
-  opacity: var(--generation-intro, 1);
 }
 .reel-ai .reel-frame {
   background: transparent;

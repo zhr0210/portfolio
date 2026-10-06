@@ -13,8 +13,10 @@ import {
   generationProgress,
   generationState,
   referencePose,
+  referenceArrival,
   mediaUV,
 } from '../experiments/ai-video/ai-generation-motion.js';
+import { createCodePixels } from '../experiments/ai-video/ai-generation-code.js';
 
 const config = reelConfig.aiGeneration;
 const geometry = (W = 1440, H = 900) => reelLayout(W, H, reelConfig, filmCrop[2] / filmCrop[3]);
@@ -93,7 +95,7 @@ for (const [W, H] of [
         assert.ok(Math.abs(end.w - g.frame.w) < 1e-9);
         assert.ok(Math.abs(end.h - g.frame.h) < 1e-9);
         assert.ok(Math.abs(end.tilt) < 1e-9);
-        assert.equal(end.opacity, 0);
+        assert.equal(end.opacity, config.referenceOpacity * ref.opacity);
         const samples = [0, 0.12, 0.2, 0.12, 0].map((p) =>
           referencePose(p, ref, i, count, g, config),
         );
@@ -119,6 +121,53 @@ test('Narrow windows crop the scatter rather than moving cards inward; phones fa
     const pose = referencePose(0, ref, i, count, phone, config);
     if (i % 2 === 0) assert.ok(pose.y < phone.frame.y);
     else assert.ok(pose.y > phone.frame.y + phone.frame.h);
+  }
+});
+
+test('References enter from below at different depth speeds without an opacity ramp', () => {
+  const segment = reelTimeline(reelWorks, reelConfig)[1];
+  assert.equal(referenceArrival(0.2, segment, config), 0);
+  assert.ok(Math.abs(referenceArrival(0.675, segment, config) - 0.5) < 1e-9);
+  assert.equal(referenceArrival(1.1, segment, config), 1);
+  for (const [W, H] of [
+    [1920, 1080],
+    [390, 844],
+  ]) {
+    const g = geometry(W, H);
+    const speeds = [];
+    for (const [i, ref] of referenceFrames.entries()) {
+      const poses = [0, 0.25, 0.5, 1].map((arrival) =>
+        referencePose(0, ref, i, referenceFrames.length, g, config, arrival),
+      );
+      const tilt = Math.abs((poses[0].tilt * Math.PI) / 180);
+      const halfHeight = (poses[0].w * Math.sin(tilt) + poses[0].h * Math.cos(tilt)) / 2;
+      assert.ok(poses[0].y - halfHeight > H, 'The first position must be fully below the viewport');
+      assert.ok(poses[0].y > poses[1].y && poses[1].y > poses[2].y && poses[2].y > poses[3].y);
+      assert.ok(poses.every((p) => p.opacity === poses[0].opacity));
+      assert.notEqual(poses[0].imageY, poses[3].imageY, 'Internal picture parallax follows entry');
+      assert.deepEqual(poses[1], referencePose(0, ref, i, referenceFrames.length, g, config, 0.25));
+      speeds.push(poses[1].y - poses[2].y);
+    }
+    assert.ok(new Set(speeds.map((speed) => speed.toFixed(3))).size > 6);
+  }
+});
+
+test('Code fills every row and horizontal band while retaining word spaces and deterministic content', () => {
+  const { pixels, columns, rows } = createCodePixels(config.seed);
+  assert.deepEqual(createCodePixels(config.seed).pixels, pixels);
+  assert.notDeepEqual(createCodePixels(config.seed + 1).pixels, pixels);
+  for (let row = 0; row < rows; row++) {
+    let spaces = 0;
+    for (let start = 0; start < columns; start += 16) {
+      let glyphs = 0;
+      for (let col = start; col < Math.min(columns, start + 16); col++) {
+        const code = pixels[(row * columns + col) * 4];
+        if (code) glyphs++;
+        else spaces++;
+      }
+      assert.ok(glyphs >= 8, 'No long empty bands at row ' + row + ', column ' + start);
+    }
+    assert.ok(spaces > 0 && spaces < columns / 3);
   }
 });
 

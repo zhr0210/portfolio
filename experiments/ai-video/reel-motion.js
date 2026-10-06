@@ -29,8 +29,24 @@ export function scenePose(position, index, g, config) {
   return {
     r,
     y,
-    opacity: r < 0 ? range(-0.9, -0.1, r) : 1 - range(0.15, 0.9, r),
+    opacity: 1,
     titleY: y - Math.abs(y) * config.titleParallax,
     metadataY: y + Math.abs(y) * config.metadataParallax,
   };
+}
+
+export function sceneInView(pose, geometry, captions) {
+  const f = geometry.frame;
+  const tops = [
+    f.y + pose.y,
+    captions.title.top + pose.titleY,
+    captions.parameters.top + pose.metadataY,
+  ];
+  const bottoms = [
+    tops[0] + f.h,
+    tops[1] + captions.title.height,
+    tops[2] + captions.parameters.height,
+  ];
+  // Keep caption shadows until the whole scene has physically left the viewport.
+  return Math.max(...bottoms) >= -24 && Math.min(...tops) <= geometry.H + 24;
 }

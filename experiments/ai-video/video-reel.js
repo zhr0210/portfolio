@@ -6,11 +6,16 @@ import {
   cameraCrops,
   referenceFrames,
 } from './video-reel.config.js';
-import { clamp, smooth, range, reelLayout, scenePose } from './reel-motion.js';
+import { clamp, smooth, reelLayout, scenePose, sceneInView } from './reel-motion.js';
 import { createDeviceLayer } from './device-layer.js';
 import { devicePose } from './device-motion.js';
 import { createAIGenerationLayer } from './ai-generation.js';
-import { reelTimeline, generationProgress, generationState } from './ai-generation-motion.js';
+import {
+  reelTimeline,
+  generationProgress,
+  generationState,
+  referenceArrival,
+} from './ai-generation-motion.js';
 
 function crop(el, rect, W, H) {
   el.style.backgroundImage = `url("${new URL(sheet.src, import.meta.url)}")`;
@@ -337,6 +342,18 @@ export class VideoReel {
       scene.params.style.transformOrigin = 'right top';
       scene.el.style.setProperty('--title-size', clamp(W * 0.026, 27, 56) + 'px');
       scene.el.style.setProperty('--parameter-size', clamp(W * 0.014, 12, 28) + 'px');
+      scene.captionBounds = {
+        title: {
+          top: parseFloat(scene.title.style.top),
+          height: scene.title.offsetHeight || clamp(W * 0.026, 27, 56) * 1.3 + 32,
+        },
+        parameters: {
+          top: parseFloat(scene.params.style.top),
+          height:
+            scene.params.offsetHeight ||
+            clamp(W * 0.014, 12, 28) * 1.4 * scene.work.parameters.length,
+        },
+      };
       scene.cameras.forEach((camera, i) => {
         const w = f.h * (g.mobile ? 0.31 : 0.48),
           h = (w * cameraCrops[i][3]) / cameraCrops[i][2];
@@ -362,7 +379,7 @@ export class VideoReel {
       const segment = this.timeline[scene.index];
       const p = scenePose(this.position, segment.entry, g, reelConfig);
       let eligible = Math.abs(p.r) < 0.18;
-      scene.el.hidden = Math.abs(p.r) > 1.06;
+      scene.el.hidden = !sceneInView(p, g, scene.captionBounds);
       scene.el.inert = scene.index !== nearest;
       scene.devices?.update({
         progress:
@@ -402,20 +419,30 @@ export class VideoReel {
           this.reduced.matches || ['failed', 'lost'].includes(scene.generation.stats.state);
         const exit = Math.max(0, this.position - segment.end);
         const outro = scenePose(exit, 0, g, reelConfig);
-        const intro = range(segment.entry - 0.08, segment.entry, this.position);
-        scene.el.hidden = this.position < segment.entry - 0.08 || exit > 1.06;
+        const arrival = referenceArrival(this.position, segment, reelConfig.aiGeneration);
+        const arrivalY = (1 - arrival) * g.H * reelConfig.aiGeneration.referenceEntryTravel;
+        scene.el.hidden =
+          this.position < segment.entry - reelConfig.aiGeneration.referenceEntrySpan || exit > 1.5;
         const visible = !scene.el.hidden && this.active && !document.hidden;
-        scene.generation.update({ progress, geometry: g, visible, reduced: this.reduced.matches });
+        scene.generation.update({
+          progress,
+          arrival,
+          geometry: g,
+          visible,
+          reduced: this.reduced.matches,
+        });
         scene.generationHost.setAttribute('aria-hidden', String(fallback || state.complete));
-        scene.el.style.setProperty('--generation-intro', intro);
-        scene.frame.style.opacity = fallback
-          ? intro * outro.opacity
-          : state.resolve * outro.opacity;
-        p.y = outro.y;
-        p.titleY = outro.titleY - (1 - state.labelOpacity) * f.h * reelConfig.titleParallax;
+        scene.frame.style.opacity = fallback ? outro.opacity : state.resolve * outro.opacity;
+        p.y = outro.y + (fallback ? arrivalY : 0);
+        p.titleY =
+          outro.titleY +
+          (fallback ? arrivalY : 0) -
+          (1 - state.labelOpacity) * f.h * reelConfig.titleParallax;
         p.metadataY =
-          outro.metadataY + (1 - state.labelOpacity) * f.h * reelConfig.metadataParallax;
-        p.opacity = (fallback ? intro : state.labelOpacity) * outro.opacity;
+          outro.metadataY +
+          (fallback ? arrivalY : 0) +
+          (1 - state.labelOpacity) * f.h * reelConfig.metadataParallax;
+        p.opacity = (fallback ? 1 : state.labelOpacity) * outro.opacity;
         p.r = exit;
         eligible =
           !scene.el.hidden &&
