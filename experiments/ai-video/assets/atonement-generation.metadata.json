@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "kind": "artistic-diffusion-sequence",
+  "simulation": true,
+  "generator": "Built-in image_gen",
+  "reference": {
+    "asset": "vertical-film-sheet.jpg",
+    "crop": [843, 500, 2196, 1184]
+  },
+  "atlas": {
+    "asset": "atonement-generation-atlas-v1.png",
+    "width": 1703,
+    "height": 924,
+    "columns": 3,
+    "rows": 3
+  },
+  "sequence": {
+    "steps": [0, 4, 9, 15, 22, 30, 38, 44, 50],
+    "posterFrame": 8,
+    "maximumStep": 50
+  },
+  "flow": {
+    "asset": "atonement-generation-flow-v1.png",
+    "range": 0.16,
+    "center": 128,
+    "scale": 96,
+    "width": 1536,
+    "height": 828,
+    "cellWidth": 512,
+    "cellHeight": 276,
+    "opencvVersion": "5.0.0",
+    "meanForwardMotion": [
+      0.029408620670437813, 0.00895956251770258, 0.015483569353818893, 0.015206084586679935,
+      0.0030234234873205423, 0.0523422472178936, 0.0013983850367367268, 0.04884255677461624
+    ],
+    "bytes": 585590
+  },
+  "note": "Nine authored intermediate predictions are sampled as 0–50 simulated states. The final atlas cell is replaced by the unchanged source cover at runtime. These are not raw FLUX inference outputs.",
+  "prompt": "Use case: scientific-educational / photorealistic-natural.\nAsset type: ONE production texture atlas for an artistic diffusion generation animation in a portfolio website.\nInput image 1 is the exact final cover and composition reference, not a texture to simply blur.\nCreate a landscape contact sheet, ideally 2304 by 1248 pixels, with EXACTLY 3 columns and 3 rows of equally sized image panels in row-major order. Each panel fills its cell edge to edge. No gutters, no margins, no outlines, no text, no step numbers, no interface, no watermark.\n\nAll nine panels depict progressive, genuinely different intermediate predictions of ONE fixed scene: a young woman seen strictly from behind, short dark brown bob haircut, pale mint-white vintage dress, centered slightly right in the lower half of the image; an organic dark arch of dense ivy surrounds her head; the right foliage has warm yellow-green sunlight while the left is dark olive green. Match input image 1's camera, crop, subject scale, placement, lighting and overall palette throughout. Never show a face, extra people, equipment or a different camera angle. The figure, foliage arch and materials must be visibly CONSTRUCTED AND REVISED through the stages, not merely the final photograph with decreasing grain or increasing sharpness.\n\nPanel 1, top-left, step 0: dense gray/olive multiscale latent noise; no recognizable woman or leaves.\nPanel 2, top-middle, step 4: abstract correlated olive, yellow-green and pale masses, dark central void, ambiguous pale body-sized mass; a dreamlike unformed latent prediction with coarse irregular patches, no finished photograph underneath.\nPanel 3, top-right, step 9: early provisional back-view human silhouette and arch emerge from smeared material; head and shoulder shapes still broad and imprecise, amorphous foliage, incomplete fabric, mixed local resolutions, mottled grain.\nPanel 4, middle-left, step 15: model is revising a roughly built person and ivy tunnel; the bob shape, shoulder contour, dress proportions and arch opening visibly shift toward the reference, soft clay-like incomplete forms and false leaf texture remain.\nPanel 5, center, step 22: woman and tunnel recognizable but not converged; coarse provisional folds, inconsistent foliage structure, locally unresolved textures, grain clustered in irregular regions; coherent composition emerging, still a synthetic intermediate prediction.\nPanel 6, middle-right, step 30: strong structure close to the reference, person and arch now stable; leaf groups, hair mass and dress folds being reconstructed, some patches remain unresolved and over-smoothed.\nPanel 7, bottom-left, step 38: nearly coherent film still; hair strands, vegetation, small flower highlights and cloth seams emerge in uneven local detail; very light residual grain.\nPanel 8, bottom-middle, step 44: high-fidelity reconstruction close to input image 1, materials and colors settle, fine foliage and bob haircut refined, tiny residual discrepancies.\nPanel 9, bottom-right, step 50: clean reconstruction matching input image 1 as closely as possible, same lower-center back-view woman and same ivy arch, camera and lighting. No invention of new scene elements.\n\nThe early and middle panels must look like actual evolving diffusion / FLUX latent decoder previews, with coarse semantically uncertain shapes turning into correct forms. Do not make nine finished photos with a fog/noise filter. Keep the grid perfectly regular for automatic WebGL cell sampling."
+}

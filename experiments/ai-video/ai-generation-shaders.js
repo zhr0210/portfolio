@@ -37,6 +37,18 @@ export const generationShader = /* glsl */ `
   uniform sampler2D uGlyphs;
   uniform sampler2D uCode;
   uniform vec2 uCodeSize;
+  uniform sampler2D uSequenceAtlas;
+  uniform sampler2D uSequenceFlow;
+  uniform float uHasSequence;
+  uniform float uHasSequenceFlow;
+  uniform vec2 uSequenceGrid;
+  uniform vec4 uSequenceCrop;
+  uniform float uSequenceFrameCount;
+  uniform float uSequencePosterFrame;
+  uniform float uSequenceSteps[64];
+  uniform float uSequenceFlowRange;
+  uniform float uSequenceFlowStrength;
+  uniform float uSequenceRegionLag;
   uniform vec4 uPosterUV;
   uniform vec2 uFrameSize;
   uniform float uProgress;
@@ -88,6 +100,52 @@ export const generationShader = /* glsl */ `
     vec2 uv = vec2((atlas.x + inside.x) / 16.0, 1.0 - (atlas.y + inside.y) / 6.0);
     return texture2D(uGlyphs, uv, -8.0).a;
   }
+  vec2 sequenceAtlasUV(float index, vec2 imageUV) {
+    vec2 slot = vec2(mod(index, uSequenceGrid.x),
+      uSequenceGrid.y - 1.0 - floor(index / uSequenceGrid.x));
+    return (slot + clamp(imageUV, vec2(0.003), vec2(0.997))) / uSequenceGrid;
+  }
+  vec3 sequenceImage(float index, vec2 imageUV) {
+    vec3 result = vec3(0.0);
+    if (abs(index - uSequencePosterFrame) < 0.5) {
+      vec2 displayUV = (imageUV - uSequenceCrop.xy) / uSequenceCrop.zw;
+      result = texture2D(uPoster, uPosterUV.xy + clamp(displayUV, 0.0, 1.0) * uPosterUV.zw).rgb;
+    } else {
+      result = texture2D(uSequenceAtlas, sequenceAtlasUV(index, imageUV)).rgb;
+    }
+    return result;
+  }
+  vec3 reconstructSequence(vec2 pixel, float raw, float binaryGrain) {
+    float maxStep = max(1.0, uDenoiseSteps);
+    float iteration = raw * maxStep;
+    float preview = (floor(iteration) + smoothstep(0.0, 1.0, fract(iteration))) / maxStep;
+    float spatial = fbm(vUv * 5.0 + uSeed * 0.001) - 0.5;
+    float local = clamp(preview + spatial * uSequenceRegionLag / maxStep * sin(preview * 3.14159265), 0.0, 1.0);
+    int from = 0;
+    for (int i = 0; i < 63; i++) {
+      if (float(i + 1) >= uSequenceFrameCount) break;
+      if (local > uSequenceSteps[i + 1]) from = i + 1;
+    }
+    from = min(from, int(uSequenceFrameCount) - 2);
+    int to = from + 1;
+    float blend = smoothstep(uSequenceSteps[from], uSequenceSteps[to], local);
+    vec2 imageUV = uSequenceCrop.xy + vUv * uSequenceCrop.zw;
+    vec4 motion = vec4(0.0);
+    if (uHasSequenceFlow > 0.5) {
+      vec4 encoded = texture2D(uSequenceFlow, sequenceAtlasUV(float(from), imageUV));
+      motion = (encoded - 128.0 / 255.0) / (96.0 / 255.0)
+        * uSequenceFlowRange * uSequenceFlowStrength;
+    }
+    // Bidirectional correspondences bring each provisional form toward the next one.
+    vec3 previous = sequenceImage(float(from), imageUV + motion.zw * blend);
+    vec3 next = sequenceImage(float(to), imageUV + motion.xy * (1.0 - blend));
+    vec3 prediction = mix(previous, next, blend);
+    // Each simulated iteration recomputes a fixed-seed residual; no frame-history feedback.
+    float residual = (grain(floor(pixel / 1.15), iteration) - 0.5)
+      * 0.18 * uNoiseStrength * pow(1.0 - preview, 2.3);
+    prediction = clamp(prediction + vec3(residual), 0.0, 1.0);
+    return mix(vec3(binaryGrain), prediction, smoothstep(0.0, 3.0, iteration));
+  }
   void main() {
     vec2 pixel = vec2(vUv.x, 1.0 - vUv.y) * uFrameSize;
     // Uniform branches skip expensive noise and image sampling in the earlier stages.
@@ -101,6 +159,13 @@ export const generationShader = /* glsl */ `
       #include <colorspace_fragment>
       return;
     }
+    float binaryGrain = step(0.5, grain(floor(pixel / 1.15), uProgress * 96.0));
+    if (uHasSequence > 0.5 && uProgress >= uStageDenoise.x) {
+      float raw = clamp((uProgress - uStageDenoise.x) / (uStageDenoise.y - uStageDenoise.x), 0.0, 1.0);
+      gl_FragColor = vec4(reconstructSequence(pixel, raw, binaryGrain), 1.0);
+      #include <colorspace_fragment>
+      return;
+    }
     float level = uSplit * uLevels;
     float glyph = mix(glyphField(pixel, floor(level)), glyphField(pixel, floor(level) + 1.0),
       smoothstep(0.0, 1.0, fract(level)));
@@ -109,7 +174,6 @@ export const generationShader = /* glsl */ `
     // Replace complete character cells left-to-right, then move to the next row.
     float readingOrder = cell.y * cells.x + cell.x;
     float swept = clamp(uScan * (cells.x * cells.y + 1.0) - readingOrder, 0.0, 1.0);
-    float binaryGrain = step(0.5, grain(floor(pixel / 1.15), uProgress * 96.0));
     // Let the small child glyphs stay legible before the final pixel-sized subdivision.
     float pixelMorph = smoothstep(0.78, 1.0, uSplit);
     vec3 codeColor = mix(vec3(0.77, 0.82, 0.82), vec3(binaryGrain), pixelMorph);
@@ -125,7 +189,7 @@ export const generationShader = /* glsl */ `
     // Simulate FLUX per-step preview pacing: composition forms early, details converge later.
     // This samples the configured cover; it is not an inference model or a clock-driven GIF.
     float raw = clamp((uProgress - uStageDenoise.x) / (uStageDenoise.y - uStageDenoise.x), 0.0, 1.0);
-    float steps = max(2.0, uDenoiseSteps) - 1.0;
+    float steps = max(1.0, uDenoiseSteps);
     float frame = raw * steps;
     float preview = (floor(frame) + smoothstep(0.0, 1.0, fract(frame))) / steps;
     float spatial = fbm(vUv * 5.0 + uSeed * 0.001);

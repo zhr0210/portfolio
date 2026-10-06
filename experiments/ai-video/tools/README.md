@@ -1,5 +1,21 @@
 # 导出网页设备动画
 
+## AI 生成序列的光流烘焙
+
+`build-denoise-flow.py` 使用 OpenCV Farneback 计算每对预测图的正向、反向位移。生成图集与原作品均只读，末张预测替换为原作品封面；脚本输出用于 GLSL 的无损 RGBA 向量数据，并更新元数据中的尺寸、版本与运动量。网页只读取纹理，不依赖 Python 或 OpenCV。
+
+在安装了 `opencv-python-headless` 与 NumPy 的 Python 环境中运行：
+
+```powershell
+python experiments/ai-video/tools/build-denoise-flow.py --metadata experiments/ai-video/assets/atonement-generation.metadata.json
+```
+
+使用单独的包目录时可加 `--opencv-path`。当前在 Codex 缓存目录中安装 OpenCV，不向项目、网页构建或 Git 加入 Python 依赖。图集使用内置 image_gen 生成，完整提示和参考图裁切记录保存在元数据中；它是艺术化预测素材，不是 FLUX 的真实内部推理帧。
+
+光流每格为 512×276：R/G 编码正向 XY，B/A 编码反向 XY，Y 轴翻转至纹理坐标；向量归一化后限制在 ±0.16，编码为 `128 + vector / 0.16 × 96`。因此 A 通道是数据，加载时使用 `NoColorSpace`、关闭预乘透明度与 mipmap；Shader 解码后按当前步与固定种子重算，不积累上一帧。
+
+## Blender 设备导出
+
 使用 Blender 5.2，在独立后台进程读取已保存文件；不在用户正在编辑的 Blender 会话中执行。脚本不覆盖原 .blend，可另存包含完整场景的材质修复副本。
 
 ```powershell

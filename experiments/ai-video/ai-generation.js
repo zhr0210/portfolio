@@ -1,6 +1,12 @@
 import { generationState, referencePose, mediaUV } from './ai-generation-motion.js';
 import { createCodePixels } from './ai-generation-code.js';
 import {
+  denoiseFrame,
+  normalizeSequence,
+  maximumSequenceFrames,
+  sequenceInterval,
+} from './ai-generation-sequence.js';
+import {
   vertexShader,
   referenceShader,
   compositeShader,
@@ -69,6 +75,7 @@ export function createAIGenerationLayer(
     layer = null;
   let cards = [],
     poster = null,
+    sequence = null,
     textures = new Map();
   let latest = { progress: 0, arrival: 1, geometry: null, visible: false, reduced: false };
   let pendingAssets = assets,
@@ -115,6 +122,33 @@ export function createAIGenerationLayer(
     const next = pendingAssets;
     try {
       const posterTexture = await textureFor(next.poster);
+      let nextSequence = null;
+      let sequenceError = null;
+      try {
+        const definition = normalizeSequence(next.sequence);
+        if (definition) {
+          const atlas = await textureFor({ src: definition.atlas });
+          atlas.generateMipmaps = false;
+          atlas.minFilter = runtime.LinearFilter;
+          let flow = null;
+          if (definition.flowAtlas) {
+            try {
+              flow = await textureFor({ src: definition.flowAtlas });
+              flow.colorSpace = runtime.NoColorSpace;
+              flow.premultiplyAlpha = false;
+              flow.generateMipmaps = false;
+              flow.minFilter = runtime.LinearFilter;
+              flow.anisotropy = 1;
+            } catch (error) {
+              sequenceError = String(error.message || error);
+            }
+          }
+          nextSequence = { definition, atlas, flow };
+        }
+      } catch (error) {
+        // A missing optional sequence keeps the cover-based compatibility renderer.
+        sequenceError = String(error.message || error);
+      }
       const loaded = await Promise.all(
         (next.references || []).map(async (reference) => {
           let asset =
@@ -150,6 +184,10 @@ export function createAIGenerationLayer(
       for (const card of cards) card.mesh.material.dispose();
       references.clear();
       poster = displayPoster;
+      sequence = nextSequence;
+      stats.sequence = sequence ? 'authored-flow' : 'procedural';
+      stats.sequenceFrames = sequence?.definition.frameCount || 0;
+      stats.sequenceError = sequenceError;
       cards = loaded.map(({ reference, asset, texture }) => {
         const material = new runtime.ShaderMaterial({
           vertexShader,
@@ -177,6 +215,19 @@ export function createAIGenerationLayer(
         return { reference, asset, texture, mesh };
       });
       layer.material.uniforms.uPoster.value = poster.texture;
+      const uniforms = layer.material.uniforms;
+      uniforms.uSequenceAtlas.value = sequence?.atlas || poster.texture;
+      uniforms.uSequenceFlow.value = sequence?.flow || poster.texture;
+      uniforms.uHasSequence.value = sequence ? 1 : 0;
+      uniforms.uHasSequenceFlow.value = sequence?.flow ? 1 : 0;
+      if (sequence) {
+        const d = sequence.definition;
+        uniforms.uSequenceGrid.value.set(d.columns, d.rows);
+        uniforms.uSequenceFrameCount.value = d.frameCount;
+        uniforms.uSequencePosterFrame.value = d.posterFrame;
+        uniforms.uSequenceSteps.value = d.keySteps;
+        uniforms.uSequenceFlowRange.value = d.flowRange;
+      }
       // Retain shared preview/reference textures, release obsolete uploaded covers.
       const used = new Set([
         next.poster.image || next.poster.src,
@@ -184,6 +235,10 @@ export function createAIGenerationLayer(
       ]);
       for (const ref of next.references || [])
         if (ref.src || ref.poster) used.add(new URL(ref.src || ref.poster, import.meta.url).href);
+      if (sequence) {
+        used.add(sequence.definition.atlas);
+        if (sequence.flow) used.add(sequence.definition.flowAtlas);
+      }
       for (const [key, promise] of textures)
         if (!used.has(key)) {
           textures.delete(key);
@@ -244,6 +299,18 @@ export function createAIGenerationLayer(
             uGlyphs: { value: glyphs },
             uCode: { value: code },
             uCodeSize: { value: new THREE.Vector2(code.image.width, code.image.height) },
+            uSequenceAtlas: { value: null },
+            uSequenceFlow: { value: null },
+            uHasSequence: { value: 0 },
+            uHasSequenceFlow: { value: 0 },
+            uSequenceGrid: { value: new THREE.Vector2(1, 1) },
+            uSequenceCrop: { value: new THREE.Vector4() },
+            uSequenceFrameCount: { value: 0 },
+            uSequencePosterFrame: { value: 0 },
+            uSequenceSteps: { value: new Float32Array(maximumSequenceFrames).fill(1) },
+            uSequenceFlowRange: { value: 0.16 },
+            uSequenceFlowStrength: { value: config.sequenceFlowStrength },
+            uSequenceRegionLag: { value: config.sequenceRegionLag },
             uPosterUV: { value: new THREE.Vector4() },
             uFrameSize: { value: new THREE.Vector2() },
             uProgress: { value: 0 },
@@ -336,6 +403,12 @@ export function createAIGenerationLayer(
     const [w, h] = assetSize(poster.asset, poster.texture);
     const uv = mediaUV(f, w, h, poster.asset.crop);
     u.uPosterUV.value.set(uv.x, uv.y, uv.w, uv.h);
+    if (sequence) {
+      const image = sequence.atlas.image;
+      const d = sequence.definition;
+      const sequenceUV = mediaUV(f, image.width / d.columns, image.height / d.rows);
+      u.uSequenceCrop.value.set(sequenceUV.x, sequenceUV.y, sequenceUV.w, sequenceUV.h);
+    }
     u.uFrameSize.value.set(f.w, f.h);
     u.uFontSize.value = g.mobile ? config.mobileFontSize : config.fontSize;
     for (const name of ['progress', 'white', 'scan', 'split', 'denoise'])
@@ -381,6 +454,13 @@ export function createAIGenerationLayer(
       stats.progress = s.progress;
       stats.arrival = latest.arrival;
       stats.phase = s.phase;
+      const frame = denoiseFrame(s.progress, config);
+      stats.step = frame.from;
+      stats.stepPosition = frame.position;
+      stats.maximumStep = frame.maxStep;
+      stats.predictionPair = sequence
+        ? sequenceInterval(frame.normalized, sequence.definition)
+        : null;
       const show =
         value.visible && !value.reduced && !s.complete && !lost && stats.state !== 'failed';
       canvas.hidden = !show;

@@ -31,9 +31,11 @@ export const reelConfig = {
     referenceImageParallax: 0.07,
     referenceOverscan: 1.22,
     // 借鉴 FLUX 的逐步预览节奏：先建立构图，再收敛纹理细节。
-    denoiseSteps: 26,
+    denoiseSteps: 50,
     denoiseBlur: 6.5,
     denoiseWarp: 0.07,
+    sequenceFlowStrength: 1,
+    sequenceRegionLag: 2,
     maxPixelRatio: 1.5,
     mobileMaxPixelRatio: 1,
   },
@@ -106,6 +108,15 @@ export const reelWorks = [
     eyebrow: 'AI FILM / 02',
     parameters: ['IMAGE TO VIDEO', '参考画面 · AI 创作'],
     video: '',
+    generationSequence: {
+      atlas: new URL('./assets/atonement-generation-atlas-v1.png', import.meta.url).href,
+      flowAtlas: new URL('./assets/atonement-generation-flow-v1.png', import.meta.url).href,
+      columns: 3,
+      rows: 3,
+      steps: [0, 4, 9, 15, 22, 30, 38, 44, 50],
+      posterFrame: 8,
+      flowRange: 0.16,
+    },
   },
 ];
 

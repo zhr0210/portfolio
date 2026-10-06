@@ -259,6 +259,7 @@ export class VideoReel {
       poster: scene.posterAsset,
       fallback: { ...sheet, crop: filmCrop },
       references: scene.work.references || referenceFrames,
+      sequence: !scene.localSource && !scene.posterURL ? scene.work.generationSequence : null,
     };
   }
   layoutPoster(scene, W, H) {
@@ -730,6 +731,7 @@ export class VideoReel {
     scene.source = src;
     scene.failed = false;
     scene.localSource = true;
+    scene.generation?.setAssets(this.generationAssets(scene));
     scene.posterVersion++;
     scene.capturedSource = null;
     scene.video.src = src;
