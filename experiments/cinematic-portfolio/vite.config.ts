@@ -8,6 +8,7 @@ export default defineConfig({
   root: path('./'),
   base: './',
   publicDir: path('../../public/'),
+  cacheDir: path('../../node_modules/.vite-afterimage/'),
   plugins: [react()],
   server: { host: '127.0.0.1', port: 4190, strictPort: true },
   preview: { host: '127.0.0.1', port: 4190, strictPort: true },

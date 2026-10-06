@@ -17,6 +17,8 @@ npm run preview:design
 
 开发时只读使用主站 `public/`，构建输出到独立的 `dist-design-preview/`，包含两个 HTML 入口与完整素材。此输出仅用于预览，没有发布到网站。原主站的 `src/`、入口、配置、`dist/` 发布规则和视频实验命令独立保留。
 
+Vite 依赖缓存使用独立的 `node_modules/.vite-afterimage/`，可与主站开发服务同时运行。
+
 ## 编辑
 
 - `src/data/cinematic.ts`：五章文案、素材引用、桌面和手机滚动长度，以及镜头缓动时间。
