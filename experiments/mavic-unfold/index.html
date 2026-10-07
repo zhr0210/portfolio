@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <title>Mavic 3 · 展开动画</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="stage" aria-label="Mavic 3 无人机三维展开动画"></div>
+      <header>
+        <div class="title">
+          <span>MAVIC 3</span>
+          <h1>蓄势，展开。</h1>
+        </div>
+        <nav aria-label="姿态选择">
+          <button id="fold" type="button">折叠</button>
+          <button id="open" type="button">展开</button>
+        </nav>
+      </header>
+      <p id="status" role="status">正在载入模型…</p>
+      <footer>
+        <div class="timeline-heading">
+          <span id="phase">折叠姿态</span
+          ><span class="time"><output id="time">00.00</output> / 10.00 s</span>
+        </div>
+        <label class="sr-only" for="timeline">动画时间</label>
+        <input id="timeline" type="range" min="0" max="10" step="0.01" value="4.8" disabled />
+        <div class="controls">
+          <div>
+            <button id="play" type="button" disabled>播放</button
+            ><button id="replay" type="button" disabled>重播展开</button>
+          </div>
+          <div class="secondary">
+            <label
+              >速度
+              <select id="speed">
+                <option value="0.5">0.5×</option>
+                <option value="1" selected>1×</option>
+                <option value="1.5">1.5×</option>
+              </select></label
+            ><button id="view" type="button" disabled>自由查看</button>
+          </div>
+        </div>
+        <div class="caption">
+          <span>DJI Mavic 3 · 3D 动作复刻</span
+          ><a
+            href="https://www.youtube.com/watch?v=r5kukRMmZNI&t=225s"
+            target="_blank"
+            rel="noreferrer"
+            >参考片段 03:45–03:55 ↗</a
+          >
+        </div>
+      </footer>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

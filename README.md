@@ -58,6 +58,8 @@ TypeScript 严格检查新增入口、调参文件和全景生命周期。继承
 
 `experiments/cinematic-portfolio/` 是 AFTERIMAGE「余像」独立设计预览，保留原 Hero 与全景，重设五个叙事章节和附属界面。运行 `npm run dev:design`（4190），整站入口 `/`，单章入口 `/chapters.html?chapter=profile`。独立构建 `npm run build:design` 输出 `dist-design-preview/`，不并入主站 `dist/`，详见实验目录 README。
 
+`experiments/mavic-unfold/` 是基于用户提供 Mavic 3 模型的独立展开动画预览，参考 DJI 视频 3:45–3:55 的机械镜头。运行 `npm run dev:drone`（4193），独立构建 `npm run build:drone` 输出 `dist-mavic-preview/`。GLB 含 0–10 秒动画与相机；打包贴图的 Blender 工程保存在本机忽略目录 `output/drone-reference/Mavic-3-Unfold.blend`。详见实验目录 README。
+
 其他完整本地副本：
 
 - `G:\zuopingji\Portfolio-pre-continuum-20260929\Editorial Vanguard\code`

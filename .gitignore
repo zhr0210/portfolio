@@ -2,6 +2,7 @@ node_modules/
 dist/
 dist-experiments/
 dist-design-preview/
+dist-mavic-preview/
 __pycache__/
 *.pyc
 .env*
@@ -12,4 +13,5 @@ __pycache__/
 .playwright-cli/
 output/playwright/
 output/ai-generation/
+output/drone-reference/
 .DS_Store
