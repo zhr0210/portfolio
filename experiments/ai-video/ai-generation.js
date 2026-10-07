@@ -362,6 +362,7 @@ export function createAIGenerationLayer(
         );
         uniforms.uSequenceFrameCount.value = d.frameCount;
         uniforms.uSequencePosterFrame.value = d.posterFrame;
+        uniforms.uSequenceDetailStart.value = d.detailStart / d.steps.at(-1);
         uniforms.uSequenceSteps.value = d.keySteps;
         uniforms.uSequenceFlowRange.value = d.flowRange;
       }
@@ -448,6 +449,7 @@ export function createAIGenerationLayer(
             uSequenceFlowRange: { value: 0.16 },
             uSequenceFlowStrength: { value: config.sequenceFlowStrength },
             uSequenceBaked: { value: 0 },
+            uSequenceDetailStart: { value: 0.72 },
             uSequenceTileSize: { value: new THREE.Vector2(1, 1) },
             uSequenceRegionLag: { value: config.sequenceRegionLag },
             uHasSolver: { value: 0 },

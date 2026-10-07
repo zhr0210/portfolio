@@ -8,7 +8,7 @@ import { normalizeSequence } from '../experiments/ai-video/ai-generation-sequenc
 
 const root = new URL('../experiments/ai-video/assets/', import.meta.url);
 const metadata = JSON.parse(
-  readFileSync(new URL('atonement-generation-50-v2.metadata.json', root)),
+  readFileSync(new URL('atonement-generation-50-v4.metadata.json', root)),
 );
 const bytes = readFileSync(new URL(metadata.atlas.asset, root));
 const sha = (data) => createHash('sha256').update(data).digest('hex');
@@ -69,7 +69,13 @@ test('The default AI artwork uses all 51 baked states and records honest image p
   assert.deepEqual(sequence.steps, metadata.sequence.steps);
   assert.equal(metadata.simulation, true);
   assert.equal(metadata.modelInference, false);
-  assert.equal(metadata.authoredCheckpoints.length, 14);
+  assert.equal(metadata.authoredCheckpoints.length, 13);
+  assert.equal(sequence.detailStart, 48);
+  assert.equal(metadata.sequence.detailStart, 48);
+  assert.deepEqual(
+    metadata.sequence.keyframeSteps,
+    [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 50],
+  );
   assert.equal(metadata.atlas.lossless, true);
   assert.equal(sha(bytes), metadata.atlas.sha256);
   assert.equal(
@@ -100,4 +106,69 @@ test('Every actual atlas tile matches its exported step; all 51 images are disti
     unique.add(actual);
   }
   assert.equal(unique.size, 51);
+});
+
+test('Sharp unresolved texture survives intermediate frames instead of a defocus ramp', () => {
+  const { pixels, width } = rgbPixels(bytes);
+  const { columns, cellWidth: w, cellHeight: h } = metadata.atlas;
+  function frame(step) {
+    const result = Buffer.alloc(w * h * 3);
+    const x = (step % columns) * w,
+      y = Math.floor(step / columns) * h;
+    for (let row = 0; row < h; row++) {
+      const start = ((y + row) * width + x) * 3;
+      pixels.copy(result, row * w * 3, start, start + w * 3);
+    }
+    return result;
+  }
+  function chroma(data) {
+    let sum = 0;
+    for (let i = 0; i < data.length; i += 3) {
+      const average = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      sum +=
+        Math.abs(data[i] - average) +
+        Math.abs(data[i + 1] - average) +
+        Math.abs(data[i + 2] - average);
+    }
+    return sum / data.length;
+  }
+  function subjectDetail(data) {
+    const gray = (x, y) => {
+      const i = (y * w + x) * 3;
+      return data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+    };
+    let sum = 0,
+      squares = 0,
+      count = 0;
+    // The central head/shoulder/dress region excludes peripheral lens blur.
+    for (let y = Math.round(h * 0.46); y < Math.round(h * 0.94); y++)
+      for (let x = Math.round(w * 0.36); x < Math.round(w * 0.64); x++) {
+        const laplacian =
+          gray(x - 1, y) + gray(x + 1, y) + gray(x, y - 1) + gray(x, y + 1) - 4 * gray(x, y);
+        sum += laplacian;
+        squares += laplacian * laplacian;
+        count++;
+      }
+    return squares / count - (sum / count) ** 2;
+  }
+  for (const step of [0, 8, 16])
+    assert.ok(chroma(frame(step)) < 1.5, `Key at ${step} stays monochrome`);
+  for (const step of [4, 12])
+    assert.ok(chroma(frame(step)) > 3, `Key at ${step} contains colored noise`);
+  assert.equal(metadata.bake.interpolation, 'texture-energy');
+  const final = subjectDetail(frame(50));
+  for (let step = 0; step < 48; step++)
+    assert.ok(
+      subjectDetail(frame(step)) > final,
+      `Step ${step} contains sharp provisional texture, not defocused subject detail`,
+    );
+  // Endpoints alone can look crisp while averaging makes the in-between states
+  // soft. Check actual intermediate pixels against their neighboring keys.
+  for (const record of metadata.frames.filter((entry) => !entry.authoredCheckpoint)) {
+    const lower = Math.min(subjectDetail(frame(record.from)), subjectDetail(frame(record.to)));
+    assert.ok(
+      subjectDetail(frame(record.step)) > lower * 0.65,
+      `Step ${record.step} retains local edge energy between checkpoints`,
+    );
+  }
 });

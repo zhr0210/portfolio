@@ -46,6 +46,9 @@ export function normalizeSequence(value) {
     throw new Error('The final sequence frame must be the unchanged cover');
   if (mode === 'baked' && steps.some((step, i) => step !== i))
     throw new Error('A baked sequence must include every consecutive step');
+  const detailStart = value.detailStart ?? steps.at(-1) * 0.72;
+  if (!Number.isFinite(detailStart) || detailStart < 0 || detailStart >= steps.at(-1))
+    throw new Error('Sequence detail restoration must start before its final step');
   const keySteps = new Float32Array(maximumSequenceFrames).fill(1);
   steps.forEach((step, index) => {
     keySteps[index] = step / steps.at(-1);
@@ -53,7 +56,7 @@ export function normalizeSequence(value) {
   const flowRange = value.flowRange ?? 0.16;
   if (!Number.isFinite(flowRange) || flowRange <= 0)
     throw new Error('Sequence flow range must be positive');
-  return { ...value, mode, flowRange, frameCount: steps.length, keySteps };
+  return { ...value, mode, detailStart, flowRange, frameCount: steps.length, keySteps };
 }
 
 export function sequenceInterval(normalized, sequence) {

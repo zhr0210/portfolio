@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 
 import cv2
@@ -35,8 +36,8 @@ def motion(before, after):
     return np.clip(forward, -12, 12), np.clip(backward, -12, 12)
 
 
-def intermediate(before, after, fields, fraction):
-    """Bring aligned endpoints to one geometry before interpolating residuals."""
+def intermediate(before, after, fields, fraction, preserve_texture=False):
+    """Align structure; optionally preserve local fine-texture energy in between."""
     if fraction <= 0:
         return before.copy()
     if fraction >= 1:
@@ -44,14 +45,31 @@ def intermediate(before, after, fields, fraction):
     height, width = before.shape[:2]
     y, x = np.mgrid[:height, :width].astype(np.float32)
     forward, backward = fields
+    sampling = cv2.INTER_CUBIC if preserve_texture else cv2.INTER_LINEAR
     a = cv2.remap(before, x - forward[..., 0] * fraction,
-        y - forward[..., 1] * fraction, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT_101)
+        y - forward[..., 1] * fraction, sampling, borderMode=cv2.BORDER_REFLECT_101)
     b = cv2.remap(after, x - backward[..., 0] * (1 - fraction),
-        y - backward[..., 1] * (1 - fraction), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT_101)
+        y - backward[..., 1] * (1 - fraction), sampling, borderMode=cv2.BORDER_REFLECT_101)
     # This is an authored transition between aligned predictions, not a claim
     # that a learned model calculated the missing denoising steps.
-    return np.clip(np.rint(a.astype(np.float32) + fraction *
-        (b.astype(np.float32) - a.astype(np.float32))), 0, 255).astype(np.uint8)
+    a, b = a.astype(np.float32), b.astype(np.float32)
+    prediction = a + fraction * (b - a)
+    if preserve_texture:
+        # Separate provisional structure from its own fine texture. Averaging
+        # unrelated grains loses contrast, so match the interpolated endpoint
+        # energy locally. No external noise or finished-photo overlay is added.
+        # Box means are an analysis split, not a defocus filter on the output.
+        low_a = cv2.boxFilter(a, -1, (5, 5))
+        low_b = cv2.boxFilter(b, -1, (5, 5))
+        detail_a, detail_b = a - low_a, b - low_b
+        detail = detail_a + fraction * (detail_b - detail_a)
+        energy_a = cv2.boxFilter(np.mean(detail_a ** 2, axis=2), -1, (9, 9))
+        energy_b = cv2.boxFilter(np.mean(detail_b ** 2, axis=2), -1, (9, 9))
+        expected = energy_a + fraction * (energy_b - energy_a)
+        actual = cv2.boxFilter(np.mean(detail ** 2, axis=2), -1, (9, 9))
+        gain = np.clip(np.sqrt((expected + 4) / (actual + 4)), 1, 1.65)
+        prediction += detail * (gain[..., None] - 1)
+    return np.clip(np.rint(prediction), 0, 255).astype(np.uint8)
 
 
 def main():
@@ -68,6 +86,16 @@ def main():
     if maximum != 50 or steps[0] != 0 or steps[-1] >= maximum or any(
         b <= a for a, b in zip(steps, steps[1:])):
         raise ValueError("Expected ordered checkpoints before the original cover at step 50")
+    version = definition.get("assetVersion", "v2")
+    if not re.fullmatch(r"v[0-9]+", version):
+        raise ValueError("Use a simple asset version such as v3")
+    detail_start = definition.get("detailStart", maximum * 0.72)
+    if not 0 <= detail_start < maximum:
+        raise ValueError("Detail restoration must start before the final step")
+    motion_start = definition.get("motionStart", 2)
+    interpolation = definition.get("interpolation", "aligned-residual")
+    if interpolation not in ("aligned-residual", "texture-energy"):
+        raise ValueError("Unsupported checkpoint interpolation")
     args.output.mkdir(parents=True, exist_ok=True)
     frame_dir = args.output / "frames"
     frame_dir.mkdir(exist_ok=True)
@@ -88,7 +116,7 @@ def main():
     fields = []
     for index, (before, after) in enumerate(zip(bank, bank[1:])):
         # No visual features exist to track in the initial noise-only frame.
-        fields.append(motion(before, after) if steps[index] >= 2 else (
+        fields.append(motion(before, after) if steps[index] >= motion_start else (
             np.zeros((*before.shape[:2], 2), np.float32),
             np.zeros((*before.shape[:2], 2), np.float32)))
     records, frames = [], []
@@ -97,7 +125,8 @@ def main():
         while interval < len(steps) - 2 and step > steps[interval + 1]:
             interval += 1
         fraction = (step - steps[interval]) / (steps[interval+1] - steps[interval])
-        frame = intermediate(bank[interval], bank[interval+1], fields[interval], fraction)
+        frame = intermediate(bank[interval], bank[interval+1], fields[interval], fraction,
+            preserve_texture=interpolation == "texture-energy")
         path = frame_dir / f"step-{step:03}.png"
         Image.fromarray(frame).save(path, compress_level=9)
         frames.append(frame)
@@ -113,7 +142,7 @@ def main():
     atlas = Image.new("RGB", (columns * width, rows * height))
     for step, frame in enumerate(frames):
         atlas.paste(Image.fromarray(frame), ((step % columns) * width, (step // columns) * height))
-    atlas_name = "atonement-generation-50-v2.png"
+    atlas_name = f"atonement-generation-50-{version}.png"
     atlas_path = args.assets / atlas_name
     if atlas_path.exists():
         raise FileExistsError("Use a new asset version instead of overwriting an existing atlas")
@@ -124,25 +153,30 @@ def main():
     for index, step in enumerate(steps):
         px, py = (index % 5) * 256, (index // 5) * 158
         preview.paste(Image.fromarray(frames[step]).resize((256, 138)), (px, py))
-        draw.text((px+6, py+140), f"{step:02} / 50", fill="#d4d9df")
+        draw.text((px+6, py+140), f"KEY {index+1:02} / STEP {step:02}", fill="#d4d9df")
     preview.save(args.output / "checkpoints-preview.png")
     metadata = {
         "schemaVersion": 2, "kind": "imagegen-authored-baked-sequence", "simulation": True,
         "generator": "Built-in image_gen", "modelInference": False,
         "reference": {**definition["reference"], "sha256": source_hash},
+        "processReference": definition.get("processReference"),
+        "aesthetic": definition.get("aesthetic"),
         "atlas": {"asset": atlas_name, "width": columns*width, "height": rows*height,
             "columns": columns, "rows": rows, "cellWidth": width, "cellHeight": height,
             "bytes": atlas_path.stat().st_size, "sha256": digest(atlas_path), "lossless": True},
         "sequence": {"steps": list(range(maximum+1)), "posterFrame": maximum,
-            "maximumStep": maximum, "mode": "baked"},
+            "maximumStep": maximum, "mode": "baked", "detailStart": detail_start,
+            "keyframeSteps": steps},
         "authoredCheckpoints": [{**entry, "sha256": digest(args.checkpoints.parent / entry["file"])}
             for entry in checkpoints],
         "bake": {"algorithm": "bounded bidirectional Farneback correspondence and aligned residual interpolation",
-            "opencvVersion": cv2.__version__, "maximumMotionPixels": 12},
+            "interpolation": interpolation, "maximumTextureGain": 1.65 if interpolation == "texture-energy" else 1,
+            "opencvVersion": cv2.__version__, "maximumMotionPixels": 12,
+            "motionStartStep": motion_start},
         "frames": records,
         "note": f"{len(checkpoints)} image_gen checkpoints plus the original cover are interpolated offline into 51 fixed artistic states. These are not 50 independent image_gen calls, RF inversion, FLUX inference outputs, or the original image's generation history.",
     }
-    metadata_path = args.assets / "atonement-generation-50-v2.metadata.json"
+    metadata_path = args.assets / f"atonement-generation-50-{version}.metadata.json"
     metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     print(json.dumps({"frames": len(frames), "generatedCheckpoints": len(checkpoints),
         "atlasBytes": atlas_path.stat().st_size, "atlasSize": atlas.size,

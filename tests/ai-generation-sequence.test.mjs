@@ -77,6 +77,8 @@ test('Sequence validation bounds shader indexing and permits a missing optional 
     { atlas: '' },
     { mode: 'unknown' },
     { mode: 'baked' },
+    { detailStart: -1 },
+    { detailStart: 50 },
   ])
     assert.throws(() => normalizeSequence({ ...definition, ...patch }));
   const full = normalizeSequence({

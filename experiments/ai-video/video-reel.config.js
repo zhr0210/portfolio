@@ -112,15 +112,17 @@ export const reelWorks = [
     eyebrow: 'AI FILM / 02',
     parameters: ['IMAGE TO VIDEO', '参考画面 · AI 创作'],
     video: '',
-    // 14 张生图关键帧离线补成 0–50 共 51 张固定画面；属于艺术模拟。
+    // 13 张生图加原封面共 14 个关键状态：锐利无序碎纹理逐步形成精细材质。
+    // 光流对齐并保留纹理能量，补成 0–50 共 51 帧；原图高频只在 48–50 步恢复。
     // 原封面作为最后一帧，载入其他本地视频时自动改用封面求解器。
     generationSequence: {
-      atlas: new URL('./assets/atonement-generation-50-v2.png', import.meta.url).href,
+      atlas: new URL('./assets/atonement-generation-50-v4.png', import.meta.url).href,
       columns: 8,
       rows: 7,
       steps: Array.from({ length: 51 }, (_, i) => i),
       posterFrame: 50,
       mode: 'baked',
+      detailStart: 48,
     },
   },
 ];

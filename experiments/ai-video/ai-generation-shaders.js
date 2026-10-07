@@ -42,6 +42,7 @@ export const generationShader = /* glsl */ `
   uniform float uHasSequence;
   uniform float uHasSequenceFlow;
   uniform float uSequenceBaked;
+  uniform float uSequenceDetailStart;
   uniform vec2 uSequenceGrid;
   uniform vec2 uSequenceTileSize;
   uniform vec4 uSequenceCrop;
@@ -139,7 +140,7 @@ export const generationShader = /* glsl */ `
       // full-resolution completion aligned with the exported low-res endpoint.
       vec3 sharp = texture2D(uPoster, uPosterUV.xy + vUv * uPosterUV.zw).rgb;
       vec3 low = texture2D(uSequenceAtlas, sequenceAtlasUV(uSequencePosterFrame, imageUV)).rgb;
-      prediction += (sharp - low) * smoothstep(0.72, 1.0, raw);
+      prediction += (sharp - low) * smoothstep(uSequenceDetailStart, 1.0, raw);
       return clamp(prediction, 0.0, 1.0);
     }
     float maxStep = max(1.0, uDenoiseSteps);

@@ -1,0 +1,647 @@
+{
+  "schemaVersion": 2,
+  "kind": "imagegen-authored-baked-sequence",
+  "simulation": true,
+  "generator": "Built-in image_gen",
+  "modelInference": false,
+  "reference": {
+    "asset": "vertical-film-sheet.jpg",
+    "crop": [
+      843,
+      500,
+      2196,
+      1184
+    ],
+    "sha256": "7b69802f175e13557d65c141ae4f97e8ca9b862ab29beb31497cf95597d70e50"
+  },
+  "processReference": {
+    "name": "User supplied fox diffusion preview",
+    "role": "Texture evolution only; subject remains portfolio cover"
+  },
+  "aesthetic": "Sharp unresolved microstructure progressively becomes coherent material detail; no added defocus or Gaussian blur",
+  "atlas": {
+    "asset": "atonement-generation-50-v4.png",
+    "width": 4096,
+    "height": 1932,
+    "columns": 8,
+    "rows": 7,
+    "cellWidth": 512,
+    "cellHeight": 276,
+    "bytes": 19348156,
+    "sha256": "573b68de086e9850b889250efb888bf49933e6c554c5c1da974ad932875ad551",
+    "lossless": true
+  },
+  "sequence": {
+    "steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50
+    ],
+    "posterFrame": 50,
+    "maximumStep": 50,
+    "mode": "baked",
+    "detailStart": 48,
+    "keyframeSteps": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      50
+    ]
+  },
+  "authoredCheckpoints": [
+    {
+      "ordinal": 1,
+      "step": 0,
+      "phase": "noise",
+      "description": "Step 0/50, pure achromatic latent prediction noise. Dense sharp tiny irregular black white grey grain, a mixture of clustered speckle and minuscule jagged granular islands. Fully unresolved, NO identifiable scene or objects. R=G=B. No geometric tessellation or colored particles.",
+      "file": "key-01.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 0/50, pure achromatic latent prediction noise. Dense sharp tiny irregular black white grey grain, a mixture of clustered speckle and minuscule jagged granular islands. Fully unresolved, NO identifiable scene or objects. R=G=B. No geometric tessellation or colored particles.",
+      "sha256": "f4440d782945239c3639c0340dfc8ff41698a083744a4264661966f32676276b"
+    },
+    {
+      "ordinal": 2,
+      "step": 4,
+      "phase": "noise",
+      "description": "Step 4/50, colored latent noise. Dense tiny sharply defined grey, charcoal, olive, muted yellow-green, mint, hints of violet and cyan granules. Locally correlated random microfragments across entire image. No woman, silhouette, arch or leaf. Not a garden photograph with noise added. Every pixel belongs to sharp confused noise.",
+      "file": "key-02.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 4/50, colored latent noise. Dense tiny sharply defined grey, charcoal, olive, muted yellow-green, mint, hints of violet and cyan granules. Locally correlated random microfragments across entire image. No woman, silhouette, arch or leaf. Not a garden photograph with noise added. Every pixel belongs to sharp confused noise.",
+      "sha256": "23064dcb6ec26d763fe822e3194ac1dc8407b14d3058b4c9b8c223e579a3257e"
+    },
+    {
+      "ordinal": 3,
+      "step": 8,
+      "phase": "noise",
+      "description": "Step 8/50, monochrome granular prediction. Tiny sharp fragments correlate into irregular 2–10-pixel-scale microclusters, fully chaotic. Faint broad light-dark distribution compatible with reference composition, but no head, body or arch. R=G=B, detailed noise itself remains crisp. No smooth cloudiness.",
+      "file": "key-03.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 8/50, monochrome granular prediction. Tiny sharp fragments correlate into irregular 2–10-pixel-scale microclusters, fully chaotic. Faint broad light-dark distribution compatible with reference composition, but no head, body or arch. R=G=B, detailed noise itself remains crisp. No smooth cloudiness.",
+      "sha256": "b15fff73a1c2b03111b0194ee0d5084713bd9d4bc9c37036f681b0145c4b7ed2"
+    },
+    {
+      "ordinal": 4,
+      "step": 12,
+      "phase": "noise",
+      "description": "Step 12/50, colored unresolved texture. Charcoal olive and warm muted green granular microclusters with pale mint tiny fragments beginning to gather lower middle. Lots of sharp organic irregular small edges everywhere. No identifiable woman, leaves, arch or clean silhouette yet. Random unresolved decoded texture, NOT geometric tile collage.",
+      "file": "key-04.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 12/50, colored unresolved texture. Charcoal olive and warm muted green granular microclusters with pale mint tiny fragments beginning to gather lower middle. Lots of sharp organic irregular small edges everywhere. No identifiable woman, leaves, arch or clean silhouette yet. Random unresolved decoded texture, NOT geometric tile collage.",
+      "sha256": "2c2c501dbe017ba54829c6688b08cada46733c99f7afd434fc980e8345336dfe"
+    },
+    {
+      "ordinal": 5,
+      "step": 16,
+      "phase": "noise",
+      "description": "Step 16/50, predominantly ACHROMATIC coarse-grain latent texture. Sharp irregular tiny organic grey white charcoal speckled microforms, faint darker upper/left masses and slightly lighter lower middle/right. Nothing recognizable: no human head, body, dress or arch yet. R=G=B. No defocus, no smooth cloudy blobs.",
+      "file": "key-05.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 16/50, predominantly ACHROMATIC coarse-grain latent texture. Sharp irregular tiny organic grey white charcoal speckled microforms, faint darker upper/left masses and slightly lighter lower middle/right. Nothing recognizable: no human head, body, dress or arch yet. R=G=B. No defocus, no smooth cloudy blobs.",
+      "sha256": "54828d79a83ff64d2277fd269299f28a04794472d950c635b2fbfc7727642a0f"
+    },
+    {
+      "ordinal": 6,
+      "step": 20,
+      "phase": "structure",
+      "description": "At step 20/50: barely organized provisional scene. Entire frame is sharply resolved tiny dark olive, warm yellow-green, mint-grey granular clumps and irregular branching microfragments. Composition is suggested only by dark upper arch-like masses and a disjointed pale lower central cluster. No recognizable head, human silhouette, sleeve, leaf, hair or dress yet. Many small crisp confused locally correlated shapes, NOT smooth color blobs. 85% structural disorder.",
+      "file": "key-06.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nAt step 20/50: barely organized provisional scene. Entire frame is sharply resolved tiny dark olive, warm yellow-green, mint-grey granular clumps and irregular branching microfragments. Composition is suggested only by dark upper arch-like masses and a disjointed pale lower central cluster. No recognizable head, human silhouette, sleeve, leaf, hair or dress yet. Many small crisp confused locally correlated shapes, NOT smooth color blobs. 85% structural disorder.",
+      "sha256": "fa9ed590d25102e02f821dc858681e1052ae45fea159703cda8f5f5d04519df0"
+    },
+    {
+      "ordinal": 7,
+      "step": 24,
+      "phase": "structure",
+      "description": "Step 24/50, dense sharp colored microfragments weakly organizing. Dark charcoal olive upper arch region, sunlit green yellow right, pale mint tiny fragments gather lower center with a vague dark oval above. Woman NOT clearly identifiable yet, no full contours. 75% sharp confused granular material, distributed at tiny scale, not confetti, not polygons. No clean photo beneath.",
+      "file": "key-07.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 24/50, dense sharp colored microfragments weakly organizing. Dark charcoal olive upper arch region, sunlit green yellow right, pale mint tiny fragments gather lower center with a vague dark oval above. Woman NOT clearly identifiable yet, no full contours. 75% sharp confused granular material, distributed at tiny scale, not confetti, not polygons. No clean photo beneath.",
+      "sha256": "90f0cda86f25b7194a01fe65e2e1afb50be291de626bee7a08cf857bc375a6ff"
+    },
+    {
+      "ordinal": 8,
+      "step": 28,
+      "phase": "structure",
+      "description": "Step 28/50, early scene hypothesis amid crisp disordered texture. Broken incomplete bob-shaped dark oval and irregular pale shoulder region only beginning to form lower center. Dark arch mostly inferred from sharp green-brown interwoven flecks. 65% unresolved sharp organic microstructures; leaf, hair and fabric details not yet correct. No complete person or clear dress seams. Avoid geometric collage and blur.",
+      "file": "key-08.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 28/50, early scene hypothesis amid crisp disordered texture. Broken incomplete bob-shaped dark oval and irregular pale shoulder region only beginning to form lower center. Dark arch mostly inferred from sharp green-brown interwoven flecks. 65% unresolved sharp organic microstructures; leaf, hair and fabric details not yet correct. No complete person or clear dress seams. Avoid geometric collage and blur.",
+      "sha256": "a799ef0d4d70ead532fab7be869bd2e6327ba64f04db0af0408c2acb0c33b77e"
+    },
+    {
+      "ordinal": 9,
+      "step": 32,
+      "phase": "structure",
+      "description": "Step 32/50, tentative woman under ivy arch emerges from fine granular detail. Bob outline and shoulders recognizable but fragmented, neck geometry incomplete, pale dress still mottled with tiny sharp unresolved threadlike and leaflike shapes. Garden foliage has plenty of clearly delineated irregular microstructure but unresolved branching and leaf identities. 50% structural uncertainty. Texture is intrinsic scene material not overlay. NO blur.",
+      "file": "key-09.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 32/50, tentative woman under ivy arch emerges from fine granular detail. Bob outline and shoulders recognizable but fragmented, neck geometry incomplete, pale dress still mottled with tiny sharp unresolved threadlike and leaflike shapes. Garden foliage has plenty of clearly delineated irregular microstructure but unresolved branching and leaf identities. 50% structural uncertainty. Texture is intrinsic scene material not overlay. NO blur.",
+      "sha256": "2f0a386ec13557b91cdec4ba2663a5196afdf73a854b939827a1f5c9c8691b93"
+    },
+    {
+      "ordinal": 10,
+      "step": 36,
+      "phase": "structure",
+      "description": "At step 36/50: woman and garden are recognizable but structurally unfinished. Sharp dense fine mottled fragments fuse into provisional hair strands, broken leaf networks and fragmented fabric edges. Head is still internally disjointed and boundary irregular, collar and sleeves are not fully formed; arch edges fragmented, leaves intertwined with incorrect tiny motifs. Preserve exact composition. About 40% unresolved sharp organic granular microstructure across every region. NO blur. Fine detail stays clear, meaning is still evolving.",
+      "file": "key-10.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nAt step 36/50: woman and garden are recognizable but structurally unfinished. Sharp dense fine mottled fragments fuse into provisional hair strands, broken leaf networks and fragmented fabric edges. Head is still internally disjointed and boundary irregular, collar and sleeves are not fully formed; arch edges fragmented, leaves intertwined with incorrect tiny motifs. Preserve exact composition. About 40% unresolved sharp organic granular microstructure across every region. NO blur. Fine detail stays clear, meaning is still evolving.",
+      "sha256": "5aea8ac0b128fbc7c751176eda2ad5092688baaaf732ea34662f1374e1e01084"
+    },
+    {
+      "ordinal": 11,
+      "step": 40,
+      "phase": "refinement",
+      "description": "Step 40/50, recognizable scene but incomplete material reconstruction. Same woman position and hair size as input 1. Dense sharp strands become hair, leaf networks form, dress material becomes fabric but retains irregular tiny granular holes and incorrect provisional seams. About 25% fragmented detail, especially collar, sleeves, hair boundary, ivy lattice. No focus change. Shapes progressively cohere from fine texture.",
+      "file": "key-11.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 40/50, recognizable scene but incomplete material reconstruction. Same woman position and hair size as input 1. Dense sharp strands become hair, leaf networks form, dress material becomes fabric but retains irregular tiny granular holes and incorrect provisional seams. About 25% fragmented detail, especially collar, sleeves, hair boundary, ivy lattice. No focus change. Shapes progressively cohere from fine texture.",
+      "sha256": "96f45b578a95d0e8f67212c158b54c0cd3d95797fa6221f33a307837b5f5be53"
+    },
+    {
+      "ordinal": 12,
+      "step": 44,
+      "phase": "refinement",
+      "description": "Step 44/50, almost coherent reference composition. Back-view bob-haired woman mint dress, collar, sleeves, dark ivy arch and green sunlight match image 1 closely. Fine sharp organic texture remains everywhere; unresolved small tendrils and granular patches become accurate hair, foliage and cloth. 12% local structure unfinished, several tiny seam and leaf details not settled. Keep exact reference geometry and colors. Not smooth, not blurred.",
+      "file": "key-12.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 44/50, almost coherent reference composition. Back-view bob-haired woman mint dress, collar, sleeves, dark ivy arch and green sunlight match image 1 closely. Fine sharp organic texture remains everywhere; unresolved small tendrils and granular patches become accurate hair, foliage and cloth. 12% local structure unfinished, several tiny seam and leaf details not settled. Keep exact reference geometry and colors. Not smooth, not blurred.",
+      "sha256": "42216c33924d0da0b84e7cee9d7783b1371a22749816f8e135f23f472bba06ea"
+    },
+    {
+      "ordinal": 13,
+      "step": 48,
+      "phase": "refinement",
+      "description": "Step 48/50, penultimate prediction extremely close to image 1 composition and geometry, exact bob size/location, mint dress seams, ivy arch darkness, warm foliage. Only 3% tiny irregular provisional microdetails remain around hair strands, collar and leaves. Natural photograph with dense fine material detail, not oversharpened. Tiny incoherent marks still being refined; NO added defocus or blur. Final unchanged source photo follows at step 50.",
+      "file": "key-13.png",
+      "prompt": "Use case: scientific-educational / style-transfer.\nAsset: ONE full-bleed landscape image, aspect ratio 2196:1184. Not a sheet or comparison. Input 1 is the exact final composition: back-view bob-haired woman in mint dress, lower center, under a dark ivy arch, warm green sunlit foliage right. Keep positions and framing. Input 2 is PROCESS REFERENCE ONLY: the fox diffusion sheet illustrates sharp dense confused microtexture organizing into coherent fine detail. Do not copy fox, snow, sheet, labels or borders.\nMake an intermediate decoded diffusion prediction. Every region has crisp, dense, irregular high-frequency microtexture. The uncertainty is in SHAPES AND MEANING, NOT focus. Fragments progressively become coherent hair, leaves, fabric. Do not use Gaussian blur, defocus, bokeh additions, fog, watercolor, painterly smears, polygon mosaics, or a completed photograph under an overlay of static. Microtexture is the scene itself. NO text or watermark.\nStep 48/50, penultimate prediction extremely close to image 1 composition and geometry, exact bob size/location, mint dress seams, ivy arch darkness, warm foliage. Only 3% tiny irregular provisional microdetails remain around hair strands, collar and leaves. Natural photograph with dense fine material detail, not oversharpened. Tiny incoherent marks still being refined; NO added defocus or blur. Final unchanged source photo follows at step 50.",
+      "sha256": "d56bb189d822be08e5eaddb8bdcd3b6ed63fcc75b753b588debc04d181e0b3f6"
+    }
+  ],
+  "bake": {
+    "algorithm": "bounded bidirectional Farneback correspondence and aligned residual interpolation",
+    "interpolation": "texture-energy",
+    "maximumTextureGain": 1.65,
+    "opencvVersion": "4.13.0",
+    "maximumMotionPixels": 12,
+    "motionStartStep": 20
+  },
+  "frames": [
+    {
+      "step": 0,
+      "sha256": "b83aadc8a7902c3c837f026810d6e16ba06fa0e268c9c66d37e8b37cf739d0b5",
+      "pixelsSha256": "82f5f6e13e9a42c94a73260a1e6099abefd1442b9c4032a2adeeb44f59c7ccd6",
+      "authoredCheckpoint": true,
+      "from": 0,
+      "to": 4
+    },
+    {
+      "step": 1,
+      "sha256": "9548b19fb0e7397d1a3ea4e99053108f9b985c1febe816dbd78a2a9906b8da11",
+      "pixelsSha256": "a0960cb792f6ef502d08d2881eef1032b3f4502cebf163a20b694dfb4859efb1",
+      "authoredCheckpoint": false,
+      "from": 0,
+      "to": 4
+    },
+    {
+      "step": 2,
+      "sha256": "0d204d9de737d0a245229642d685d4bf840a09f46790ed33593cb765f08637c7",
+      "pixelsSha256": "8889cb1e28cb3c4a07716f1ab35ae0b96acd30db515d0d4fff5d4834b3f71eda",
+      "authoredCheckpoint": false,
+      "from": 0,
+      "to": 4
+    },
+    {
+      "step": 3,
+      "sha256": "5d44c5c1b075d34a35fce5ddb3426537c7e1905f16400713c99ffa55e8eae309",
+      "pixelsSha256": "245c0c2c04951d64e721ad314b94638a6ca8f851ca31720f31462085662717e3",
+      "authoredCheckpoint": false,
+      "from": 0,
+      "to": 4
+    },
+    {
+      "step": 4,
+      "sha256": "e165f1844d1e1b862c823ca7a036a89462d759aa2410898ca25bc77fd566fdef",
+      "pixelsSha256": "1da845fc6215b5edffdcbff3bea1415ddbc73b580700c258d95e61b6bbdb81c9",
+      "authoredCheckpoint": true,
+      "from": 0,
+      "to": 4
+    },
+    {
+      "step": 5,
+      "sha256": "3a6e913576771faf23cb990eeca89a6c70af6c8b7429569daa6db4673033a4cb",
+      "pixelsSha256": "060843ed0020810c4128c3941f546e1e1c8fa7b26611c19a0375ff4aed89dbf7",
+      "authoredCheckpoint": false,
+      "from": 4,
+      "to": 8
+    },
+    {
+      "step": 6,
+      "sha256": "0f3f7bfaddb0b72b3e7000b54a92f8ad601ed7aaac23e9388e7575b8aadce2e7",
+      "pixelsSha256": "c31f234a2656fb19f214ce9a166df776ef1bb9f8a7e48fecb43be647d754d5c6",
+      "authoredCheckpoint": false,
+      "from": 4,
+      "to": 8
+    },
+    {
+      "step": 7,
+      "sha256": "097c356a1354222df07292cb9df42e38d115fd2200e7bdeb9f516255034210d4",
+      "pixelsSha256": "694aeff9400b29dc0db96c440b2a67cd53509962b8244304170ea1993e6e4b90",
+      "authoredCheckpoint": false,
+      "from": 4,
+      "to": 8
+    },
+    {
+      "step": 8,
+      "sha256": "925c42435a06e8aad9ea199b80ad76c896532818a88d72dd7c3d6c04f69ff837",
+      "pixelsSha256": "192d2af00f21cf75dec61ed254fc5c0c742eccedb442ecdb9942161f81e0ae15",
+      "authoredCheckpoint": true,
+      "from": 4,
+      "to": 8
+    },
+    {
+      "step": 9,
+      "sha256": "fd2dbee2a8abb8c3d2a7e656993361a72f5b665cfb52f9b211bd6933833773f7",
+      "pixelsSha256": "3e331dddc8e4e8e47a1a48e9984da087d9e2b47b207490c38da0725f37d54c6e",
+      "authoredCheckpoint": false,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 10,
+      "sha256": "cd1879d0b5ac8a89a96715c769f00b15487187e84dad55fab7f492b0ea01e99c",
+      "pixelsSha256": "27fb9818556cb1ca724fcdc1a38a2d75dc3db114f2c1a7e47b4856d0852069d1",
+      "authoredCheckpoint": false,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 11,
+      "sha256": "c543c8d534bd486a0cabd2207675be4daddfeda3808025ff34eb935b90a0d55a",
+      "pixelsSha256": "4528a0efa4a68b412761a485517ab20dafe6e0a3f1f5afef51f1ae2c774e3df1",
+      "authoredCheckpoint": false,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 12,
+      "sha256": "a26ed52beeb5d84da81a68a08c84eb618fbc5265764458d7db2763785141d4c8",
+      "pixelsSha256": "1b63b3071ebca3c2ee27844dea9ced8aa4dd53b601d3cf0a280d3dea66f2e84d",
+      "authoredCheckpoint": true,
+      "from": 8,
+      "to": 12
+    },
+    {
+      "step": 13,
+      "sha256": "ac033ef4a03f02a38e7a9dd2ae3bf0d41956fd6f4b8599b250e5281217905c3b",
+      "pixelsSha256": "cd54cc3a6942655fd39a053effaefb2ac219369dac38a3ad58b2a413005e9a43",
+      "authoredCheckpoint": false,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 14,
+      "sha256": "5ef6683857609e28b3b4a9f552b8fa201091a14cd02381d7b97521279c932a9b",
+      "pixelsSha256": "42a8e26bda873cbc93de6a9f9de87d7c0bf323fc1fef9073fc93ba9b127f8862",
+      "authoredCheckpoint": false,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 15,
+      "sha256": "faab3092980fe56a01809b85f8240c98fd57350cc48180c880b80448e7d24a39",
+      "pixelsSha256": "b8895a1fc42827a11a7d43cc2c99e22bac508199a394fc0cd49744819482c60d",
+      "authoredCheckpoint": false,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 16,
+      "sha256": "9cc2518a0cc35254310590a51d3a6a69369c1f72bf803b8e37af84ae736d509e",
+      "pixelsSha256": "c93948bbcbdf6a755000ea10ebe385706cfa43cf5d45a66f6d5e9c296fb9edb2",
+      "authoredCheckpoint": true,
+      "from": 12,
+      "to": 16
+    },
+    {
+      "step": 17,
+      "sha256": "f5bbb67852b1748f65bc15fd4c3520d770277c60c7ac250336c87a4da4a5bf47",
+      "pixelsSha256": "6d570e6afac181006f3a4c7e4f12922677c59587325429a0655f7c2cbca70b4e",
+      "authoredCheckpoint": false,
+      "from": 16,
+      "to": 20
+    },
+    {
+      "step": 18,
+      "sha256": "0cd77acea1747f1649087109102f6dbc5b7b6732eeafe3ea3e4502676ea34973",
+      "pixelsSha256": "8c6de91f5f6d8d79cb22fc6016675b268f1e573cfbb2502a67773727e8ec606f",
+      "authoredCheckpoint": false,
+      "from": 16,
+      "to": 20
+    },
+    {
+      "step": 19,
+      "sha256": "1bc57573373b668ef210028f29949ccf495841abf693049c53aa8894565ef824",
+      "pixelsSha256": "c0e3bb67a8f63db040c9586f58e8c55b1b185aab54f3cc032d226663969b8f48",
+      "authoredCheckpoint": false,
+      "from": 16,
+      "to": 20
+    },
+    {
+      "step": 20,
+      "sha256": "3a5ad7e8b814e44237096d09ff49131f8645d9adf1a607094ee5471209d22933",
+      "pixelsSha256": "4780eee2d4b572a11f197342091e086aff1a3d0be8be0df65fed6f9e0590a6d9",
+      "authoredCheckpoint": true,
+      "from": 16,
+      "to": 20
+    },
+    {
+      "step": 21,
+      "sha256": "5b0afc18ace6d5752959f78263ac4bd8324e67afd1e79329b2f2a8a315e48f94",
+      "pixelsSha256": "2de763da2adc8345f39ea4bbfe8560c79b03acd03b70c66a58eac5e4d3bef585",
+      "authoredCheckpoint": false,
+      "from": 20,
+      "to": 24
+    },
+    {
+      "step": 22,
+      "sha256": "45cc49dd9407ab5a9e23c6046b7a91e0362da3348a21f545d32ddd18aef8cf8f",
+      "pixelsSha256": "9b4a3f33bf729626a227a8333f6fce46fe6f0dd039dfb049d04e25a73bdb3266",
+      "authoredCheckpoint": false,
+      "from": 20,
+      "to": 24
+    },
+    {
+      "step": 23,
+      "sha256": "f8b17c2eb958e21fd5bfc250c9baefc8959f06451fd7f88399dcfa1ae37eee90",
+      "pixelsSha256": "685cf36ba419af3b6f5df03866088a5b4c82641267460ff38d46fd0aebb65a58",
+      "authoredCheckpoint": false,
+      "from": 20,
+      "to": 24
+    },
+    {
+      "step": 24,
+      "sha256": "4c8f851affb2b4aa7a3d8dbf2544c82a257f6c0605564f1cc322cb54c76006a0",
+      "pixelsSha256": "a32ab6921f48f654aeaaef99d4661b7c0e4273f6ecb1a2eecec5bdecf3a38473",
+      "authoredCheckpoint": true,
+      "from": 20,
+      "to": 24
+    },
+    {
+      "step": 25,
+      "sha256": "2d28401a49ff40108ef91abae98ca848e9c2e2b24e75e18c4b47e9e80a8ebb3d",
+      "pixelsSha256": "705b0ccc4efb1b2c2e2c5e378b2e85104d6d8a059fe5d678c866c0dbdf275fd3",
+      "authoredCheckpoint": false,
+      "from": 24,
+      "to": 28
+    },
+    {
+      "step": 26,
+      "sha256": "2b814e82a1b1662f5684c322c19cfa6f42fdef74866784bdfb248267e5ae57f4",
+      "pixelsSha256": "6c2157e315bd7ac696246d512c05c8c10efea569089ec54461c3f9ff3e5d064d",
+      "authoredCheckpoint": false,
+      "from": 24,
+      "to": 28
+    },
+    {
+      "step": 27,
+      "sha256": "aec4cab52ff5db9bd4c250f2cbee0bd886b41f60f5e029dec26196a76b16da22",
+      "pixelsSha256": "3d5bf8337befe276b9ec45c0d2405557e6d6dee812a20efdf3198f82b764a9ff",
+      "authoredCheckpoint": false,
+      "from": 24,
+      "to": 28
+    },
+    {
+      "step": 28,
+      "sha256": "620dabfdfa3b4caeed25a3f45864ce61f1d3246b5c42872d2da9fbac88d5749a",
+      "pixelsSha256": "1de317d303f81da5e26278d7f8dec5623af7d60480fc612735c854d996baf189",
+      "authoredCheckpoint": true,
+      "from": 24,
+      "to": 28
+    },
+    {
+      "step": 29,
+      "sha256": "44f134f3f992d6e78937413c5c967d2545e20e186961f977fff12ccc40717843",
+      "pixelsSha256": "ba699bb823743e5decf949346b86952d7703d1ea23541d7c095a2013f8cfd1db",
+      "authoredCheckpoint": false,
+      "from": 28,
+      "to": 32
+    },
+    {
+      "step": 30,
+      "sha256": "6df17b28bf3e0c739fe8a3ae73ade7b0fe7dbf53557fa2a3e6e48d3b441cd678",
+      "pixelsSha256": "3a140f45cfc355a23b42bfcf65fdae2c6ac5e4614ee53f6b1a9b55e6227b9e02",
+      "authoredCheckpoint": false,
+      "from": 28,
+      "to": 32
+    },
+    {
+      "step": 31,
+      "sha256": "d9d620a6258227d7979d79ab09fe43256fec739950866a475970775ee6bbf313",
+      "pixelsSha256": "9e5eaf427533a95b4ce3be2ed8b84269f4011a188c520e67414b78797c83afed",
+      "authoredCheckpoint": false,
+      "from": 28,
+      "to": 32
+    },
+    {
+      "step": 32,
+      "sha256": "38d0ffc117f8d3397ca2753a31a1fa33929c12c3987581716534b8e187c22f89",
+      "pixelsSha256": "00a56d0ca994f7d56c8fb401fa85aa5188c63b9235a2cc4866cef222829651f6",
+      "authoredCheckpoint": true,
+      "from": 28,
+      "to": 32
+    },
+    {
+      "step": 33,
+      "sha256": "77757d9e28f221f6b2a7e17fbe1cf627302e9aef911af8e4f09d63112759fe72",
+      "pixelsSha256": "432cbd570f309a90033a42fc359a185163f27b8e5e67c4b537589687cbda2a46",
+      "authoredCheckpoint": false,
+      "from": 32,
+      "to": 36
+    },
+    {
+      "step": 34,
+      "sha256": "f2e793f167cd5afae06c711db4d812feffe6570251829952f5f2d5f05f5c2951",
+      "pixelsSha256": "44c37bb3f73218ba179c42aceb67d235cf078cbba094b6dde8887f4bce723070",
+      "authoredCheckpoint": false,
+      "from": 32,
+      "to": 36
+    },
+    {
+      "step": 35,
+      "sha256": "2ac00a898b4322efc9223789c59d4dbdd9a071910724ba0775ee40979246d493",
+      "pixelsSha256": "cdafebf9fc5eea165b23949d0cbe5dcf8248ede071e4d2a48240a426735b6b85",
+      "authoredCheckpoint": false,
+      "from": 32,
+      "to": 36
+    },
+    {
+      "step": 36,
+      "sha256": "a5c861f4e3d454df03c764ec4bfff325391ec8a77bb8e042b37cd8f1800eb389",
+      "pixelsSha256": "5cb871152cf2da44a7f450f7f4bbc3f44b07200bb5a5cf569c7654302d0b34b4",
+      "authoredCheckpoint": true,
+      "from": 32,
+      "to": 36
+    },
+    {
+      "step": 37,
+      "sha256": "5fb247f309b893996d6f0ccef75d9fc2c87017db05e86e36c41ee7dd8de6bc95",
+      "pixelsSha256": "58947c6833f7b7fda8448ff14ee50248115747e331d7a7499bd7719452bd2cd4",
+      "authoredCheckpoint": false,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 38,
+      "sha256": "0a971eb268cc28632b85c5cdb398bc1450edcceeee00d4c5c8ecf971e0e6397a",
+      "pixelsSha256": "1d1561953783b34ce99c39c328e241ed95abb0f16aa156bc6d4d531a052fb9a9",
+      "authoredCheckpoint": false,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 39,
+      "sha256": "c1bcca60c558192474eda1d23a0ded63f84b9f3f6ac421a935ee76a5537fc543",
+      "pixelsSha256": "a8a7d1ac0ccd9ab957036fb4a53c66cc1b06aec0d8ea52172058debb90d6e766",
+      "authoredCheckpoint": false,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 40,
+      "sha256": "ff1384490f344cb18ae4b151929b7b37724123b5ff0b9b1ac222a85f06c08227",
+      "pixelsSha256": "bc876d13516e9c7f35e880cecf1983c9e43b05556195e73189cad3d6f38fa825",
+      "authoredCheckpoint": true,
+      "from": 36,
+      "to": 40
+    },
+    {
+      "step": 41,
+      "sha256": "da95dce017469139748d649406f3fcc18a1d8111cdc4969ac9f5b8d150a957a4",
+      "pixelsSha256": "f69fbd5c8f3fc74deba19e93b953f6ed5f4bc1fbc5805d4a1d046a3e3bb3ab76",
+      "authoredCheckpoint": false,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 42,
+      "sha256": "1a742531043101103ac72516b48e62f3951f113b3b8bf6c293393c6f4958bede",
+      "pixelsSha256": "1d93f172925deaa85dd3a441fc2f81df7b530cd3f81cfa6ccba532babb0f5673",
+      "authoredCheckpoint": false,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 43,
+      "sha256": "0c87aef6b4e2af0c83946e08829f38c69befa9dca21258af6e7328b9151d4de2",
+      "pixelsSha256": "c95de01e0156b2666c79aa3e8f871759c43c148fabf60292d01d8a31f773df80",
+      "authoredCheckpoint": false,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 44,
+      "sha256": "383e7531bcc7301f081f042ccfb813e03a4c5b5e7d26c74d608e0cbe6f71c7c8",
+      "pixelsSha256": "0332527cfc2c63c7a84a4b82a4544c7d3ac976a54bb72eaa9be4e5f172627e8e",
+      "authoredCheckpoint": true,
+      "from": 40,
+      "to": 44
+    },
+    {
+      "step": 45,
+      "sha256": "220ea6639b594dd6b279ac5fa99eb653c3b92cfc3483c08f4ffe51db5c499690",
+      "pixelsSha256": "0f165bfbbb0674ef7d34572af6769ceb0738afdf27fbd6cd549046f3b56778ee",
+      "authoredCheckpoint": false,
+      "from": 44,
+      "to": 48
+    },
+    {
+      "step": 46,
+      "sha256": "86435cd4349f0be823d28e9fafcd6ec7b6c5b7062bc7ccc72af17265f68ee50d",
+      "pixelsSha256": "3e6c6aed109ad9c9dd2700eebfe03d2e25aa5f13c8dc72e6cc70890a7f84fa04",
+      "authoredCheckpoint": false,
+      "from": 44,
+      "to": 48
+    },
+    {
+      "step": 47,
+      "sha256": "8b7216553606ab44d91acf1d89740e858e8a64f07cb420831e8de0e472afb008",
+      "pixelsSha256": "5f7ea5121c6fd6d22f33fe9ba5688faee666153b7413bb4c76bec8a96e7068ed",
+      "authoredCheckpoint": false,
+      "from": 44,
+      "to": 48
+    },
+    {
+      "step": 48,
+      "sha256": "387bc8faa3184939c2ab714196e1955fd31ebfcdd061fa8fa77de80c46daf349",
+      "pixelsSha256": "c46595c96ea777862754f3cb80afd11613a9d6d7ab8af1d4f7e7fafba9badd0c",
+      "authoredCheckpoint": true,
+      "from": 44,
+      "to": 48
+    },
+    {
+      "step": 49,
+      "sha256": "03ae487a42c4f9ceddbe2d16c1b366ee6267b948151c0d842aa70115ca011cc5",
+      "pixelsSha256": "ddedb6cf18851f4f90939ec768b1bf8064989fb5eaaba66c19b0d60fb36156ad",
+      "authoredCheckpoint": false,
+      "from": 48,
+      "to": 50
+    },
+    {
+      "step": 50,
+      "sha256": "d01473294530606f41256b03b084beddac8874d266284e0d0cab1d9ceb526252",
+      "pixelsSha256": "a4d0531a6ef1d17931d3c3a72b409b61c7f6873c195ffc7e628d3aeb94ff7913",
+      "authoredCheckpoint": true,
+      "from": 48,
+      "to": 50
+    }
+  ],
+  "note": "13 image_gen checkpoints plus the original cover are interpolated offline into 51 fixed artistic states. These are not 50 independent image_gen calls, RF inversion, FLUX inference outputs, or the original image's generation history."
+}
