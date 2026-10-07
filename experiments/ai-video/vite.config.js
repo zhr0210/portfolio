@@ -21,6 +21,7 @@ function legacyPreviewPath() {
 
 export default defineConfig({
   root: repository,
+  cacheDir: 'node_modules/.vite-ai-video',
   base: './',
   publicDir: false,
   assetsInclude: ['**/*.glb'],

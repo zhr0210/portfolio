@@ -125,6 +125,12 @@ export const generationShader = /* glsl */ `
     }
     return result;
   }
+  vec3 denoiseColor(vec3 color, float progress) {
+    // Saturation follows absolute scroll progress: grayscale at frame zero,
+    // original color at the last of the 51 states, with identical reverse input.
+    float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    return mix(vec3(luma), color, clamp(progress, 0.0, 1.0));
+  }
   vec3 reconstructSequence(vec2 pixel, float raw, float binaryGrain) {
     if (uSequenceBaked > 0.5) {
       // Every integer step is a baked image. Do not add residual grain, local
@@ -212,13 +218,13 @@ export const generationShader = /* glsl */ `
     float binaryGrain = step(0.5, grain(floor(pixel / 1.15), uProgress * 96.0));
     if (uHasSolver > 0.5 && uProgress >= uStageDenoise.x) {
       float raw = clamp((uProgress - uStageDenoise.x) / (uStageDenoise.y - uStageDenoise.x), 0.0, 1.0);
-      gl_FragColor = vec4(reconstructIterations(raw, binaryGrain), 1.0);
+      gl_FragColor = vec4(denoiseColor(reconstructIterations(raw, binaryGrain), raw), 1.0);
       #include <colorspace_fragment>
       return;
     }
     if (uHasSequence > 0.5 && uProgress >= uStageDenoise.x) {
       float raw = clamp((uProgress - uStageDenoise.x) / (uStageDenoise.y - uStageDenoise.x), 0.0, 1.0);
-      gl_FragColor = vec4(reconstructSequence(pixel, raw, binaryGrain), 1.0);
+      gl_FragColor = vec4(denoiseColor(reconstructSequence(pixel, raw, binaryGrain), raw), 1.0);
       #include <colorspace_fragment>
       return;
     }
@@ -274,7 +280,7 @@ export const generationShader = /* glsl */ `
     vec3 reconstruction = clamp(mix(vec3(0.48), structure, signal) + residual, 0.0, 1.0);
     reconstruction = mix(vec3(binaryGrain), reconstruction, smoothstep(0.0, 0.08, q));
     // Residual, displacement and blur all reach zero at the exact cover UV.
-    gl_FragColor = vec4(reconstruction, 1.0);
+    gl_FragColor = vec4(denoiseColor(reconstruction, raw), 1.0);
     #include <colorspace_fragment>
   }
 `;
