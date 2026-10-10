@@ -14,22 +14,33 @@ const metadata = JSON.parse(
   ),
 );
 const json = JSON.parse(bytes.subarray(20, 20 + bytes.readUInt32LE(12)));
+const binaryOffset = 28 + bytes.readUInt32LE(12);
+function geometryFor(primitive) {
+  const a = json.accessors[primitive.attributes.POSITION];
+  const view = json.bufferViews[a.bufferView];
+  const values = new Float32Array(a.count * 3);
+  const stride = view.byteStride || 12;
+  for (let i = 0; i < a.count; i++)
+    for (let c = 0; c < 3; c++)
+      values[i * 3 + c] = bytes.readFloatLE(
+        binaryOffset + (view.byteOffset || 0) + (a.byteOffset || 0) + i * stride + c * 4,
+      );
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(values, 3));
+  return geometry;
+}
 function sourceRig() {
+  // Match GLTFLoader: a mesh node can itself be the parent of an entire motor.
+  // Boxes inside Groups hid the four shaft meshes at this seam in the old test.
   const nodes = json.nodes.map((n) => {
-    const node = new THREE.Group();
+    const node =
+      n.mesh === undefined
+        ? new THREE.Group()
+        : new THREE.Mesh(geometryFor(json.meshes[n.mesh].primitives[0]));
     node.name = n.name;
     if (n.translation) node.position.fromArray(n.translation);
     if (n.rotation) node.quaternion.fromArray(n.rotation);
     if (n.scale) node.scale.fromArray(n.scale);
-    if (n.mesh !== undefined)
-      for (const primitive of json.meshes[n.mesh].primitives) {
-        const a = json.accessors[primitive.attributes.POSITION];
-        const size = a.max.map((x, i) => x - a.min[i]);
-        const center = a.max.map((x, i) => (x + a.min[i]) / 2);
-        const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size));
-        mesh.position.fromArray(center);
-        node.add(mesh);
-      }
     return node;
   });
   json.nodes.forEach((n, i) => n.children?.forEach((c) => nodes[i].add(nodes[c])));
@@ -38,6 +49,33 @@ function sourceRig() {
   root.updateMatrixWorld(true);
   return { root, nodes };
 }
+function topAlong(mesh, axis) {
+  let top = -Infinity;
+  const p = mesh.geometry.attributes.position;
+  for (let i = 0; i < p.count; i++)
+    top = Math.max(
+      top,
+      new THREE.Vector3().fromBufferAttribute(p, i).applyMatrix4(mesh.matrixWorld).dot(axis),
+    );
+  return top;
+}
+test('Real rotor geometry seats the lower hub rim on the motor cap and includes the ancestor shaft', () => {
+  const { root } = sourceRig();
+  const rig = createDroneRig(THREE, root);
+  for (const [i, r] of rig.rotors.entries()) {
+    const cap = root.getObjectByName(`桨叶${i + 1}_${i < 2 ? '02' : '03'}`);
+    const shaft = root.getObjectByName(`桨叶${i + 1}_${i === 0 ? '06' : '07'}`);
+    assert.ok(shaft.parent === r.pivot, 'shaft geometry must follow the complete upper assembly');
+    const axis = r.axis
+      .clone()
+      .applyQuaternion(r.pivot.parent.getWorldQuaternion(new THREE.Quaternion()));
+    assert.ok(
+      topAlong(r.plate, axis) - topAlong(cap, axis) <= 0.000351,
+      'lower hub rim must sit within 0.35mm of the cap top',
+    );
+  }
+});
+
 test('The supplied unfolded drone keeps its original geometry and embedded textures', () => {
   assert.equal(createHash('sha256').update(bytes).digest('hex'), metadata.sourceSha256);
   assert.equal(bytes.length, metadata.bytes);
@@ -53,11 +91,29 @@ test('Locking plates, collars, pins and blades stay assembled on centered shafts
   const rig = createDroneRig(THREE, root);
   rig.sample(0);
   assert.equal(rig.rotors.length, 4);
-  nodes.forEach((node, i) =>
-    node.matrixWorld.elements.forEach((value, j) =>
-      assert.ok(Math.abs(value - initial[i].elements[j]) < 1e-8),
-    ),
-  );
+  const seated = nodes.map((node) => node.matrixWorld.clone());
+  // Each fitted deck receives only its axial translation at zero angle;
+  // mounts, motor housings and the rest of the model retain authored matrices.
+  for (const rotor of rig.rotors) {
+    assert.ok(rotor.seatingOffset > 0.0026 && rotor.seatingOffset < 0.0028);
+    assert.ok(rotor.deckOffset > 0.0026 && rotor.deckOffset < 0.0027);
+    const displacement = rotor.axis
+      .clone()
+      .applyQuaternion(rotor.pivot.parent.getWorldQuaternion(new THREE.Quaternion()))
+      .multiplyScalar(-rotor.seatingOffset);
+    for (const part of rotor.parts) {
+      const expected = initial[nodes.indexOf(part)].clone();
+      const shift = displacement.clone();
+      if (rotor.upperParts.includes(part))
+        shift.addScaledVector(displacement.clone().normalize(), rotor.deckOffset);
+      expected.elements[12] += shift.x;
+      expected.elements[13] += shift.y;
+      expected.elements[14] += shift.z;
+      expected.elements.forEach((v, k) =>
+        assert.ok(Math.abs(v - part.matrixWorld.elements[k]) < 1e-8),
+      );
+    }
+  }
   const moving = new Set(rig.rotors.flatMap((rotor) => rotor.parts));
   const fixed = nodes.filter((node) => !moving.has(node));
   for (const rotor of rig.rotors) {
@@ -140,7 +196,7 @@ test('Locking plates, collars, pins and blades stay assembled on centered shafts
   rig.sample(0);
   nodes.forEach((node, i) =>
     node.matrixWorld.elements.forEach((value, j) =>
-      assert.ok(Math.abs(value - initial[i].elements[j]) < 1e-8),
+      assert.ok(Math.abs(value - seated[i].elements[j]) < 1e-8),
     ),
   );
   // Match the production hierarchy: a centered source under base attitude
@@ -176,4 +232,24 @@ test('Locking plates, collars, pins and blades stay assembled on centered shafts
       assert.ok(normal.angleTo(shaft) < 1e-5);
     }
   }
+});
+
+test('Disabling the display fit reproduces every original node world matrix, including shaft carriers', () => {
+  const { root, nodes } = sourceRig();
+  const original = nodes.map((n) => n.matrixWorld.clone());
+  const vertexCount = nodes.reduce(
+    (sum, n) => sum + (n.geometry?.attributes.position.count || 0),
+    0,
+  );
+  createDroneRig(THREE, root, { hubSeatClearance: 1, hubDeckCompression: 0 }).sample(0);
+  nodes.forEach((n, i) =>
+    n.matrixWorld.elements.forEach((v, k) =>
+      assert.ok(Math.abs(v - original[i].elements[k]) < 1e-8),
+    ),
+  );
+  let actualVertices = 0;
+  root.traverse((n) => {
+    actualVertices += n.geometry?.attributes.position.count || 0;
+  });
+  assert.equal(actualVertices, vertexCount, 'shaft extraction must not duplicate/drop geometry');
 });

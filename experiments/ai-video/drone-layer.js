@@ -187,7 +187,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
         releaseScene(source);
         return;
       }
-      rig = createDroneRig(THREE, source);
+      rig = createDroneRig(THREE, source, config);
       const bounds = new THREE.Box3().setFromObject(source);
       const center = bounds.getCenter(new THREE.Vector3());
       baseSize = Math.max(...bounds.getSize(new THREE.Vector3()).toArray());

@@ -13,7 +13,13 @@
     "桨叶4": ["02", "04", "05", "06", "08", "09", "10"]
   },
   "lockingPlateSuffixes": ["10", "04", "04", "04"],
-  "fixedParts": "lower motor housings and bases retain their original motor parents; the upper locking plate and its collar rotate with the propeller pins, preserving their assembly and the zero-pose world transforms",
+  "fixedParts": "lower motor housings and bases retain their original world transforms beneath carrier groups; the extracted shaft and complete fitted upper assembly rotate together",
   "travel": "absolute scroll position across three live films",
-  "renderer": "independent transparent Three.js layer"
+  "renderer": "independent transparent Three.js layer",
+  "shaftMeshNames": ["桨叶1_06", "桨叶2_07", "桨叶3_07", "桨叶4_07"],
+  "runtimeAssemblyFit": {
+    "hubSeatClearanceMetres": 0.00035,
+    "hubDeckCompression": 0.4,
+    "description": "Separate shaft mesh geometry from its motor carrier; seat lower locking disk on cap and lower the upper deck by 40% of pin height. Mesh vertices, UVs, materials and source asset bytes are unchanged; runtime part positions differ from the authored zero pose."
+  }
 }
