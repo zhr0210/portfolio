@@ -98,19 +98,27 @@ test('Hover is smooth, seeded, bounded and halved on phones; zero elapsed time f
 });
 
 test('Only drone travel extends; the original camera timing and three-live spacing remain fixed', () => {
-  assert.deepEqual(config.travel, { start: -0.9, end: 5.337 });
-  assert.ok(Math.abs((config.travel.end - config.travel.start) / 5.67 - 1.1) < 1e-12);
+  assert.deepEqual(config.travel, { start: -0.9, end: 5.9607 });
+  assert.ok(Math.abs((config.travel.end - config.travel.start) / 6.237 - 1.1) < 1e-12);
   assert.deepEqual(reelConfig.deviceAnimation, { start: -0.9, end: 4.5 });
   assert.equal(reelConfig.liveScrollSpan, 1.8);
 });
 
-test('Quartic command reaches only 6.25% at halfway and coalesces same-direction inputs', () => {
+test('Ease-in-out command is symmetric, slows both ends and coalesces same-direction inputs', () => {
   const drive = createDroneDrive(config.drive);
+  drive.reset(0);
+  drive.update(1, { sequence: 1, time: 100, direction: 1 });
+  const samples = Array.from({ length: 20 }, () => drive.step(0.025));
+  samples.forEach((s, i) => {
+    if (i < 19) assert.ok(Math.abs(s.command + samples[18 - i].command - 1) < 1e-12);
+  });
+  assert.ok(samples[0].command < 0.001);
+  assert.ok(samples[19].command - samples[18].command < 0.001);
   drive.reset(0);
   drive.update(1, { sequence: 1, time: 100, direction: 1 });
   for (let i = 0; i < 5; i++) drive.step(0.05);
   const half = drive.step(0);
-  assert.ok(Math.abs(half.command - 0.0625) < 1e-12);
+  assert.ok(Math.abs(half.command - 0.5) < 1e-12);
   drive.update(2, { sequence: 2, time: 180, direction: 1 });
   assert.deepEqual(drive.step(0), half, 'target updates do not move the command synchronously');
   const next = drive.step(0.05);
@@ -132,7 +140,7 @@ test('Quartic command reaches only 6.25% at halfway and coalesces same-direction
   assert.deepEqual(drive.step(0), { command: 3, progress: 1 }, 'exit clears an unfinished ramp');
 });
 
-test('Input-driven flight peaks in the second half, brakes and rebounds in either direction', () => {
+test('Input-driven eased flight accelerates, slows, brakes and rebounds in either direction', () => {
   for (const sign of [-1, 1]) {
     const motion = createDroneMotion(calm);
     motion.reset(0);
@@ -145,7 +153,7 @@ test('Input-driven flight peaks in the second half, brakes and rebounds in eithe
     }));
     const peak = samples.reduce((a, b) => (Math.abs(a.velocity) > Math.abs(b.velocity) ? a : b));
     assert.ok(peak.t > 0.25 && peak.t < 0.8, `peak at ${peak.t}`);
-    assert.ok(Math.abs(samples[29].y) < 0.04 * 0.0625, 'body lags the shaped command at midpoint');
+    assert.ok(Math.abs(samples[29].y) < 0.04 * 0.5, 'body lags the shaped command at midpoint');
     assert.ok(Math.max(...samples.map((s) => sign * s.y)) > 0.042, 'flight overshoots the target');
     assert.ok(
       samples.some((s) => sign * s.velocity < 0),

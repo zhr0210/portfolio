@@ -47,7 +47,7 @@ test('The supplied unfolded drone keeps its original geometry and embedded textu
   for (const name of ['桨叶1', '桨叶2', '桨叶3', '桨叶4'])
     assert.equal(json.nodes.filter((n) => n.name === name).length, 1);
 });
-test('Rotor hubs and blades follow authored motor shafts while housings stay attached during a full revolution', () => {
+test('Locking plates, collars, pins and blades stay assembled on centered shafts during a full revolution', () => {
   const { root, nodes } = sourceRig();
   const initial = nodes.map((node) => node.matrixWorld.clone());
   const rig = createDroneRig(THREE, root);
@@ -66,15 +66,22 @@ test('Rotor hubs and blades follow authored motor shafts while housings stay att
       .applyQuaternion(rotor.pivot.parent.getWorldQuaternion(new THREE.Quaternion()).normalize());
     const tilt = (axis.angleTo(new THREE.Vector3(0, 1, 0)) * 180) / Math.PI;
     assert.ok(tilt > 7 && tilt < 9);
-    assert.deepEqual(rotor.pivot.position.toArray(), [0, 0, 0]);
+    const plateCenter = new THREE.Box3().setFromObject(rotor.plate).getCenter(new THREE.Vector3());
+    assert.ok(rotor.pivot.getWorldPosition(new THREE.Vector3()).distanceTo(plateCenter) < 1e-8);
     assert.ok(rotor.parts.every((part) => part.parent === rotor.pivot));
   }
   const shaftSamples = rig.rotors.map((rotor) =>
     rotor.parts.map((part) => {
-      const local = rotor.pivot.parent.worldToLocal(part.getWorldPosition(new THREE.Vector3()));
+      const local = rotor.pivot.parent
+        .worldToLocal(part.getWorldPosition(new THREE.Vector3()))
+        .sub(rotor.pivot.position);
       return { axial: local.z, radius: Math.hypot(local.x, local.y) };
     }),
   );
+  const assembly = rig.rotors.map((rotor) => {
+    const inverse = rotor.plate.matrixWorld.clone().invert();
+    return rotor.parts.map((part) => inverse.clone().multiply(part.matrixWorld));
+  });
   for (let i = 1; i <= 16; i++) {
     rig.sample((i * Math.PI) / 8);
     for (const node of fixed)
@@ -83,9 +90,17 @@ test('Rotor hubs and blades follow authored motor shafts while housings stay att
       );
     rig.rotors.forEach((rotor, r) =>
       rotor.parts.forEach((part, p) => {
-        const local = rotor.pivot.parent.worldToLocal(part.getWorldPosition(new THREE.Vector3()));
+        const local = rotor.pivot.parent
+          .worldToLocal(part.getWorldPosition(new THREE.Vector3()))
+          .sub(rotor.pivot.position);
         assert.ok(Math.abs(local.z - shaftSamples[r][p].axial) < 1e-5);
         assert.ok(Math.abs(Math.hypot(local.x, local.y) - shaftSamples[r][p].radius) < 1e-5);
+        const relative = rotor.plate.matrixWorld.clone().invert().multiply(part.matrixWorld);
+        relative.elements.forEach((value, k) =>
+          assert.ok(Math.abs(value - assembly[r][p].elements[k]) < 1e-5),
+        );
+        const center = new THREE.Box3().setFromObject(rotor.plate).getCenter(new THREE.Vector3());
+        assert.ok(rotor.pivot.getWorldPosition(new THREE.Vector3()).distanceTo(center) < 1e-8);
       }),
     );
   }
@@ -100,7 +115,10 @@ test('Rotor hubs and blades follow authored motor shafts while housings stay att
   rig.sample(Math.PI / 2);
   rig.rotors.forEach((rotor, i) => {
     assert.ok(
-      rotor.pivot.getWorldPosition(new THREE.Vector3()).distanceTo(motorPositions[i]) < 1e-8,
+      rotor.pivot
+        .getWorldPosition(new THREE.Vector3())
+        .distanceTo(new THREE.Box3().setFromObject(rotor.plate).getCenter(new THREE.Vector3())) <
+        1e-8,
     );
     assert.ok(
       rotor.pivot.parent.getWorldPosition(new THREE.Vector3()).distanceTo(motorPositions[i]) < 1e-8,

@@ -5,14 +5,15 @@
   "modifiedGeometry": false,
   "modifiedTextures": false,
   "runtimeRotorGroups": ["桨叶1", "桨叶2", "桨叶3", "桨叶4"],
-  "rotorAxis": "authored motor local -Z at its original origin; opposite diagonal pairs spin in opposite directions",
+  "rotorAxis": "authored motor local -Z through the geometric center of its upper locking plate; opposite diagonal pairs spin in opposite directions",
   "rotatingPartSuffixes": {
-    "桨叶1": ["03", "04", "05", "07", "08"],
-    "桨叶2": ["05", "06", "08", "09", "10"],
-    "桨叶3": ["05", "06", "08", "09", "10"],
-    "桨叶4": ["05", "06", "08", "09", "10"]
+    "桨叶1": ["03", "04", "05", "07", "08", "09", "10"],
+    "桨叶2": ["03", "04", "05", "06", "08", "09", "10"],
+    "桨叶3": ["02", "04", "05", "06", "08", "09", "10"],
+    "桨叶4": ["02", "04", "05", "06", "08", "09", "10"]
   },
-  "fixedParts": "motor housings and bases retain their original motor parents; reparented rotating parts preserve the zero-pose world transforms",
+  "lockingPlateSuffixes": ["10", "04", "04", "04"],
+  "fixedParts": "lower motor housings and bases retain their original motor parents; the upper locking plate and its collar rotate with the propeller pins, preserving their assembly and the zero-pose world transforms",
   "travel": "absolute scroll position across three live films",
   "renderer": "independent transparent Three.js layer"
 }

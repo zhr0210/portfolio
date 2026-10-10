@@ -86,8 +86,8 @@ export const reelConfig = {
     reducedProgress: 0.375,
   },
   drone: {
-    travel: { start: -0.9, end: 5.337 },
-    drive: { duration: 0.5, exponent: 4, burstGap: 140 },
+    travel: { start: -0.9, end: 5.9607 },
+    drive: { duration: 0.5, exponent: 3, burstGap: 140 },
     spring: {
       frequency: 10,
       damping: 0.59,

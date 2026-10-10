@@ -39,7 +39,10 @@ export function createDroneDrive(config) {
     step(dt) {
       if (dt > 0) {
         elapsed = Math.min(config.duration, elapsed + dt);
-        command = start + (goal - start) * (elapsed / config.duration) ** config.exponent;
+        const p = elapsed / config.duration;
+        const ease =
+          p < 0.5 ? 0.5 * (2 * p) ** config.exponent : 1 - 0.5 * (2 * (1 - p)) ** config.exponent;
+        command = start + (goal - start) * ease;
       }
       return { command, progress: elapsed / config.duration };
     },

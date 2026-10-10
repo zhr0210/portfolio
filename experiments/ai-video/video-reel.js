@@ -398,6 +398,7 @@ export class VideoReel {
   render() {
     if (!this.scenes[0]?.geo) return;
     const nearest = this.currentIndex();
+    const aiStart = this.timeline.find((segment) => segment.type === 'ai')?.entry ?? Infinity;
     const candidates = [];
     for (const scene of this.scenes) {
       const g = scene.geo,
@@ -420,6 +421,7 @@ export class VideoReel {
       scene.devices?.update(deviceUpdate);
       scene.drone?.update({
         ...deviceUpdate,
+        visible: deviceUpdate.visible && this.position < aiStart,
         progress:
           (this.position - reelConfig.drone.travel.start) /
           (reelConfig.drone.travel.end - reelConfig.drone.travel.start),
