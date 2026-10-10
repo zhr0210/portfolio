@@ -108,24 +108,42 @@ test('Only drone travel extends; the original camera timing and three-live spaci
   assert.ok(Math.abs(config.hover.yaw / ((0.8 * Math.PI) / 180) - 1.05) < 1e-12);
 });
 
-test('Command accelerates for 80% then decelerates for a short tail; bursts coalesce', () => {
+test('Gentler command lowers peak speed and retains smooth braking and burst coalescing', () => {
   const drive = createDroneDrive(config.drive);
   drive.reset(0);
   drive.update(1, { sequence: 1, time: 100, direction: 1 });
-  const samples = Array.from({ length: 100 }, () => drive.step(0.005));
-  const speeds = samples.map((s, i) => (s.command - (samples[i - 1]?.command || 0)) / 0.005);
-  assert.ok(speeds[78] > speeds[49] * 2);
-  assert.ok(speeds[98] < speeds[80] * 0.03);
-  assert.ok(Math.abs(samples[79].command - 0.8) < 1e-12);
+  const samples = Array.from({ length: 100 }, () => drive.step(config.drive.duration / 100));
+  const speeds = samples.map(
+    (s, i) => (s.command - (samples[i - 1]?.command || 0)) / (config.drive.duration / 100),
+  );
+  const previous = createDroneDrive({
+    ...config.drive,
+    duration: 0.5,
+    exponent: 3,
+    brakingFraction: 0.2,
+  });
+  previous.reset(0);
+  previous.update(1, { sequence: 1, time: 100, direction: 1 });
+  let last = 0,
+    oldPeak = 0;
+  for (let i = 0; i < 100; i++) {
+    const value = previous.step(0.005).command;
+    oldPeak = Math.max(oldPeak, (value - last) / 0.005);
+    last = value;
+  }
+  assert.ok(Math.max(...speeds) < oldPeak * 0.65, 'gentler peak speed than rev=28');
+  assert.ok(speeds[68] > speeds[49]);
+  assert.ok(speeds[98] < speeds[70] * 0.08);
+  assert.ok(Math.abs(samples[69].command - 0.7) < 1e-12);
   assert.equal(samples.at(-1).command, 1);
   drive.reset(0);
   drive.update(1, { sequence: 1, time: 100, direction: 1 });
-  for (let i = 0; i < 5; i++) drive.step(0.05);
+  for (let i = 0; i < 5; i++) drive.step(0.06);
   const half = drive.step(0);
-  assert.ok(Math.abs(half.command - 0.1953125) < 1e-12);
+  assert.ok(Math.abs(half.command - 0.5 ** 2 / 0.7) < 1e-12);
   drive.update(2, { sequence: 2, time: 180, direction: 1 });
   assert.deepEqual(drive.step(0), half, 'target updates do not move the command synchronously');
-  const next = drive.step(0.05);
+  const next = drive.step(0.06);
   assert.ok(Math.abs(next.progress - 0.6) < 1e-12, 'same burst keeps its clock');
   drive.update(-1, { sequence: 3, time: 220, direction: -1 });
   const reverse = drive.step(0);
@@ -159,8 +177,8 @@ test('Input-driven eased flight accelerates, slows, brakes and rebounds in eithe
     assert.ok(peak.t > 0.25 && peak.t < 0.8, `peak at ${peak.t}`);
     assert.ok(Math.abs(samples[29].y) < 0.04 * 0.5, 'body lags the shaped command at midpoint');
     assert.ok(
-      Math.max(...samples.map((s) => sign * s.y)) > 0.045,
-      'scroll flight exceeds the previous approximately 7% braking overshoot',
+      Math.max(...samples.map((s) => sign * s.y)) > 0.043,
+      'gentler acceleration still retains visible braking overshoot',
     );
     assert.ok(
       samples.some((s) => sign * s.velocity < 0),
