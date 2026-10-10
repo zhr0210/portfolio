@@ -1,9 +1,10 @@
 import { devicePose } from './device-motion.js';
 import { releaseScene } from './device-layer.js';
 import { createDroneRig } from './drone-rig.js';
+import { createDroneMotion } from './drone-motion.js';
 
-/** Rotor time is the only autonomous clock. Body travel remains an absolute,
- * reversible scroll sample; hidden/offscreen/reduced views stop this clock. */
+/** Scroll supplies a bounded spring target. One visible-only clock handles
+ * inertial settling, continuous hover and the independent propellers. */
 export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => {} }) {
   const canvas = document.createElement('canvas');
   canvas.className = 'reel-drone-canvas';
@@ -28,6 +29,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     error: null,
   };
   let latest = { progress: 0, geo: null, visible: false, reduced: false };
+  const motion = createDroneMotion(config);
   let renderer, scene, camera, model, rig, baseSize, radiusRatio;
   let loading = false,
     disposed = false,
@@ -40,26 +42,51 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     stats.raf = 0;
     previousTime = 0;
   }
-  function pose() {
+  function pose(dt = 0) {
     if (!latest.geo || !model) return null;
     const g = latest.geo;
     const size = g.H * (g.mobile ? config.mobileSize : config.size);
-    const p = devicePose(latest.progress, size * radiusRatio, g.H, {
-      phase: config.phase,
-      reduced: latest.reduced,
-      reducedProgress: 0.5,
-    });
-    const virtualWidth = g.mobile ? g.W : Math.max(g.W, g.H * config.compositionAspect);
-    p.x = g.W / 2 + virtualWidth * ((g.mobile ? config.mobileTargetX : config.targetX) - 0.5);
-    if (g.mobile && !latest.reduced)
-      p.y += (config.mobileVerticalBias || 0) * g.H * Math.sin(Math.PI * p.progress) ** 2;
-    p.size = size;
+    // Reserve enough space for the full spring/hover envelope: fixed interval
+    // endpoints are physically outside the viewport, even during braking.
+    const radius = size * radiusRatio + g.H * (config.spring.maxOffset + config.hover.vertical);
+    const anchor = (progress) => {
+      const sample = devicePose(progress, radius, g.H, {
+        phase: config.phase,
+        reduced: latest.reduced,
+        reducedProgress: 0.5,
+      });
+      if (g.mobile && !latest.reduced)
+        sample.y +=
+          (config.mobileVerticalBias || 0) * g.H * Math.sin(Math.PI * sample.progress) ** 2;
+      return sample;
+    };
+    const p = anchor(latest.progress);
+    const goal = anchor(
+      latest.navigation ? latest.progress : (latest.targetProgress ?? latest.progress),
+    );
+    motion.setTarget(goal.y / g.H, p.y / g.H, latest.reduced);
     p.visible &&= latest.visible && !document.hidden;
+    if (!p.visible) {
+      if (p.progress <= 0 || p.progress >= 1) motion.reset(p.y / g.H);
+      return p;
+    }
+    const flight = motion.step(dt, { mobile: g.mobile, reduced: latest.reduced });
+    p.baseY = p.y;
+    p.y = flight.y * g.H;
+    p.flight = flight;
+    /* The base yaw/pitch remains on the inner group; flight correction is
+       composed on its parent, independent of the four local rotor axes. */
+    const virtualWidth = g.mobile ? g.W : Math.max(g.W, g.H * config.compositionAspect);
+    p.x =
+      g.W / 2 +
+      virtualWidth * ((g.mobile ? config.mobileTargetX : config.targetX) - 0.5) +
+      flight.x * g.H;
+    p.size = size;
     return p;
   }
-  function draw() {
+  function draw(dt = 0) {
     if (disposed || lost || !renderer) return false;
-    const p = pose();
+    const p = pose(dt);
     stats.visible = !!p?.visible;
     canvas.style.opacity = stats.visible ? '1' : '0';
     if (!stats.visible) {
@@ -72,7 +99,18 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
       g.mobile ? config.mobileMaxPixelRatio : config.maxPixelRatio,
     );
     const angle = latest.reduced ? 0 : stats.rotorAngle;
-    const key = [g.W, g.H, ratio, p.x, p.y, p.size, angle].join(':');
+    const key = [
+      g.W,
+      g.H,
+      ratio,
+      p.x,
+      p.y,
+      p.size,
+      angle,
+      p.flight.pitch,
+      p.flight.yaw,
+      p.flight.roll,
+    ].join(':');
     if (key === lastKey) return !latest.reduced;
     if (stats.width !== g.W || stats.height !== g.H || stats.pixelRatio !== ratio) {
       renderer.setPixelRatio(ratio);
@@ -88,6 +126,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     }
     model.scale.setScalar(p.size / baseSize);
     model.position.set(p.x - g.W / 2, g.H / 2 - p.y, 0);
+    model.rotation.set(p.flight.pitch, p.flight.yaw, p.flight.roll);
     rig.sample(angle);
     renderer.render(scene, camera);
     stats.draws++;
@@ -109,7 +148,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     const dt = previousTime ? Math.min(0.05, (time - previousTime) / 1000) : 0;
     previousTime = time;
     stats.rotorAngle = (stats.rotorAngle + dt * config.rotorRadiansPerSecond) % (Math.PI * 2);
-    if (draw()) schedule();
+    if (draw(dt)) schedule();
   }
   function release() {
     releasing = true;
@@ -151,8 +190,10 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
       radiusRatio = bounds.getBoundingSphere(new THREE.Sphere()).radius / baseSize;
       source.position.sub(center);
       model = new THREE.Group();
-      model.add(source);
-      model.rotation.set(...config.rotation);
+      const attitude = new THREE.Group();
+      attitude.rotation.set(...config.rotation);
+      attitude.add(source);
+      model.add(attitude);
       scene = new THREE.Scene();
       scene.add(model);
       const ambient = new THREE.AmbientLight(0xffffff, 0.8);

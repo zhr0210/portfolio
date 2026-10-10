@@ -62,7 +62,7 @@ export class VideoReel {
     this.abort = new AbortController();
     this.reduced = matchMedia('(prefers-reduced-motion: reduce)');
     this.works = reelWorks.map((w) => ({ ...w }));
-    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / ${String(this.works.length).padStart(2, '0')}</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>六条演示片由现有封面制作镜头运动；MENU 可逐条载入真实影片，仅用于本次浏览，不上传。</p><p>Sony、Pocket 和无人机随三条实拍上移；相机动画放慢三倍，反向滚动可回看。停滚后机身保持姿态，桨叶在可见时继续转动。Pocket 保留 Blender 原场景面光。</p><button data-action="close-info">关闭</button></div></section>`;
+    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / ${String(this.works.length).padStart(2, '0')}</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>六条演示片由现有封面制作镜头运动；MENU 可逐条载入真实影片，仅用于本次浏览，不上传。</p><p>Sony、Pocket 和无人机随三条实拍上移；相机动画放慢三倍，反向滚动可回看。停滚后 Sony 与 Pocket 保持姿态；无人机完成惯性回弹后轻微悬停，桨叶在可见时继续转动。Pocket 保留 Blender 原场景面光。</p><button data-action="close-info">关闭</button></div></section>`;
     this.root = host.firstElementChild;
     this.root.querySelector('.reel-return').href = returnUrl;
     this.world = this.root.querySelector('.reel-world');
@@ -219,7 +219,10 @@ export class VideoReel {
         config: reelConfig.drone,
         onInvalidate: () => this.request(),
       });
-      deviceHost.setAttribute('aria-label', 'Sony、Pocket 和无人机，机身随滚动移动，桨叶持续旋转');
+      deviceHost.setAttribute(
+        'aria-label',
+        'Sony、Pocket 和无人机，无人机随滚动惯性飞行并轻微悬停，桨叶持续旋转',
+      );
     } else if (work.type === 'ai' && work.generate !== false) {
       const generationHost = document.createElement('div');
       generationHost.className = 'reel-generation-layer';
@@ -414,7 +417,17 @@ export class VideoReel {
         reduced: this.reduced.matches,
       };
       scene.devices?.update(deviceUpdate);
-      scene.drone?.update(deviceUpdate);
+      scene.drone?.update({
+        ...deviceUpdate,
+        progress:
+          (this.position - reelConfig.drone.travel.start) /
+          (reelConfig.drone.travel.end - reelConfig.drone.travel.start),
+        targetProgress:
+          (clamp(this.target + this.pending, this.minimum, this.maximum) -
+            reelConfig.drone.travel.start) /
+          (reelConfig.drone.travel.end - reelConfig.drone.travel.start),
+        navigation: !!this.snap,
+      });
       scene.cameras.forEach((camera, i) => {
         const h = parseFloat(camera.style.height) || 1;
         const progress = deviceProgress;

@@ -86,6 +86,22 @@ export const reelConfig = {
     reducedProgress: 0.375,
   },
   drone: {
+    travel: { start: -0.9, end: 4.77 },
+    spring: {
+      frequency: 10,
+      damping: 0.59,
+      maxOffset: 0.08,
+      maxTilt: (4 * Math.PI) / 180,
+      velocityTilt: 0.12,
+      accelerationTilt: 0.018,
+    },
+    hover: {
+      seed: 7319,
+      horizontal: 0.006,
+      vertical: 0.004,
+      tilt: (1.5 * Math.PI) / 180,
+      yaw: (0.8 * Math.PI) / 180,
+    },
     phase: 0.08,
     size: 0.6,
     mobileSize: 0.39,
