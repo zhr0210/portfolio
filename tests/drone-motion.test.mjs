@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDroneMotion, springStep } from '../experiments/ai-video/drone-motion.js';
+import {
+  createDroneDrive,
+  createDroneMotion,
+  springStep,
+} from '../experiments/ai-video/drone-motion.js';
 import { reelConfig } from '../experiments/ai-video/video-reel.config.js';
 
 const config = reelConfig.drone;
@@ -94,8 +98,75 @@ test('Hover is smooth, seeded, bounded and halved on phones; zero elapsed time f
 });
 
 test('Only drone travel extends; the original camera timing and three-live spacing remain fixed', () => {
-  assert.deepEqual(config.travel, { start: -0.9, end: 4.77 });
-  assert.ok(Math.abs((config.travel.end - config.travel.start) / 5.4 - 1.05) < 1e-12);
+  assert.deepEqual(config.travel, { start: -0.9, end: 5.337 });
+  assert.ok(Math.abs((config.travel.end - config.travel.start) / 5.67 - 1.1) < 1e-12);
   assert.deepEqual(reelConfig.deviceAnimation, { start: -0.9, end: 4.5 });
   assert.equal(reelConfig.liveScrollSpan, 1.8);
+});
+
+test('Quartic command reaches only 6.25% at halfway and coalesces same-direction inputs', () => {
+  const drive = createDroneDrive(config.drive);
+  drive.reset(0);
+  drive.update(1, { sequence: 1, time: 100, direction: 1 });
+  for (let i = 0; i < 5; i++) drive.step(0.05);
+  const half = drive.step(0);
+  assert.ok(Math.abs(half.command - 0.0625) < 1e-12);
+  drive.update(2, { sequence: 2, time: 180, direction: 1 });
+  assert.deepEqual(drive.step(0), half, 'target updates do not move the command synchronously');
+  const next = drive.step(0.05);
+  assert.ok(Math.abs(next.progress - 0.6) < 1e-12, 'same burst keeps its clock');
+  drive.update(-1, { sequence: 3, time: 220, direction: -1 });
+  const reverse = drive.step(0);
+  assert.equal(reverse.command, next.command);
+  assert.equal(reverse.progress, 0);
+  drive.step(0.3);
+  const beforeGap = drive.step(0);
+  drive.update(-2, { sequence: 4, time: 500, direction: -1 });
+  assert.equal(drive.step(0).command, beforeGap.command);
+  assert.equal(drive.step(0).progress, 0);
+  drive.update(7, { sequence: 4, time: 500, direction: -1 }, true);
+  assert.equal(drive.step(0).command, 7, 'navigation bypasses the delayed command');
+  drive.update(9, { sequence: 5, time: 550, direction: 1 });
+  drive.step(0.1);
+  drive.reset(3);
+  assert.deepEqual(drive.step(0), { command: 3, progress: 1 }, 'exit clears an unfinished ramp');
+});
+
+test('Input-driven flight peaks in the second half, brakes and rebounds in either direction', () => {
+  for (const sign of [-1, 1]) {
+    const motion = createDroneMotion(calm);
+    motion.reset(0);
+    motion.setTarget(sign * 0.04, sign * 0.04, false, {
+      input: { sequence: 1, time: 100, direction: sign },
+    });
+    const samples = Array.from({ length: 240 }, (_, i) => ({
+      ...motion.step(1 / 120),
+      t: (i + 1) / 120,
+    }));
+    const peak = samples.reduce((a, b) => (Math.abs(a.velocity) > Math.abs(b.velocity) ? a : b));
+    assert.ok(peak.t > 0.25 && peak.t < 0.8, `peak at ${peak.t}`);
+    assert.ok(Math.abs(samples[29].y) < 0.04 * 0.0625, 'body lags the shaped command at midpoint');
+    assert.ok(Math.max(...samples.map((s) => sign * s.y)) > 0.042, 'flight overshoots the target');
+    assert.ok(
+      samples.some((s) => sign * s.velocity < 0),
+      'braking produces rebound',
+    );
+    assert.ok(Math.abs(samples.at(-1).y - sign * 0.04) < 0.0001);
+    const before = motion.step(0);
+    motion.setTarget(-sign * 0.04, 0, false, {
+      input: { sequence: 2, time: 200, direction: -sign },
+    });
+    assert.equal(motion.step(0).velocity, before.velocity);
+  }
+  const endpoints = [30, 60, 120].map((fps) => {
+    const motion = createDroneMotion(calm);
+    motion.reset(0);
+    motion.setTarget(0.04, 0.04, false, {
+      input: { sequence: 1, time: 100, direction: 1 },
+    });
+    let state;
+    for (let i = 0; i < fps * 1.5; i++) state = motion.step(1 / fps);
+    return state.y;
+  });
+  assert.ok(Math.max(...endpoints) - Math.min(...endpoints) < 0.0001);
 });

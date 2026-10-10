@@ -5,7 +5,14 @@
   "modifiedGeometry": false,
   "modifiedTextures": false,
   "runtimeRotorGroups": ["桨叶1", "桨叶2", "桨叶3", "桨叶4"],
-  "rotorAxis": "world +Y at motor centers; opposite diagonal pairs spin in opposite directions",
+  "rotorAxis": "authored motor local -Z at its original origin; opposite diagonal pairs spin in opposite directions",
+  "rotatingPartSuffixes": {
+    "桨叶1": ["03", "04", "05", "07", "08"],
+    "桨叶2": ["05", "06", "08", "09", "10"],
+    "桨叶3": ["05", "06", "08", "09", "10"],
+    "桨叶4": ["05", "06", "08", "09", "10"]
+  },
+  "fixedParts": "motor housings and bases retain their original motor parents; reparented rotating parts preserve the zero-pose world transforms",
   "travel": "absolute scroll position across three live films",
   "renderer": "independent transparent Three.js layer"
 }

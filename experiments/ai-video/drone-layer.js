@@ -64,10 +64,13 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     const goal = anchor(
       latest.navigation ? latest.progress : (latest.targetProgress ?? latest.progress),
     );
-    motion.setTarget(goal.y / g.H, p.y / g.H, latest.reduced);
+    motion.setTarget(goal.y / g.H, p.y / g.H, latest.reduced, {
+      input: latest.input,
+      navigation: latest.navigation,
+    });
     p.visible &&= latest.visible && !document.hidden;
     if (!p.visible) {
-      if (p.progress <= 0 || p.progress >= 1) motion.reset(p.y / g.H);
+      if (!latest.visible || p.progress <= 0 || p.progress >= 1) motion.reset(p.y / g.H);
       return p;
     }
     const flight = motion.step(dt, { mobile: g.mobile, reduced: latest.reduced });
@@ -153,6 +156,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
   function release() {
     releasing = true;
     stop();
+    motion.reset(0);
     releaseScene(scene);
     renderer?.dispose();
     if (disposed) renderer?.forceContextLoss();

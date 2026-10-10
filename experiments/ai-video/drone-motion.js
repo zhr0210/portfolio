@@ -1,6 +1,51 @@
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const finite = (n, fallback = 0) => (Number.isFinite(n) ? n : fallback);
 
+/** A single scroll-burst clock shapes the spring's command. Updating the goal
+ * during a burst does not restart it; reversing rebases from the last command. */
+export function createDroneDrive(config) {
+  let command = 0,
+    start = 0,
+    goal = 0,
+    elapsed = config.duration,
+    lastInput = null;
+  return {
+    reset(value) {
+      command = start = goal = finite(value);
+      elapsed = config.duration;
+      lastInput = null;
+    },
+    update(value, input, navigation = false) {
+      goal = finite(value, command);
+      if (navigation || !input?.sequence) {
+        command = start = goal;
+        elapsed = config.duration;
+        lastInput = input ? { ...input } : null;
+        return;
+      }
+      if (input.sequence !== lastInput?.sequence) {
+        if (
+          !lastInput ||
+          input.direction !== lastInput.direction ||
+          input.time - lastInput.time > config.burstGap ||
+          elapsed >= config.duration
+        ) {
+          start = command;
+          elapsed = 0;
+        }
+        lastInput = { ...input };
+      }
+    },
+    step(dt) {
+      if (dt > 0) {
+        elapsed = Math.min(config.duration, elapsed + dt);
+        command = start + (goal - start) * (elapsed / config.duration) ** config.exponent;
+      }
+      return { command, progress: elapsed / config.duration };
+    },
+  };
+}
+
 // Closed-form underdamped spring: a constant target gives the same result at
 // 30, 60 or 120 Hz. Positions and velocities are in viewport-height units.
 export function springStep(position, velocity, target, dt, frequency, damping) {
@@ -24,6 +69,7 @@ export function springStep(position, velocity, target, dt, frequency, damping) {
 export function createDroneMotion(config) {
   const spring = config.spring,
     hover = config.hover;
+  const drive = createDroneDrive(config.drive);
   let position = null,
     velocity = 0,
     target = 0,
@@ -44,11 +90,13 @@ export function createDroneMotion(config) {
     reset(value) {
       position = target = base = finite(value);
       velocity = pitch = roll = 0;
+      drive.reset(base);
     },
-    setTarget(value, anchor, reduced = false) {
+    setTarget(value, anchor, reduced = false, { input, navigation = false } = {}) {
       base = finite(anchor);
       if (position === null || reduced) motion.reset(base);
       target = clamp(finite(value, base), base - spring.maxOffset, base + spring.maxOffset);
+      drive.update(target, input, navigation || reduced);
       const bounded = clamp(position, base - spring.maxOffset, base + spring.maxOffset);
       if (bounded !== position) {
         position = bounded;
@@ -64,6 +112,8 @@ export function createDroneMotion(config) {
         return { x: 0, y: base, pitch: 0, yaw: 0, roll: 0, velocity: 0, offset: 0 };
       }
       time += dt;
+      const command = drive.step(dt);
+      target = clamp(command.command, base - spring.maxOffset, base + spring.maxOffset);
       const next = springStep(position, velocity, target, dt, spring.frequency, spring.damping);
       position = clamp(next.position, base - spring.maxOffset, base + spring.maxOffset);
       velocity = position === next.position ? next.velocity : 0;
@@ -89,6 +139,8 @@ export function createDroneMotion(config) {
         acceleration,
         offset: position - base,
         time,
+        command: target,
+        driveProgress: command.progress,
       };
     },
   };

@@ -50,6 +50,7 @@ export class VideoReel {
     this.maximum = this.timeline.at(-1).end;
     this.position = this.target = standalone ? reelConfig.initialPosition : 0;
     this.pending = this.velocity = 0;
+    this.motionInput = { sequence: 0, time: 0, direction: 0 };
     this.active = false;
     this.raf = 0;
     this.lastTime = 0;
@@ -427,6 +428,7 @@ export class VideoReel {
             reelConfig.drone.travel.start) /
           (reelConfig.drone.travel.end - reelConfig.drone.travel.start),
         navigation: !!this.snap,
+        input: this.motionInput,
       });
       scene.cameras.forEach((camera, i) => {
         const h = parseFloat(camera.style.height) || 1;
@@ -614,6 +616,11 @@ export class VideoReel {
   input(delta, wheel = false) {
     if (!this.active || !Number.isFinite(delta) || !delta) return;
     const sign = Math.sign(delta);
+    this.motionInput = {
+      sequence: this.motionInput.sequence + 1,
+      time: performance.now(),
+      direction: sign,
+    };
     if (this.direction && this.direction !== sign) {
       this.pending = 0;
       this.target = this.position;
