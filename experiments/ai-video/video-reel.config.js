@@ -12,6 +12,8 @@ export const reelConfig = {
   minimumSceneGap: 170,
   titleParallax: 0.1,
   metadataParallax: 0.08,
+  // 三条实拍共享设备动画；每条保留同样的画面间距并提供更长的滚动行程。
+  liveScrollSpan: 1.8,
   // AI 生成段独立于实拍时间轴。比例决定画面阶段，停止滚动即停止计算。
   aiGeneration: {
     scrollSpan: 1.4,
@@ -46,8 +48,8 @@ export const reelConfig = {
   // 第一部影片可以向上回看完整入场；保留原来的首次打开位置。
   initialPosition: -0.22,
   minimumPosition: -0.9,
-  // 两台设备只在第一部影片的固定区间进出场，停止滚动后停帧。
-  deviceAnimation: { start: -0.9, end: 0.9 },
+  // 设备覆盖三条实拍：原 1.8 单位行程延长为 5.4，旋转采样放慢三倍。
+  deviceAnimation: { start: -0.9, end: 4.5 },
   deviceLayer: {
     cameraName: 'sourceCamera',
     sourceAspect: 16 / 9,
@@ -60,9 +62,9 @@ export const reelConfig = {
     compositionAspect: 16 / 9,
     desktopComposition: {
       sony: { sourceX: 0.09, sourceY: 0.5, targetX: 0.17, targetY: 0.5 },
-      pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.84, targetY: 0.5 },
+      pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.17, targetY: 0.5 },
     },
-    entryOffsets: { sony: 0.12, pocket: -0.04 },
+    entryOffsets: { sony: 0.12, pocket: -0.1 },
     // Sony 0–216 帧，Pocket 保留 36 帧错峰并延长至 252 帧；完整采样一次。
     animationRanges: { sony: [0, 9], pocket: [1.5, 10.5] },
     // 手机用同一画布的两次投影，把设备移至上下，保持原动画轨迹和错峰。
@@ -83,6 +85,20 @@ export const reelConfig = {
     mobileMaxPixelRatio: 1,
     reducedProgress: 0.375,
   },
+  drone: {
+    phase: 0.08,
+    size: 0.6,
+    mobileSize: 0.39,
+    targetX: 0.84,
+    mobileTargetX: 0.64,
+    mobileVerticalBias: -0.16,
+    compositionAspect: 16 / 9,
+    rotation: [0.38, -0.48, 0.08],
+    rotorRadiansPerSecond: 42,
+    exposure: 0.9,
+    maxPixelRatio: 1.5,
+    mobileMaxPixelRatio: 1,
+  },
 };
 
 // 用原始参考图作为共享图集，CSS 裁切，不改动用户原图。
@@ -102,16 +118,36 @@ export const reelWorks = [
     type: 'live',
     title: '赎罪',
     eyebrow: 'LIVE ACTION / 01',
-    parameters: ['SONY A7M4', 'S-Log3 · S-Gamut3.Cine'],
-    video: '',
+    parameters: ['SONY A7M4', 'S-Log3 · S-Gamut3.Cine', 'DEMO / 预览片'],
+    demo: true,
+    video: new URL('./assets/demo-atonement-live.mp4', import.meta.url).href,
+  },
+  {
+    id: 'light-live',
+    type: 'live',
+    title: '光影习作',
+    eyebrow: 'LIVE ACTION / 02',
+    parameters: ['DEMO FILM', '实拍展示占位 · 待替换影片'],
+    demo: true,
+    video: new URL('./assets/demo-light-live.mp4', import.meta.url).href,
+  },
+  {
+    id: 'space-live',
+    type: 'live',
+    title: '空间叙事',
+    eyebrow: 'LIVE ACTION / 03',
+    parameters: ['DEMO FILM', '实拍展示占位 · 待替换影片'],
+    demo: true,
+    video: new URL('./assets/demo-space-live.mp4', import.meta.url).href,
   },
   {
     id: 'atonement-ai',
     type: 'ai',
     title: '赎罪',
-    eyebrow: 'AI FILM / 02',
-    parameters: ['IMAGE TO VIDEO', '参考画面 · AI 创作'],
-    video: '',
+    eyebrow: 'AI FILM / 01',
+    parameters: ['IMAGE TO VIDEO', '参考画面 · AI 创作', 'DEMO / 预览片'],
+    demo: true,
+    video: new URL('./assets/demo-atonement-ai.mp4', import.meta.url).href,
     // 13 张生图加原封面共 14 个关键状态：锐利无序碎纹理逐步形成精细材质。
     // 光流对齐并保留纹理能量，补成 0–50 共 51 帧；原图高频只在 48–50 步恢复。
     // 原封面作为最后一帧，载入其他本地视频时自动改用封面求解器。
@@ -124,6 +160,26 @@ export const reelWorks = [
       mode: 'baked',
       detailStart: 48,
     },
+  },
+  {
+    id: 'texture-ai',
+    type: 'ai',
+    generate: false,
+    title: '纹理演化',
+    eyebrow: 'AI FILM / 02',
+    parameters: ['DEMO FILM', 'AI 展示占位 · 待替换影片'],
+    demo: true,
+    video: new URL('./assets/demo-texture-ai.mp4', import.meta.url).href,
+  },
+  {
+    id: 'echo-ai',
+    type: 'ai',
+    generate: false,
+    title: '视觉回声',
+    eyebrow: 'AI FILM / 03',
+    parameters: ['DEMO FILM', 'AI 展示占位 · 待替换影片'],
+    demo: true,
+    video: new URL('./assets/demo-echo-ai.mp4', import.meta.url).href,
   },
 ];
 

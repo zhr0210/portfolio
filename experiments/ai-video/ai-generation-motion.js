@@ -1,13 +1,15 @@
 import { clamp, range } from './reel-motion.js';
 
-// Coordinates up to the first AI entry retain the original live-action timeline.
+// Live pacing and the first AI generation interval have independent scroll spans.
 export function reelTimeline(works, config) {
   let anchor = 0;
   return works.map((work) => {
     const entry = anchor;
-    const end = entry + (work.type === 'ai' ? config.aiGeneration.scrollSpan : 0);
-    anchor = end + 1;
-    return { entry, end, type: work.type };
+    const generate = work.type === 'ai' && work.generate !== false;
+    const end = entry + (generate ? config.aiGeneration.scrollSpan : 0);
+    const travelSpan = work.type === 'live' ? config.liveScrollSpan || 1 : 1;
+    anchor = end + travelSpan;
+    return { entry, end, type: work.type, generate, travelSpan };
   });
 }
 

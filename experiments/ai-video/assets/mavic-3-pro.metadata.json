@@ -1,0 +1,11 @@
+{
+  "sourceAsset": "dji-mavic-3-pro-unfolded-validated.glb",
+  "sourceSha256": "13a01d74f53e757cca2e70eb699505a9352da603042afd00ba7215949cb63a15",
+  "bytes": 10546192,
+  "modifiedGeometry": false,
+  "modifiedTextures": false,
+  "runtimeRotorGroups": ["桨叶1", "桨叶2", "桨叶3", "桨叶4"],
+  "rotorAxis": "world +Y at motor centers; opposite diagonal pairs spin in opposite directions",
+  "travel": "absolute scroll position across three live films",
+  "renderer": "independent transparent Three.js layer"
+}

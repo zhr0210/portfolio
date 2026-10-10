@@ -9,6 +9,8 @@ import {
 import { clamp, smooth, reelLayout, scenePose, sceneInView } from './reel-motion.js';
 import { createDeviceLayer } from './device-layer.js';
 import { devicePose } from './device-motion.js';
+import { createDroneLayer } from './drone-layer.js';
+import { selectPlaybackScene } from './reel-playback.js';
 import { createAIGenerationLayer } from './ai-generation.js';
 import {
   reelTimeline,
@@ -60,7 +62,7 @@ export class VideoReel {
     this.abort = new AbortController();
     this.reduced = matchMedia('(prefers-reduced-motion: reduce)');
     this.works = reelWorks.map((w) => ({ ...w }));
-    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / 02</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>影片暂用你提供的设计图预览；MENU 可载入当前作品的本地视频，仅用于本次浏览，不上传。</p><p>相机和 Pocket 在实拍视频的固定区间各向上进入、退出一次，完整动画随滚动播放一次；反向滚动可以倒放，停止后保持当前姿态。Pocket 使用 Blender 原场景的面光。三维加载失败时显示静态参考。</p><button data-action="close-info">关闭</button></div></section>`;
+    host.innerHTML = `<section class="video-reel is-inactive" tabindex="0" role="region" aria-label="视频作品，向下滚动或上下方向键浏览"><div class="reel-world"></div><header class="reel-header"><div class="reel-menu" hidden><a class="reel-return">返回作品集 ↗</a><div class="reel-work-links"></div><label class="reel-upload">载入当前视频<input type="file" accept="video/*" aria-label="载入当前视频"></label><button data-action="play">播放 / 暂停</button><button data-action="sound">开启声音</button><button data-action="info">素材说明</button></div><button class="reel-menu-toggle" aria-expanded="false">MENU <i aria-hidden="true"></i></button></header><footer class="reel-footer"><span class="reel-count">01 / ${String(this.works.length).padStart(2, '0')}</span><span class="reel-scroll">SCROLL TO EXPLORE <i aria-hidden="true"></i></span></footer><div class="reel-message" role="status"></div><div class="reel-info" hidden><p>六条演示片由现有封面制作镜头运动；MENU 可逐条载入真实影片，仅用于本次浏览，不上传。</p><p>Sony、Pocket 和无人机随三条实拍上移；相机动画放慢三倍，反向滚动可回看。停滚后机身保持姿态，桨叶在可见时继续转动。Pocket 保留 Blender 原场景面光。</p><button data-action="close-info">关闭</button></div></section>`;
     this.root = host.firstElementChild;
     this.root.querySelector('.reel-return').href = returnUrl;
     this.world = this.root.querySelector('.reel-world');
@@ -180,7 +182,7 @@ export class VideoReel {
       posterVersion: 0,
       posterURL: null,
     };
-    if (work.type === 'live') {
+    if (work.type === 'live' && index === 0) {
       cameraCrops.forEach((rect, i) => {
         const camera = document.createElement('div');
         camera.className = 'reel-camera';
@@ -212,7 +214,13 @@ export class VideoReel {
         },
         onInvalidate: () => this.request(),
       });
-    } else {
+      scene.drone = createDroneLayer(deviceHost, {
+        assetUrl: new URL('./assets/mavic-3-pro.glb', import.meta.url).href,
+        config: reelConfig.drone,
+        onInvalidate: () => this.request(),
+      });
+      deviceHost.setAttribute('aria-label', 'Sony、Pocket 和无人机，机身随滚动移动，桨叶持续旋转');
+    } else if (work.type === 'ai' && work.generate !== false) {
       const generationHost = document.createElement('div');
       generationHost.className = 'reel-generation-layer';
       generationHost.setAttribute('role', 'img');
@@ -227,12 +235,16 @@ export class VideoReel {
           scene.el.dataset.generationState = state;
         },
       });
-      if (work.poster) this.setPoster(scene, { src: new URL(work.poster, import.meta.url).href });
     }
+    if (work.poster) this.setPoster(scene, { src: new URL(work.poster, import.meta.url).href });
     const on = (type, fn) => video.addEventListener(type, fn, { signal: this.abort.signal });
     on('loadeddata', () => {
       scene.failed = false;
-      if (work.type === 'ai' && (!work.poster || scene.localSource)) this.capturePoster(scene);
+      if (
+        work.type === 'ai' &&
+        (scene.localSource || (!work.poster && !work.generationSequence && !work.demo))
+      )
+        this.capturePoster(scene);
       this.request();
     });
     on('loadedmetadata', () => this.layout());
@@ -358,8 +370,17 @@ export class VideoReel {
       scene.cameras.forEach((camera, i) => {
         const w = f.h * (g.mobile ? 0.31 : 0.48),
           h = (w * cameraCrops[i][3]) / cameraCrops[i][2];
+        const name = i === 0 ? 'sony' : 'pocket';
+        const slot = (
+          g.mobile
+            ? reelConfig.deviceLayer.mobileComposition
+            : reelConfig.deviceLayer.desktopComposition
+        )[name];
+        const virtualWidth = g.mobile
+          ? W
+          : Math.max(W, H * reelConfig.deviceLayer.compositionAspect);
         box(camera, {
-          x: i === 0 ? -W * 0.018 : W - w * 0.83,
+          x: W / 2 + virtualWidth * (slot.targetX - 0.5) - w / 2,
           y: g.mobile ? (i === 0 ? f.y + f.h + 38 : f.y - h * 0.8) : H * (i === 0 ? 0.67 : 0.18),
           w,
           h,
@@ -373,29 +394,30 @@ export class VideoReel {
   render() {
     if (!this.scenes[0]?.geo) return;
     const nearest = this.currentIndex();
-    let focused = null;
+    const candidates = [];
     for (const scene of this.scenes) {
       const g = scene.geo,
         f = g.frame;
       const segment = this.timeline[scene.index];
-      const p = scenePose(this.position, segment.entry, g, reelConfig);
-      let eligible = Math.abs(p.r) < 0.18;
+      const p = scenePose((this.position - segment.entry) / segment.travelSpan, 0, g, reelConfig);
+      let eligible = p.r >= 0;
       scene.el.hidden = !sceneInView(p, g, scene.captionBounds);
       scene.el.inert = scene.index !== nearest;
-      scene.devices?.update({
-        progress:
-          (this.position - scene.index - reelConfig.deviceAnimation.start) /
-          (reelConfig.deviceAnimation.end - reelConfig.deviceAnimation.start),
+      const deviceProgress =
+        (this.position - reelConfig.deviceAnimation.start) /
+        (reelConfig.deviceAnimation.end - reelConfig.deviceAnimation.start);
+      const deviceUpdate = {
+        progress: deviceProgress,
         geo: g,
         opacity: 1,
         visible: this.active && !document.hidden,
         reduced: this.reduced.matches,
-      });
+      };
+      scene.devices?.update(deviceUpdate);
+      scene.drone?.update(deviceUpdate);
       scene.cameras.forEach((camera, i) => {
         const h = parseFloat(camera.style.height) || 1;
-        const progress =
-          (this.position - scene.index - reelConfig.deviceAnimation.start) /
-          (reelConfig.deviceAnimation.end - reelConfig.deviceAnimation.start);
+        const progress = deviceProgress;
         const name = i === 0 ? 'sony' : 'pocket';
         const pose = devicePose(progress, h / 2, g.H, {
           phase: reelConfig.deviceLayer.entryOffsets[name],
@@ -445,10 +467,7 @@ export class VideoReel {
           (1 - state.labelOpacity) * f.h * reelConfig.metadataParallax;
         p.opacity = (fallback ? 1 : state.labelOpacity) * outro.opacity;
         p.r = exit;
-        eligible =
-          !scene.el.hidden &&
-          (fallback ? this.position >= segment.entry : state.complete) &&
-          exit < 0.18;
+        eligible = !scene.el.hidden && (fallback ? this.position >= segment.entry : state.complete);
         scene.poster.setAttribute('aria-hidden', String(!fallback && !state.complete));
         scene.el.dataset.generationPhase = fallback ? 'static' : state.phase;
         scene.el.dataset.generationProgress = String(progress);
@@ -480,8 +499,14 @@ export class VideoReel {
       scene.video.setAttribute('aria-hidden', String(!hasVideo));
       if (!scene.generation) scene.poster.setAttribute('aria-hidden', String(hasVideo));
       else if (hasVideo) scene.poster.setAttribute('aria-hidden', 'true');
-      if (eligible) focused = scene;
+      candidates.push({
+        scene,
+        visible: true,
+        centered: eligible,
+        ready: !!scene.source && !scene.failed && scene.video.readyState >= 2,
+      });
     }
+    const focused = selectPlaybackScene(candidates, this.active && !document.hidden);
     const next =
       focused?.source &&
       !focused.failed &&
@@ -512,6 +537,10 @@ export class VideoReel {
       Math.max(24, this.scenes[nearest].geo.frame.x + 4) + 'px',
     );
     const ai = this.scenes[nearest].generation;
+    if (!ai) {
+      delete this.root.dataset.generationPhase;
+      delete this.root.dataset.generationProgress;
+    }
     this.scrollHint.firstChild.textContent = ai ? 'SCROLL TO REVEAL ' : 'SCROLL TO EXPLORE ';
     this.scrollHint.style.opacity = ai
       ? String(this.position < this.timeline[nearest].end ? 1 : 0)
@@ -524,7 +553,8 @@ export class VideoReel {
   currentIndex() {
     let index = 0;
     for (let i = 1; i < this.timeline.length; i++)
-      if (this.position >= this.timeline[i].entry - 0.5) index = i;
+      if (this.position >= this.timeline[i].entry - this.timeline[i - 1].travelSpan * 0.5)
+        index = i;
     return index;
   }
   request() {
@@ -684,7 +714,8 @@ export class VideoReel {
     this.lastTime = 0;
   }
   play(video) {
-    video.play()?.catch(() => {
+    video.play()?.catch((error) => {
+      if (error.name === 'AbortError') return;
       if (this.playing === video) this.message('可从 MENU 点击播放。');
     });
   }
@@ -711,7 +742,7 @@ export class VideoReel {
       return;
     }
     if (this.playing === scene.video) {
-      this.userPaused = !this.userPaused;
+      this.userPaused = !scene.video.paused;
       if (this.userPaused) scene.video.pause();
       else this.play(scene.video);
     } else this.goTo(scene.index);
@@ -755,6 +786,7 @@ export class VideoReel {
     clearTimeout(this.messageTimer);
     this.scenes.forEach((s) => {
       s.devices?.dispose();
+      s.drone?.dispose();
       s.generation?.dispose();
       s.posterVersion++;
       if (s.posterURL) URL.revokeObjectURL(s.posterURL);

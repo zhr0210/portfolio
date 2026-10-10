@@ -132,7 +132,7 @@ test('DPR is capped independently on desktop and phone without moving the source
   assert.equal(mobile.offsetY, 0);
 });
 
-test('Desktop devices spread across the 16:9 composition and retain their lanes when cropped', () => {
+test('Sony and Pocket share the left lane and remain naturally cropped in narrow windows', () => {
   const config = reelConfig.deviceLayer;
   const wide = geometry(1600, 900);
   const narrow = geometry(800, 900);
@@ -151,15 +151,12 @@ test('Desktop devices spread across the 16:9 composition and retain their lanes 
     projections[name] = { originalX, croppedX };
   }
   assert.ok(projections.sony.originalX < wide.W * 0.2);
-  assert.ok(projections.pocket.originalX > wide.W * 0.8);
+  assert.ok(Math.abs(projections.pocket.originalX - projections.sony.originalX) < 1e-8);
   assert.ok(
     projections.sony.croppedX < 0,
     'The left device can be cropped outside a narrow window',
   );
-  assert.ok(
-    projections.pocket.croppedX > narrow.W,
-    'The right device can be cropped outside a narrow window',
-  );
+  assert.ok(projections.pocket.croppedX < 0, 'Pocket follows the same left lane below Sony');
   assert.ok(
     Math.abs(
       projections.pocket.originalX -

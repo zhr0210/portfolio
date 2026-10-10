@@ -1,0 +1,58 @@
+{
+  "kind": "animated-cover-preview",
+  "realFootage": false,
+  "modelInference": false,
+  "source": "vertical-film-sheet.jpg",
+  "sourceSha256": "7b69802f175e13557d65c141ae4f97e8ca9b862ab29beb31497cf95597d70e50",
+  "crop": [843, 500, 2196, 1184],
+  "durationSeconds": 8,
+  "fps": 30,
+  "frames": 240,
+  "dimensions": [960, 518],
+  "codec": "H.264",
+  "silent": true,
+  "films": [
+    {
+      "asset": "demo-atonement-live.mp4",
+      "work": "atonement-live",
+      "bytes": 339016,
+      "sha256": "427205a776949858c550dc8b0272b662a42c0312c3bc5546880d3dbdd4ec666d",
+      "filter": "crop=2196:1184:843:500,scale=1920:1036,zoompan=z='1+0.018*(1-cos(2*PI*on/240))/2':x='(iw-iw/zoom)*(0.5+0.28*sin(2*PI*on/240))':y='(ih-ih/zoom)*(0.5+0.2*sin(2*PI*on/240))':d=1:s=960x518:fps=30"
+    },
+    {
+      "asset": "demo-light-live.mp4",
+      "work": "light-live",
+      "bytes": 360603,
+      "sha256": "faf8965fc21dc00592743332bde5fe281eb7cb8697fa1bf8ba0782230a6fba8a",
+      "filter": "crop=2196:1184:843:500,scale=1920:1036,zoompan=z='1+0.022*(1-cos(2*PI*on/240))/2':x='(iw-iw/zoom)*(0.5+0.28*sin(2*PI*on/240))':y='(ih-ih/zoom)*(0.5+0.2*sin(2*PI*on/240))':d=1:s=960x518:fps=30"
+    },
+    {
+      "asset": "demo-space-live.mp4",
+      "work": "space-live",
+      "bytes": 381183,
+      "sha256": "b476e2d704d4466f36645594f61d8038dab6ea9d3b5ff5db3120c6ed5ccff25c",
+      "filter": "crop=2196:1184:843:500,scale=1920:1036,zoompan=z='1+0.026*(1-cos(2*PI*on/240))/2':x='(iw-iw/zoom)*(0.5+0.28*sin(2*PI*on/240))':y='(ih-ih/zoom)*(0.5+0.2*sin(2*PI*on/240))':d=1:s=960x518:fps=30"
+    },
+    {
+      "asset": "demo-atonement-ai.mp4",
+      "work": "atonement-ai",
+      "bytes": 379417,
+      "sha256": "12a1da01aaf1f857558412231c87086cc083399a66d67699dfbd492352126b26",
+      "filter": "crop=2196:1184:843:500,scale=1920:1036,zoompan=z='1+0.03*(1-cos(2*PI*on/240))/2':x='(iw-iw/zoom)*(0.5+0.28*sin(2*PI*on/240))':y='(ih-ih/zoom)*(0.5+0.2*sin(2*PI*on/240))':d=1:s=960x518:fps=30"
+    },
+    {
+      "asset": "demo-texture-ai.mp4",
+      "work": "texture-ai",
+      "bytes": 376410,
+      "sha256": "ca5692e26f7d02e9a4d48b2adbdae600949da06dc374b963554aa0d294813cd7",
+      "filter": "crop=2196:1184:843:500,scale=1920:1036,zoompan=z='1+0.034*(1-cos(2*PI*on/240))/2':x='(iw-iw/zoom)*(0.5+0.28*sin(2*PI*on/240))':y='(ih-ih/zoom)*(0.5+0.2*sin(2*PI*on/240))':d=1:s=960x518:fps=30"
+    },
+    {
+      "asset": "demo-echo-ai.mp4",
+      "work": "echo-ai",
+      "bytes": 371733,
+      "sha256": "1ef3845857a12100fbed83c3f4e2fabe67c9e5de441fb8299371c2772417adfe",
+      "filter": "crop=2196:1184:843:500,scale=1920:1036,zoompan=z='1+0.038*(1-cos(2*PI*on/240))/2':x='(iw-iw/zoom)*(0.5+0.28*sin(2*PI*on/240))':y='(ih-ih/zoom)*(0.5+0.2*sin(2*PI*on/240))':d=1:s=960x518:fps=30"
+    }
+  ]
+}

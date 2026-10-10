@@ -21,17 +21,27 @@ import { createCodePixels } from '../experiments/ai-video/ai-generation-code.js'
 const config = reelConfig.aiGeneration;
 const geometry = (W = 1440, H = 900) => reelLayout(W, H, reelConfig, filmCrop[2] / filmCrop[3]);
 
-test('AI gets its own 1.4-unit generation interval without retiming the live film', () => {
+test('Three live films lead into one generation sequence and two consecutive AI films', () => {
   const timeline = reelTimeline(reelWorks, reelConfig);
-  assert.deepEqual(timeline, [
-    { entry: 0, end: 0, type: 'live' },
-    { entry: 1, end: 2.4, type: 'ai' },
-  ]);
-  assert.equal(generationProgress(0.9, timeline[1]), 0);
-  assert.equal(generationProgress(1.7, timeline[1]), 0.5);
-  assert.equal(generationProgress(2.4, timeline[1]), 1);
-  assert.equal(generationProgress(100, timeline[1]), 1);
-  assert.equal(reelTimeline([...reelWorks, { type: 'live' }], reelConfig)[2].entry, 3.4);
+  assert.deepEqual(
+    timeline.map((s) => s.type),
+    ['live', 'live', 'live', 'ai', 'ai', 'ai'],
+  );
+  assert.deepEqual(
+    timeline.map((s) => s.generate),
+    [false, false, false, true, false, false],
+  );
+  for (const [i, expected] of [0, 1.8, 3.6, 5.4, 7.8, 8.8].entries())
+    assert.ok(Math.abs(timeline[i].entry - expected) < 1e-10);
+  for (const s of timeline.slice(0, 3)) assert.equal(s.travelSpan, 1.8);
+  const generation = timeline[3];
+  assert.equal(generationProgress(generation.entry - 0.1, generation), 0);
+  assert.ok(Math.abs(generationProgress(generation.entry + 0.7, generation) - 0.5) < 1e-10);
+  assert.equal(generationProgress(generation.end, generation), 1);
+  assert.equal(generationProgress(100, generation), 1);
+  assert.ok(Math.abs(generation.end - generation.entry - 1.4) < 1e-10);
+  assert.equal(timeline[4].entry, timeline[4].end);
+  assert.equal(timeline[5].entry, timeline[5].end);
 });
 
 test('All visual phases have explicit boundaries and playback waits for the clean endpoint', () => {
@@ -125,10 +135,17 @@ test('Narrow windows crop the scatter rather than moving cards inward; phones fa
 });
 
 test('References enter from below at different depth speeds without an opacity ramp', () => {
-  const segment = reelTimeline(reelWorks, reelConfig)[1];
-  assert.equal(referenceArrival(0.2, segment, config), 0);
-  assert.ok(Math.abs(referenceArrival(0.675, segment, config) - 0.5) < 1e-9);
-  assert.equal(referenceArrival(1.1, segment, config), 1);
+  const segment = reelTimeline(reelWorks, reelConfig)[3];
+  assert.equal(
+    referenceArrival(segment.entry - config.referenceEntrySpan - 0.1, segment, config),
+    0,
+  );
+  assert.ok(
+    Math.abs(
+      referenceArrival(segment.entry - config.referenceEntrySpan / 2, segment, config) - 0.5,
+    ) < 1e-9,
+  );
+  assert.equal(referenceArrival(segment.entry + 0.1, segment, config), 1);
   for (const [W, H] of [
     [1920, 1080],
     [390, 844],

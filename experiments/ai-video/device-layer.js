@@ -11,7 +11,7 @@ export function sampleDeviceTimeline(mixer, actions, time) {
   mixer.setTime(time);
 }
 
-function releaseScene(scene, closeImages = true) {
+export function releaseScene(scene, closeImages = true) {
   if (!scene) return;
   const geometries = new Set();
   const materials = new Set();

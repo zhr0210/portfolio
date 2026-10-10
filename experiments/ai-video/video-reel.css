@@ -198,6 +198,9 @@
   gap: 5px;
   padding: 22px 25px;
   min-width: 225px;
+  max-height: calc(85dvh - 54px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: #10130fed;
   backdrop-filter: blur(16px);
   border: 1px solid #b5c4ac22;
