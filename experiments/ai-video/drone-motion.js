@@ -40,8 +40,13 @@ export function createDroneDrive(config) {
       if (dt > 0) {
         elapsed = Math.min(config.duration, elapsed + dt);
         const p = elapsed / config.duration;
+        const brakeStart = 1 - config.brakingFraction;
+        // Matching speed at the join; a short final tail brings command speed
+        // to zero before the underdamped body finishes braking and rebounding.
         const ease =
-          p < 0.5 ? 0.5 * (2 * p) ** config.exponent : 1 - 0.5 * (2 * (1 - p)) ** config.exponent;
+          p < brakeStart
+            ? brakeStart * (p / brakeStart) ** config.exponent
+            : 1 - (1 - brakeStart) * ((1 - p) / (1 - brakeStart)) ** config.exponent;
         command = start + (goal - start) * ease;
       }
       return { command, progress: elapsed / config.duration };

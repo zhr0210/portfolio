@@ -18,8 +18,13 @@ export function createDroneRig(THREE, source) {
       if (!part) throw new Error(`Drone rotating part ${name}_${suffix} is missing`);
       return part;
     });
-    const axis = new THREE.Vector3(0, 0, -1);
     const plate = blade.getObjectByName(`${name}_${index === 0 ? '10' : '04'}`);
+    // The exported propeller subtree has its own 7–8 degree tilt. The motor
+    // parent's -Z is NOT the shaft: use the plate normal in parent space.
+    const axis = new THREE.Vector3(0, 0, -1)
+      .applyQuaternion(plate.getWorldQuaternion(new THREE.Quaternion()))
+      .applyQuaternion(parent.getWorldQuaternion(new THREE.Quaternion()).invert())
+      .normalize();
     const center = new THREE.Box3().setFromObject(plate).getCenter(new THREE.Vector3());
     const pivot = new THREE.Group();
     pivot.name = `ReelRotor${index + 1}`;
@@ -34,7 +39,7 @@ export function createDroneRig(THREE, source) {
     sample(angle) {
       for (const rotor of rotors)
         rotor.pivot.quaternion.setFromAxisAngle(rotor.axis, angle * rotor.direction);
-      source.updateMatrixWorld(true);
+      source.updateWorldMatrix(true, true);
     },
   };
 }

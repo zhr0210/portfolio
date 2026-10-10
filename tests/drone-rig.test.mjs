@@ -64,17 +64,21 @@ test('Locking plates, collars, pins and blades stay assembled on centered shafts
     const axis = rotor.axis
       .clone()
       .applyQuaternion(rotor.pivot.parent.getWorldQuaternion(new THREE.Quaternion()).normalize());
-    const tilt = (axis.angleTo(new THREE.Vector3(0, 1, 0)) * 180) / Math.PI;
-    assert.ok(tilt > 7 && tilt < 9);
+    const plateAxis = new THREE.Vector3(0, 0, -1).applyQuaternion(
+      rotor.plate.getWorldQuaternion(new THREE.Quaternion()),
+    );
+    assert.ok(axis.angleTo(plateAxis) < 1e-7, 'shaft follows actual plate normal');
+    assert.ok(
+      rotor.axis.angleTo(new THREE.Vector3(0, 0, -1)) > 0.12,
+      'exported propeller tilt must not be discarded',
+    );
     const plateCenter = new THREE.Box3().setFromObject(rotor.plate).getCenter(new THREE.Vector3());
     assert.ok(rotor.pivot.getWorldPosition(new THREE.Vector3()).distanceTo(plateCenter) < 1e-8);
     assert.ok(rotor.parts.every((part) => part.parent === rotor.pivot));
   }
   const shaftSamples = rig.rotors.map((rotor) =>
     rotor.parts.map((part) => {
-      const local = rotor.pivot.parent
-        .worldToLocal(part.getWorldPosition(new THREE.Vector3()))
-        .sub(rotor.pivot.position);
+      const local = rotor.pivot.worldToLocal(part.getWorldPosition(new THREE.Vector3()));
       return { axial: local.z, radius: Math.hypot(local.x, local.y) };
     }),
   );
@@ -90,9 +94,7 @@ test('Locking plates, collars, pins and blades stay assembled on centered shafts
       );
     rig.rotors.forEach((rotor, r) =>
       rotor.parts.forEach((part, p) => {
-        const local = rotor.pivot.parent
-          .worldToLocal(part.getWorldPosition(new THREE.Vector3()))
-          .sub(rotor.pivot.position);
+        const local = rotor.pivot.worldToLocal(part.getWorldPosition(new THREE.Vector3()));
         assert.ok(Math.abs(local.z - shaftSamples[r][p].axial) < 1e-5);
         assert.ok(Math.abs(Math.hypot(local.x, local.y) - shaftSamples[r][p].radius) < 1e-5);
         const relative = rotor.plate.matrixWorld.clone().invert().multiply(part.matrixWorld);
@@ -101,6 +103,13 @@ test('Locking plates, collars, pins and blades stay assembled on centered shafts
         );
         const center = new THREE.Box3().setFromObject(rotor.plate).getCenter(new THREE.Vector3());
         assert.ok(rotor.pivot.getWorldPosition(new THREE.Vector3()).distanceTo(center) < 1e-8);
+        const normal = new THREE.Vector3(0, 0, -1).applyQuaternion(
+          rotor.plate.getWorldQuaternion(new THREE.Quaternion()),
+        );
+        const shaft = rotor.axis
+          .clone()
+          .applyQuaternion(rotor.pivot.parent.getWorldQuaternion(new THREE.Quaternion()));
+        assert.ok(normal.angleTo(shaft) < 1e-5, `plate axis error ${normal.angleTo(shaft)}`);
       }),
     );
   }
@@ -134,4 +143,37 @@ test('Locking plates, collars, pins and blades stay assembled on centered shafts
       assert.ok(Math.abs(value - initial[i].elements[j]) < 1e-8),
     ),
   );
+  // Match the production hierarchy: a centered source under base attitude
+  // and a frame-by-frame moving/scaled flight parent. Sampling must update
+  // ancestors too, before either geometric inspection or renderer traversal.
+  const attitude = new THREE.Group(),
+    model = new THREE.Group(),
+    scene = new THREE.Scene();
+  root.position.set(-2, 1, -3);
+  attitude.rotation.set(0.38, -0.48, 0.08);
+  attitude.add(root);
+  model.add(attitude);
+  scene.add(model);
+  for (let frame = 0; frame < 32; frame++) {
+    model.position.set(frame * 3, -frame * 2, 0);
+    model.scale.setScalar(6 + frame / 10);
+    model.rotation.set(Math.sin(frame) * 0.04, 0.015, Math.cos(frame) * 0.05);
+    rig.sample((frame * Math.PI) / 8);
+    const sampled = nodes.map((n) => n.matrixWorld.clone());
+    scene.updateMatrixWorld(true);
+    nodes.forEach((n, i) =>
+      n.matrixWorld.elements.forEach((v, k) =>
+        assert.ok(Math.abs(v - sampled[i].elements[k]) < 1e-8),
+      ),
+    );
+    for (const rotor of rig.rotors) {
+      const shaft = rotor.axis
+        .clone()
+        .applyQuaternion(rotor.pivot.parent.getWorldQuaternion(new THREE.Quaternion()));
+      const normal = new THREE.Vector3(0, 0, -1).applyQuaternion(
+        rotor.plate.getWorldQuaternion(new THREE.Quaternion()),
+      );
+      assert.ok(normal.angleTo(shaft) < 1e-5);
+    }
+  }
 });
