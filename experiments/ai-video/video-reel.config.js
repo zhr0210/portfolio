@@ -111,10 +111,7 @@ export const reelConfig = {
     mobileVerticalBias: -0.16,
     compositionAspect: 16 / 9,
     rotation: [0.38, -0.48, 0.08],
-    rotorRadiansPerSecond: 42,
-    // Runtime assembly fitting; metres in the original glTF coordinates.
-    hubSeatClearance: 0.00035,
-    hubDeckCompression: 0.4,
+    rotorPlaybackRate: 1,
     exposure: 0.9,
     maxPixelRatio: 1.5,
     mobileMaxPixelRatio: 1,

@@ -23,7 +23,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     state: 'idle',
     draws: 0,
     rotors: 0,
-    rotorAngle: 0,
+    rotorTime: 0,
     visible: false,
     raf: 0,
     error: null,
@@ -101,7 +101,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
       devicePixelRatio || 1,
       g.mobile ? config.mobileMaxPixelRatio : config.maxPixelRatio,
     );
-    const angle = latest.reduced ? 0 : stats.rotorAngle;
+    const rotorTime = latest.reduced ? 0 : stats.rotorTime;
     const key = [
       g.W,
       g.H,
@@ -109,7 +109,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
       p.x,
       p.y,
       p.size,
-      angle,
+      rotorTime,
       p.flight.pitch,
       p.flight.yaw,
       p.flight.roll,
@@ -130,7 +130,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     model.scale.setScalar(p.size / baseSize);
     model.position.set(p.x - g.W / 2, g.H / 2 - p.y, 0);
     model.rotation.set(p.flight.pitch, p.flight.yaw, p.flight.roll);
-    rig.sample(angle);
+    rig.sample(rotorTime);
     renderer.render(scene, camera);
     stats.draws++;
     stats.pose = p;
@@ -150,7 +150,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
     }
     const dt = previousTime ? Math.min(0.05, (time - previousTime) / 1000) : 0;
     previousTime = time;
-    stats.rotorAngle = (stats.rotorAngle + dt * config.rotorRadiansPerSecond) % (Math.PI * 2);
+    stats.rotorTime += dt * config.rotorPlaybackRate;
     if (draw(dt)) schedule();
   }
   function release() {
@@ -187,7 +187,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
         releaseScene(source);
         return;
       }
-      rig = createDroneRig(THREE, source, config);
+      rig = createDroneRig(THREE, source);
       const bounds = new THREE.Box3().setFromObject(source);
       const center = bounds.getCenter(new THREE.Vector3());
       baseSize = Math.max(...bounds.getSize(new THREE.Vector3()).toArray());

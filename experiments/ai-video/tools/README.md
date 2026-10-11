@@ -80,3 +80,17 @@ python experiments/ai-video/tools/bake-authored-sequence.py --checkpoints output
 ```
 
 脚本拒绝覆盖已有版本的图集；重新加工时在脚本中使用新版本名，先保留原版。生成完检查 51 个不同状态、原封面保留、末态一致和固定裁切。`tests/ai-authored-assets.test.mjs` 实际解码已提交的 PNG，验证每个格子的像素校验值及顺序。
+
+## 用户自制无人机与桨叶控制器
+
+`export-authored-drone.py` 使用独立后台 Blender 读取用户提供的 `.blend1` 备份，仅导出“无人机”根的 Mesh／Empty 子树；Sony、Pocket、灯光、相机不进入资产，不覆盖源文件。保留原层级、控制器轴心、零件变换和材质，贴图保留原尺寸并内嵌无损 PNG。不要再调用旧版轴心重建、装配下移或 deck 压缩逻辑。
+
+```powershell
+& 'F:\blender\blender.exe' --background --disable-autoexec 'C:\Users\kilian\Downloads\camera 无人机.blend1' --python 'experiments\ai-video\tools\export-authored-drone.py' -- --output 'experiments\ai-video\assets\mavic-3-pro.glb'
+```
+
+源动画为 1–252 帧／24 fps，四个控制器分别为右前、右后、左前、左后“桨叶自转”，均沿 Blender 局部 Z 轴增加角度。导出为 glTF 的局部 Y 轴；完整动作合并为 `AuthoredPropellers`，起始时间归零。保留用户设定的四个旋转方向，不擅自添加对角反转。GLB 可在其他查看器中播放原动作。
+
+网页读取控制器 extras 中原 F-curve 的未取模 Euler 样本，完整动作播放后按末端角速度继续旋转。源动作累计约 33⅓ 圈，直接重置 Quaternion clip 会跳约 120°；不能靠普通 LoopRepeat 重播。`rotorPlaybackRate` 默认 1，仅调整桨叶动画速度，机身继续由原 `drone-motion.js` 控制。
+
+metadata 记录源文件／资产 SHA-256、原贴图尺寸、四个动作以及六个 Blender 时间点下全部 147 个网格的代表顶点。`tests/drone-rig.test.mjs` 对比实际导出矩阵与源顶点位置，并逐帧核对 GLB 旋转轨道与网页采样；另用生产 GLTFLoader 解析真实几何与层级，对照构图居中、父级飞行动作下的源顶点位置（仅替代 Node 中不可用的 GPU 图片解码）；检查装配关系以及连续旋转不会重置相位。重新导出后应检查终端成功标记、实际页面及单元测试，Blender 退出码本身不能证明 Python 脚本成功。
