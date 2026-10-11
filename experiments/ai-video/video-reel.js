@@ -372,9 +372,9 @@ export class VideoReel {
         },
       };
       scene.cameras.forEach((camera, i) => {
-        const w = f.h * (g.mobile ? 0.31 : 0.48),
-          h = (w * cameraCrops[i][3]) / cameraCrops[i][2];
         const name = i === 0 ? 'sony' : 'pocket';
+        const w = f.h * (g.mobile ? 0.31 : 0.48) * reelConfig.deviceLayer.deviceSizes[name],
+          h = (w * cameraCrops[i][3]) / cameraCrops[i][2];
         const slot = (
           g.mobile
             ? reelConfig.deviceLayer.mobileComposition

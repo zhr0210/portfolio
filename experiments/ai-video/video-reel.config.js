@@ -56,13 +56,14 @@ export const reelConfig = {
     referenceVideoHeight: 0.4,
     size: 1.12,
     desktopSize: 0.72,
+    deviceSizes: { sony: 0.5, pocket: 1 },
     verticalFovScale: 1,
     offsetX: 0,
     offsetY: 0,
     compositionAspect: 16 / 9,
     desktopComposition: {
       sony: { sourceX: 0.09, sourceY: 0.5, targetX: 0.17, targetY: 0.5 },
-      pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.17, targetY: 0.5 },
+      pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.17, targetY: 0.75, verticalBias: 0.2 },
     },
     entryOffsets: { sony: 0.12, pocket: -0.1 },
     // Sony 0–216 帧，Pocket 保留 36 帧错峰并延长至 252 帧；完整采样一次。
@@ -71,7 +72,7 @@ export const reelConfig = {
     mobileSize: 0.48,
     mobileComposition: {
       sony: { sourceX: 0.09, sourceY: 0.5, targetX: 0.5, targetY: 0.2, verticalBias: -0.28 },
-      pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.5, targetY: 0.77, verticalBias: 0.25 },
+      pocket: { sourceX: 0.89, sourceY: 0.5, targetX: 0.5, targetY: 0.85, verticalBias: 0.3 },
     },
     environmentIntensity: 0.12,
     ambientIntensity: 0.55,

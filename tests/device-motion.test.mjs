@@ -172,7 +172,7 @@ test('Phone projection brings both devices into upper and lower lanes without ch
   const config = reelConfig.deviceLayer;
   const sony = deviceProjection(geo, 32.268, config, 3, 'sony');
   const pocket = deviceProjection(geo, 32.268, config, 3, 'pocket');
-  assert.equal(sony.fullHeight, pocket.fullHeight);
+  assert.equal(sony.fullHeight, pocket.fullHeight * 0.5);
   assert.equal(sony.fov, pocket.fov);
   assert.equal(sony.pixelRatio, 1);
   for (const [name, view] of [

@@ -38,6 +38,7 @@ export function deviceProjection(geo, sourceFov, config = {}, pixelRatio = 1, de
     : null;
   const size =
     Math.max(0.01, finite(config.size, 1)) *
+    Math.max(0.01, finite(config.deviceSizes?.[device], 1)) *
     (geo.mobile
       ? device
         ? Math.max(0.01, finite(config.mobileSize, 0.48))
