@@ -196,6 +196,7 @@ export function createDroneLayer(host, { assetUrl, config, onInvalidate = () => 
       model = new THREE.Group();
       const attitude = new THREE.Group();
       attitude.rotation.set(...config.rotation);
+      attitude.rotateY(config.sourceYaw ?? 0);
       attitude.add(source);
       model.add(attitude);
       scene = new THREE.Scene();

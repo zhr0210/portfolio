@@ -111,6 +111,8 @@ export const reelConfig = {
     mobileVerticalBias: -0.16,
     compositionAspect: 16 / 9,
     rotation: [0.38, -0.48, 0.08],
+    // This Blender model faces -Z; align it with the previous +Z-facing asset.
+    sourceYaw: Math.PI,
     rotorPlaybackRate: 1,
     exposure: 0.9,
     maxPixelRatio: 1.5,

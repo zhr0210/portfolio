@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { releaseScene } from '../experiments/ai-video/device-layer.js';
+import { reelConfig } from '../experiments/ai-video/video-reel.config.js';
 import { createDroneRig, rotorControllers, rotorPhase } from '../experiments/ai-video/drone-rig.js';
 const asset = new URL('../experiments/ai-video/assets/mavic-3-pro.glb', import.meta.url);
 const bytes = readFileSync(asset);
@@ -99,13 +100,18 @@ test('Production GLTFLoader hierarchy matches Blender during flight; headless te
   source.position.sub(bounds.getCenter(new THREE.Vector3()));
   const model = new THREE.Group(),
     attitude = new THREE.Group();
-  attitude.rotation.set(0.38, -0.48, 0.08);
+  attitude.rotation.set(...reelConfig.drone.rotation);
+  attitude.rotateY(reelConfig.drone.sourceYaw);
   attitude.add(source);
   model.add(attitude);
   model.scale.setScalar(0.9);
   model.position.set(250, -100, 0);
   model.rotation.set(0.06, -0.02, 0.04);
   model.updateMatrixWorld(true);
+  const nose = new THREE.Box3().setFromObject(original.get('JT')).getCenter(new THREE.Vector3());
+  const body = new THREE.Box3().setFromObject(original.get('机身')).getCenter(new THREE.Vector3());
+  const forward = nose.sub(body).normalize();
+  assert.ok(forward.z > 0.7, 'the Blender drone nose must face the +Z web camera');
   for (const check of metadata.sourcePoseChecks) {
     rig.sample(check.seconds);
     for (const mesh of check.meshes) {
