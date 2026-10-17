@@ -15,6 +15,7 @@ import { createAIGenerationLayer } from './ai-generation.js';
 import {
   reelTimeline,
   generationProgress,
+  generationPlayback,
   generationState,
   referenceArrival,
 } from './ai-generation-motion.js';
@@ -179,6 +180,7 @@ export class VideoReel {
       failed: false,
       devices: null,
       generation: null,
+      generationCompleted: false,
       posterAsset: { ...sheet, crop: filmCrop },
       posterVersion: 0,
       posterURL: null,
@@ -228,7 +230,10 @@ export class VideoReel {
       const generationHost = document.createElement('div');
       generationHost.className = 'reel-generation-layer';
       generationHost.setAttribute('role', 'img');
-      generationHost.setAttribute('aria-label', '参考画面汇聚、字符重构与去噪成像，随滚动可逆展示');
+      generationHost.setAttribute(
+        'aria-label',
+        '参考画面汇聚、字符重构与去噪成像，完成后回到实拍区域可重新触发',
+      );
       el.prepend(generationHost);
       scene.generationHost = generationHost;
       scene.generation = createAIGenerationLayer(generationHost, {
@@ -452,16 +457,26 @@ export class VideoReel {
         camera.style.opacity = this.active && !document.hidden && pose.visible ? '1' : '0';
       });
       if (scene.generation) {
-        const progress = generationProgress(this.position, segment);
+        const playback = generationPlayback(
+          this.position,
+          segment,
+          this.timeline[scene.index - 1],
+          scene.generationCompleted,
+          reelConfig.aiGeneration,
+        );
+        scene.generationCompleted = playback.completed;
+        const progress = playback.progress;
         const state = generationState(progress, reelConfig.aiGeneration);
         const fallback =
           this.reduced.matches || ['failed', 'lost'].includes(scene.generation.stats.state);
-        const exit = Math.max(0, this.position - segment.end);
+        const exit = playback.offset;
         const outro = scenePose(exit, 0, g, reelConfig);
         const arrival = referenceArrival(this.position, segment, reelConfig.aiGeneration);
         const arrivalY = (1 - arrival) * g.H * reelConfig.aiGeneration.referenceEntryTravel;
-        scene.el.hidden =
-          this.position < segment.entry - reelConfig.aiGeneration.referenceEntrySpan || exit > 1.5;
+        scene.el.hidden = playback.completed
+          ? !sceneInView(outro, g, scene.captionBounds)
+          : this.position < segment.entry - reelConfig.aiGeneration.referenceEntrySpan ||
+            exit > 1.5;
         const visible = !scene.el.hidden && this.active && !document.hidden;
         scene.generation.update({
           progress,
@@ -472,14 +487,15 @@ export class VideoReel {
         });
         scene.generationHost.setAttribute('aria-hidden', String(fallback || state.complete));
         scene.frame.style.opacity = fallback ? outro.opacity : state.resolve * outro.opacity;
-        p.y = outro.y + (fallback ? arrivalY : 0);
+        const fallbackArrival = fallback && !playback.completed ? arrivalY : 0;
+        p.y = outro.y + fallbackArrival;
         p.titleY =
           outro.titleY +
-          (fallback ? arrivalY : 0) -
+          fallbackArrival -
           (1 - state.labelOpacity) * f.h * reelConfig.titleParallax;
         p.metadataY =
           outro.metadataY +
-          (fallback ? arrivalY : 0) +
+          fallbackArrival +
           (1 - state.labelOpacity) * f.h * reelConfig.metadataParallax;
         p.opacity = (fallback ? 1 : state.labelOpacity) * outro.opacity;
         p.r = exit;
@@ -487,6 +503,7 @@ export class VideoReel {
         scene.poster.setAttribute('aria-hidden', String(!fallback && !state.complete));
         scene.el.dataset.generationPhase = fallback ? 'static' : state.phase;
         scene.el.dataset.generationProgress = String(progress);
+        scene.el.dataset.generationCompleted = String(playback.completed);
         if (scene.index === nearest) {
           this.root.dataset.generationPhase = scene.el.dataset.generationPhase;
           this.root.dataset.generationProgress = progress.toFixed(6);
@@ -535,6 +552,7 @@ export class VideoReel {
       const outgoing = this.scenes.find((scene) => scene.video === this.playing);
       if (
         outgoing?.generation &&
+        !outgoing.generationCompleted &&
         !generationState(
           generationProgress(this.position, this.timeline[outgoing.index]),
           reelConfig.aiGeneration,
@@ -559,7 +577,7 @@ export class VideoReel {
     }
     this.scrollHint.firstChild.textContent = ai ? 'SCROLL TO REVEAL ' : 'SCROLL TO EXPLORE ';
     this.scrollHint.style.opacity = ai
-      ? String(this.position < this.timeline[nearest].end ? 1 : 0)
+      ? String(!this.scenes[nearest].generationCompleted ? 1 : 0)
       : String(1 - clamp(this.position, 0, 0.6));
     this.root.dataset.position = this.position.toFixed(6);
     this.root.dataset.type = this.works[nearest].type;
@@ -754,6 +772,7 @@ export class VideoReel {
     }
     if (
       scene.generation &&
+      !scene.generationCompleted &&
       this.position < this.timeline[scene.index].end &&
       !this.reduced.matches &&
       !['failed', 'lost'].includes(scene.generation.stats.state)

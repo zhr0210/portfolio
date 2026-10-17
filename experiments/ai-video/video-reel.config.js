@@ -17,6 +17,8 @@ export const reelConfig = {
   // AI 生成段独立于实拍时间轴。比例决定画面阶段，停止滚动即停止计算。
   aiGeneration: {
     scrollSpan: 1.4,
+    // 完成后锁定；回到上一条实拍中心后 20% 行程内，才允许重新生成。
+    rearmNearPrevious: 0.2,
     seed: 2917,
     stages: { gather: 0.28, white: 0.32, scan: 0.5, split: 0.65, denoise: 0.96 },
     fontSize: 12,

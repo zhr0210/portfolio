@@ -11,6 +11,7 @@ import { reelLayout } from '../experiments/ai-video/reel-motion.js';
 import {
   reelTimeline,
   generationProgress,
+  generationPlayback,
   generationState,
   referencePose,
   referenceArrival,
@@ -20,6 +21,37 @@ import { createCodePixels } from '../experiments/ai-video/ai-generation-code.js'
 
 const config = reelConfig.aiGeneration;
 const geometry = (W = 1440, H = 900) => reelLayout(W, H, reelConfig, filmCrop[2] / filmCrop[3]);
+
+test('Completed generation stays a moving film until returning near live film three', () => {
+  const timeline = reelTimeline(reelWorks, reelConfig);
+  const segment = timeline[3],
+    previous = timeline[2];
+  let completed = false;
+  const sample = (position) => {
+    const state = generationPlayback(position, segment, previous, completed, config);
+    completed = state.completed;
+    return state;
+  };
+  assert.equal(sample(segment.entry + 0.8).completed, false);
+  assert.ok(sample(segment.entry + 0.3).progress < 0.3);
+  assert.equal(sample(segment.end).completed, true);
+  for (const position of [8.8, 6.5, 5.8, 5.4, 4.1, 5.8]) {
+    const state = sample(position);
+    assert.equal(state.progress, 1);
+    assert.equal(state.completed, true);
+    if (position >= segment.end) assert.equal(state.offset, position - segment.end);
+    else assert.ok(state.offset < 0 && state.offset > -1.5);
+  }
+  const reset = previous.entry + previous.travelSpan * config.rearmNearPrevious;
+  assert.ok(reset < segment.entry - config.referenceEntrySpan);
+  assert.ok(sample(reset + 1e-6).offset < -1.499);
+  assert.equal(sample(reset).completed, false);
+  assert.equal(sample(segment.entry).progress, 0);
+  assert.ok(Math.abs(sample(segment.entry + 0.7).progress - 0.5) < 1e-10);
+  assert.equal(sample(segment.end).completed, true);
+  assert.equal(sample(previous.entry).completed, false);
+  assert.equal(sample(segment.end + 2).completed, true); // End/navigation may skip the interval.
+});
 
 test('Three live films lead into one generation sequence and two consecutive AI films', () => {
   const timeline = reelTimeline(reelWorks, reelConfig);

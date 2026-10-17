@@ -17,6 +17,24 @@ export function generationProgress(position, segment) {
   return clamp((position - segment.entry) / (segment.end - segment.entry));
 }
 
+// A finished reveal stays a film until the viewer returns near the preceding film.
+// Before completion, the deterministic visual stages remain freely reversible.
+export function generationPlayback(position, segment, previous, completed, config) {
+  const resetPosition = previous
+    ? previous.entry + previous.travelSpan * config.rearmNearPrevious
+    : segment.entry - config.referenceEntrySpan;
+  const latched = position <= resetPosition ? false : completed || position >= segment.end;
+  // Use the whole return interval to move the finished film below the viewport;
+  // replaying the raw generation distance here would leave an empty screen.
+  const offset = position - segment.end;
+  const returnOffset = (offset / Math.max(0.001, segment.end - resetPosition)) * 1.5;
+  return {
+    completed: latched,
+    progress: latched ? 1 : generationProgress(position, segment),
+    offset: latched && offset < 0 ? returnOffset : Math.max(0, offset),
+  };
+}
+
 export function referenceArrival(position, segment, config) {
   return clamp((position - segment.entry + config.referenceEntrySpan) / config.referenceEntrySpan);
 }
