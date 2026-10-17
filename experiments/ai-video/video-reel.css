@@ -95,13 +95,7 @@
   height: 100%;
   background-repeat: no-repeat;
   object-fit: cover;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    #000 var(--media-feather, 0px),
-    #000 calc(100% - var(--media-feather, 0px)),
-    transparent
-  );
+  clip-path: inset(var(--media-edge-inset, 2px) 0);
 }
 .reel-poster {
   z-index: 1;
@@ -125,16 +119,33 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  transform: translateY(var(--fill-drift, 0px)) scale(var(--fill-scale, 1.36));
-  filter: blur(var(--fill-blur, 14px));
+  transform: translateY(var(--media-drift, 0px)) scale(1.12);
 }
 .reel-fill-poster,
+.reel-fill-top,
+.reel-fill-bottom,
 .reel-fill-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   background-repeat: no-repeat;
+}
+.reel-fill-poster,
+.reel-fill-top,
+.reel-fill-bottom {
+  clip-path: inset(var(--media-edge-inset, 2px) 0);
+}
+.reel-fill-top,
+.reel-fill-bottom {
+  bottom: auto;
+  transform: scaleY(-1);
+}
+.reel-fill-top {
+  top: calc(-100% + var(--media-edge-inset, 2px) * 2);
+}
+.reel-fill-bottom {
+  top: calc(100% - var(--media-edge-inset, 2px) * 2);
 }
 .reel-title,
 .reel-parameters {

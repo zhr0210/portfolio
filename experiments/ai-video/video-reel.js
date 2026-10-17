@@ -148,7 +148,7 @@ export class VideoReel {
     el.className = `reel-scene reel-${work.type}`;
     el.setAttribute('aria-label', `${work.title} · ${work.type === 'live' ? '实拍' : 'AI'}视频`);
     el.innerHTML =
-      '<div class="reel-side-elements"></div><div class="reel-frame"><div class="reel-media-fill" aria-hidden="true"><div class="reel-fill-poster"></div><canvas class="reel-fill-canvas" hidden></canvas></div><div class="reel-poster" role="img"></div><video muted playsinline loop preload="auto"></video></div><div class="reel-title"><span></span><h1></h1></div><div class="reel-parameters"></div>';
+      '<div class="reel-side-elements"></div><div class="reel-frame"><div class="reel-media-fill" aria-hidden="true"><div class="reel-fill-poster"></div><div class="reel-fill-top"></div><div class="reel-fill-bottom"></div><canvas class="reel-fill-canvas" hidden></canvas></div><div class="reel-poster" role="img"></div><video muted playsinline loop preload="auto"></video></div><div class="reel-title"><span></span><h1></h1></div><div class="reel-parameters"></div>';
     const frame = el.querySelector('.reel-frame'),
       poster = el.querySelector('.reel-poster'),
       video = el.querySelector('video');
@@ -171,7 +171,7 @@ export class VideoReel {
       frame,
       poster,
       video,
-      fillPoster: el.querySelector('.reel-fill-poster'),
+      fillPosters: [...el.querySelectorAll('.reel-fill-poster,.reel-fill-top,.reel-fill-bottom')],
       fill: createVideoFill(video, el.querySelector('.reel-fill-canvas'), {
         maxSize: reelConfig.mediaParallax.fillMaxSize,
       }),
@@ -290,7 +290,7 @@ export class VideoReel {
   }
   layoutPoster(scene, W, H) {
     const asset = scene.posterAsset;
-    for (const poster of [scene.poster, scene.fillPoster]) {
+    for (const poster of [scene.poster, ...scene.fillPosters]) {
       if (asset.crop) {
         crop(poster, asset.crop, W, H);
       } else {
@@ -363,10 +363,9 @@ export class VideoReel {
       g.travel = travel;
       const f = g.frame;
       box(scene.frame, f);
-      scene.frame.style.setProperty('--fill-scale', reelConfig.mediaParallax.fillScale);
       scene.frame.style.setProperty(
-        '--fill-blur',
-        Math.min(reelConfig.mediaParallax.fillBlur, f.h * 0.04) + 'px',
+        '--media-edge-inset',
+        reelConfig.mediaParallax.mirrorEdgeInset + 'px',
       );
       this.layoutPoster(scene, f.w, f.h);
       scene.title.style.left = Math.max(18, f.x - W * (g.mobile ? 0.025 : 0.042)) + 'px';
@@ -539,15 +538,6 @@ export class VideoReel {
         : clamp(-p.r, -1, 1) *
           Math.min(reelConfig.mediaParallax.maxPixels, f.h * reelConfig.mediaParallax.travel);
       scene.frame.style.setProperty('--media-drift', drift + 'px');
-      // Only soften a few pixels at an exposed edge; the clear image stays above the fill.
-      scene.frame.style.setProperty(
-        '--media-feather',
-        Math.min(8, Math.max(0, Math.abs(drift) - f.h * 0.06)) + 'px',
-      );
-      scene.frame.style.setProperty(
-        '--fill-drift',
-        drift * reelConfig.mediaParallax.fillTravel + 'px',
-      );
       const hasVideo =
         !!scene.source &&
         !scene.failed &&
@@ -558,6 +548,9 @@ export class VideoReel {
         active: this.active && !document.hidden && hasVideo && !this.reduced.matches,
         width: f.w,
         height: f.h,
+        padding: reelConfig.mediaParallax.maxPixels,
+        pixelRatio: Math.min(devicePixelRatio || 1, 1.5),
+        edgeInset: reelConfig.mediaParallax.mirrorEdgeInset,
       });
       scene.video.setAttribute('aria-hidden', String(!hasVideo));
       if (!scene.generation) scene.poster.setAttribute('aria-hidden', String(hasVideo));

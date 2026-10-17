@@ -16,10 +16,8 @@ export const reelConfig = {
   mediaParallax: {
     travel: 0.18,
     maxPixels: 96,
-    fillScale: 1.36,
-    fillBlur: 14,
-    fillTravel: 0.3,
-    fillMaxSize: 640,
+    fillMaxSize: 1280,
+    mirrorEdgeInset: 2,
   },
   // 三条实拍共享设备动画；每条保留同样的画面间距并提供更长的滚动行程。
   liveScrollSpan: 1.8,
