@@ -1,0 +1,4 @@
+# Preserve original archive bytes so SHA-256 manifests survive Windows checkout.
+/archive/ai-video-prototype/ORIGINAL-README.md -text
+/archive/ai-video-prototype/site/** -text whitespace=cr-at-eol
+/archive/continuum-5-build/index.template.html -text

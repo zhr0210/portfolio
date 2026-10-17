@@ -1,5 +1,7 @@
 # 作品集维护
 
+- Git 仓库和工作目录为 `G:\zuopingji\Portfolio\`，直接在根目录运行 npm 和 Git 命令。目录归属及恢复方法见 `docs/PROJECT_STRUCTURE.md`。
+
 ## GitHub 同步
 
 - 本项目的远程仓库是 `https://github.com/zhr0210/portfolio.git`，当前协作分支为 `master`。
@@ -17,5 +19,8 @@
 - 全景 CPU 投影与 GLSL 逆投影必须一致。修改渲染或输入时验证拖动、命中、筛选、静止停帧、后台暂停及退出清理，并运行 `npm test`。
 - 修改页面后检查桌面与手机的首页、菜单、作品浏览、详情进入和返回，运行 `npm run build`。新增 TypeScript 按严格模式检查，既有 JS / JSX 可逐模块迁移。
 - `experiments/` 是独立实验，`archive/` 是历史参考。主站构建保持二者独立；只有 `dist/` 可发布。
+- 创作工程和建模中间文件保存在 `working-files/`；截图、验收报告和日志保存在 `output/`。二者的本机内容由 `.gitignore` 排除，网页实际使用的素材继续放在 `public/` 或实验自身的资产目录。
+- `.edgeone/` 与 `.openai/` 保留现有项目关联。历史原型位于 `archive/ai-video-prototype/`，仅保存独有源码及共享文件清单，不能作为完整旧站直接启动。
+- 2026-10-17 目录整合前副本位于 `G:\zuopingji\Portfolio-before-consolidation-20261017`，含文件哈希清单、原始压缩包及 Git bundle。
 - 完整迁移前副本位于 `G:\zuopingji\Portfolio-before-vite-20260930`。其他备份位置见 README；删除独有内容前保留可恢复副本。
 - GitHub 代码同步与网站发布是两个动作；推送代码后只报告代码同步结果，不把它当作线上发布成功的证据。

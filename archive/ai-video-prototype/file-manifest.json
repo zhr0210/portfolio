@@ -1,0 +1,358 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "0da8f0ec6c7225fa7c4791143ce3fb1346a4d08c2904e08505f83c6e030f2b16",
+    "retained": true,
+    "retainedAs": "ORIGINAL-README.md"
+  },
+  {
+    "path": "site/app.js",
+    "sha256": "5472d67113d4ca6c1e3645d5ca542be3c24dd1dea58ddf82ba46680c8f8c8378",
+    "retained": true
+  },
+  {
+    "path": "site/images/about-crops/ceremony.webp",
+    "sha256": "dc0762f7d1f487d142adefb705049a8310c34aeb16ad228c6e3c52ea8f112872",
+    "sharedWith": "public/images/about-crops/ceremony.webp"
+  },
+  {
+    "path": "site/images/about-crops/corridor.webp",
+    "sha256": "3db5fd3b0ad5b4e7b6d749226df287faf41fb296ac137872d0dc8ea4480a552f",
+    "sharedWith": "public/images/about-crops/corridor.webp"
+  },
+  {
+    "path": "site/images/about-crops/detail.webp",
+    "sha256": "0b8773ac0ead4a5c0b93a75d3b429d99078c6cf10c3b3be7f6b89d95c3ccf3eb",
+    "sharedWith": "public/images/about-crops/detail.webp"
+  },
+  {
+    "path": "site/images/continuum/space.webp",
+    "sha256": "bd5345e45e6456daa714643b291243202d5df6682e43f625ff1732540f7cbfde",
+    "sharedWith": "public/images/continuum/space.webp"
+  },
+  {
+    "path": "site/images/gitee/image-1.jpg",
+    "sha256": "feb0512007b812110184cfba472c5409c0576fcdfc850959da5a477001264575",
+    "sharedWith": "public/images/gitee/image-1.jpg"
+  },
+  {
+    "path": "site/images/gitee/image-2.jpg",
+    "sha256": "bddd1afe22f4f19ec6394d0c27110ad40f62f95b5ec7286b645b0ccf8f43f168",
+    "sharedWith": "public/images/gitee/image-2.jpg"
+  },
+  {
+    "path": "site/images/gitee/image-3.jpg",
+    "sha256": "ae84c61f99d8139bb5512d878ff44cf265540705293d447f003f9cd51c43593c",
+    "sharedWith": "public/images/gitee/image-3.jpg"
+  },
+  {
+    "path": "site/images/gitee/portrait.jpg",
+    "sha256": "edaa6ed6907fe5b7ee5e72e7e77a426370018aaed4b34d7dd811043c81120f0c",
+    "sharedWith": "public/images/gitee/portrait.jpg"
+  },
+  {
+    "path": "site/images/optimized/flight-0.webp",
+    "sha256": "dd554754c5f3626d2cdb45f4e1ccf4670bea5044ea514ed63bf14167bdf744ad",
+    "sharedWith": "public/images/optimized/flight-0.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-1.webp",
+    "sha256": "09e350a8cbfc6e9f58d70098a7501b39e233ce2cb25bbaf0978aeaeef2f61e47",
+    "sharedWith": "public/images/optimized/flight-1.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-10.webp",
+    "sha256": "6e2ffe4939e67b5f65000bbb6d0e21a832fabfd22cd4c0344237be58852409a8",
+    "sharedWith": "public/images/optimized/flight-10.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-2.webp",
+    "sha256": "93cd191a54cbf8b1e8affb82139d652cddf8f69ebc3ae8f0c9eb92b550829d75",
+    "sharedWith": "public/images/optimized/flight-2.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-3.webp",
+    "sha256": "5772a43d5f64ea8ca13bdcc1fc5b046113d84d1e2b0a687207d4bdec3ce3f9e7",
+    "sharedWith": "public/images/optimized/flight-3.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-4.webp",
+    "sha256": "67049fd84001c75918e7f81024e6c7b937d807cb4f3e29c4eb4571eec7504eea",
+    "sharedWith": "public/images/optimized/flight-4.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-5.webp",
+    "sha256": "1d8432853127f155f307ee06ae5f35c0f2ca2df6fbfc8b34a286cd3e48a54a58",
+    "sharedWith": "public/images/optimized/flight-5.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-6.webp",
+    "sha256": "1072dc3e8ab6706215d6d2b661abea7c0424b000e2a4a546cfa37048e519fdda",
+    "sharedWith": "public/images/optimized/flight-6.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-7.webp",
+    "sha256": "960b34b2ee00ddd73f1ff678cf8380a90eee8d2bd3c7d85ec806d8b2d6a3a20e",
+    "sharedWith": "public/images/optimized/flight-7.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-8.webp",
+    "sha256": "8c4d1929ab3a5a27a6dc29d87a266b7b11a2928af9d261884b29a0b999ad655c",
+    "sharedWith": "public/images/optimized/flight-8.webp"
+  },
+  {
+    "path": "site/images/optimized/flight-9.webp",
+    "sha256": "db8032461eeaae69834a475ae14b29adc2542fc1152976230b5b9af2286f87be",
+    "sharedWith": "public/images/optimized/flight-9.webp"
+  },
+  {
+    "path": "site/images/optimized/portrait-light.webp",
+    "sha256": "5cea7686ded6e18d4108026801b71219caf05aab6c11bd137dace5a4f47c18bb",
+    "sharedWith": "public/images/optimized/portrait-light.webp"
+  },
+  {
+    "path": "site/images/optimized/project-1.webp",
+    "sha256": "e06ef54fcbe274644402ee6655e71ba504f76b0445b8ea813d7ce8017d4aa8d9",
+    "sharedWith": "public/images/optimized/project-1.webp"
+  },
+  {
+    "path": "site/images/optimized/project-2.webp",
+    "sha256": "8f1adbefc3c0922b1cd318308d84961dd5e227c531a5cb72c4c636ffe1537d04",
+    "sharedWith": "public/images/optimized/project-2.webp"
+  },
+  {
+    "path": "site/images/panorama/01-01.webp",
+    "sha256": "35b9cb879b42fd14f1d58a3ced7f4c1cb1a3a194b7e38f502ed8dc027e22b598",
+    "sharedWith": "public/images/panorama/01-01.webp"
+  },
+  {
+    "path": "site/images/panorama/01-02.webp",
+    "sha256": "d681828a38b1a91622e07566618216d55cf6f66a7fff221cbcef31f3c90cb0ed",
+    "sharedWith": "public/images/panorama/01-02.webp"
+  },
+  {
+    "path": "site/images/panorama/01-03.webp",
+    "sha256": "04c3de7333e9c3924bc0a3d979f5ee7ec4bae684684da2bc3681a20b1fa5e492",
+    "sharedWith": "public/images/panorama/01-03.webp"
+  },
+  {
+    "path": "site/images/panorama/01-04.webp",
+    "sha256": "4976bd8ae50968c00b1094b085d3ab9027059ed6de398c3f99f49bb3244eecd3",
+    "sharedWith": "public/images/panorama/01-04.webp"
+  },
+  {
+    "path": "site/images/panorama/02-01.webp",
+    "sha256": "8ba01d5a7a7d13223a530cf7ffbddd86ca3794bdea720dbfcfb7a592b9706652",
+    "sharedWith": "public/images/panorama/02-01.webp"
+  },
+  {
+    "path": "site/images/panorama/02-02.webp",
+    "sha256": "f4ac04c98aeb00a96c8644275a042a1bcb01a7116bbe228b152c4ffae97451c6",
+    "sharedWith": "public/images/panorama/02-02.webp"
+  },
+  {
+    "path": "site/images/panorama/02-03.webp",
+    "sha256": "1fe7749092f365560a4c34b8bb33c1662866fc4c3438604b09c13e314aa6786b",
+    "sharedWith": "public/images/panorama/02-03.webp"
+  },
+  {
+    "path": "site/images/panorama/02-04.webp",
+    "sha256": "4df06d5fcab0634aad15e02a1eafe1cea38b888366a6d386dd727fd749c28201",
+    "sharedWith": "public/images/panorama/02-04.webp"
+  },
+  {
+    "path": "site/images/panorama/03-01.webp",
+    "sha256": "4405826892424f0bb734cec5e0d5c7e43cc021b6edad28d7392e2e6a83f0b4f7",
+    "sharedWith": "public/images/panorama/03-01.webp"
+  },
+  {
+    "path": "site/images/panorama/03-02.webp",
+    "sha256": "d3f18eb8778d6d1ab7a3958fc85b9059e6db68005891a289eb677eb0924cd8cd",
+    "sharedWith": "public/images/panorama/03-02.webp"
+  },
+  {
+    "path": "site/images/panorama/03-03.webp",
+    "sha256": "306052038343c9961765a45217bd1be677630b90256dd36caebb1db7d31a576b",
+    "sharedWith": "public/images/panorama/03-03.webp"
+  },
+  {
+    "path": "site/images/panorama/03-04.webp",
+    "sha256": "c750d213310e70496cebfd3477ae4d502e829135ab54a1ccbab1da956fa1648d",
+    "sharedWith": "public/images/panorama/03-04.webp"
+  },
+  {
+    "path": "site/images/panorama/04-01.webp",
+    "sha256": "68a015b8a6cb57a7b18ec8a03c714bd953d6faed9f1f222fe1014d0c410d5666",
+    "sharedWith": "public/images/panorama/04-01.webp"
+  },
+  {
+    "path": "site/images/panorama/04-02.webp",
+    "sha256": "eb2daedfb62a6863c7b49b3196d8310e5d4f68f813844bc2106e70662c4aec2e",
+    "sharedWith": "public/images/panorama/04-02.webp"
+  },
+  {
+    "path": "site/images/panorama/04-03.webp",
+    "sha256": "ae88dc5f7d0615aa8edc583267d5027924feb4847fb3540816882ac2a95538ac",
+    "sharedWith": "public/images/panorama/04-03.webp"
+  },
+  {
+    "path": "site/images/panorama/04-04.webp",
+    "sha256": "93af34e4c7aca904854f4fcdd876d127acdd654a09c52fc53604c383e66a6927",
+    "sharedWith": "public/images/panorama/04-04.webp"
+  },
+  {
+    "path": "site/images/panorama/05-01.webp",
+    "sha256": "20cdc7ad5f5d36963d452dc98c8fdc8b39b9baf252fa5d5f26f0636632e3a40f",
+    "sharedWith": "public/images/panorama/05-01.webp"
+  },
+  {
+    "path": "site/images/panorama/05-02.webp",
+    "sha256": "54589a89754381590af8c860762cb9546abc150ff8d89a44e16a6ffb94207251",
+    "sharedWith": "public/images/panorama/05-02.webp"
+  },
+  {
+    "path": "site/images/panorama/05-03.webp",
+    "sha256": "e1281bbffee99a78deae267e200e15f714e097243fd617de78dd78917c616a36",
+    "sharedWith": "public/images/panorama/05-03.webp"
+  },
+  {
+    "path": "site/images/panorama/05-04.webp",
+    "sha256": "438c85767463b2129c43e13a08a97ef912c15056896a93d070ddafe2ed0c1cd3",
+    "sharedWith": "public/images/panorama/05-04.webp"
+  },
+  {
+    "path": "site/images/panorama/06-01.webp",
+    "sha256": "973df5f797bbad31e6cbc5044ba9319c3f48da807b52379a4d246d650cdb82c1",
+    "sharedWith": "public/images/panorama/06-01.webp"
+  },
+  {
+    "path": "site/images/panorama/06-02.webp",
+    "sha256": "57ef5a936913cbef7a2f352e431c328085828baaf81633d5e271f7f2fe151144",
+    "sharedWith": "public/images/panorama/06-02.webp"
+  },
+  {
+    "path": "site/images/panorama/06-03.webp",
+    "sha256": "d06adc995dcd60a2b6e28aff63699b7e2af20a6e606df58ef69963236e175dab",
+    "sharedWith": "public/images/panorama/06-03.webp"
+  },
+  {
+    "path": "site/images/panorama/06-04.webp",
+    "sha256": "3d15f97dbe1490672a5833f1243bf7eaeff543593ddb2cf54c2b224383eb940c",
+    "sharedWith": "public/images/panorama/06-04.webp"
+  },
+  {
+    "path": "site/images/panorama/07-01.webp",
+    "sha256": "f40cb808ccd1600e06a4c38e96b1369e6a6e260c64cc69ac9d9ec046c2ceea95",
+    "sharedWith": "public/images/panorama/07-01.webp"
+  },
+  {
+    "path": "site/images/panorama/07-02.webp",
+    "sha256": "943cb504386454ddeff9ad44cb71abaff9416554af8a5f3bba034e644e645911",
+    "sharedWith": "public/images/panorama/07-02.webp"
+  },
+  {
+    "path": "site/images/panorama/07-03.webp",
+    "sha256": "c455174792b19f1fac57bd611d6fcab3b93d5d26a836494c82f1255d0e868981",
+    "sharedWith": "public/images/panorama/07-03.webp"
+  },
+  {
+    "path": "site/images/panorama/07-04.webp",
+    "sha256": "6f42942dbf7645cf937a79472824176172e457350a565799e2c82845f99fa0ee",
+    "sharedWith": "public/images/panorama/07-04.webp"
+  },
+  {
+    "path": "site/images/公众号推文 WeChat Official Account article/1.盛启预告 Grand Opening Preview.jpg",
+    "sha256": "868f194deb048bc247c6080951cc4f69e3a83d7f155be13a11dc0ab85bce98ab",
+    "sharedWith": "public/images/公众号推文 WeChat Official Account article/1.盛启预告 Grand Opening Preview.jpg"
+  },
+  {
+    "path": "site/images/公众号推文 WeChat Official Account article/2.启幕盛典 Opening Ceremony.jpg",
+    "sha256": "94e3917a8b38da051af5d8fc8f40c726c22fccdf94a2fe8d5ca8654ce9628d66",
+    "sharedWith": "public/images/公众号推文 WeChat Official Account article/2.启幕盛典 Opening Ceremony.jpg"
+  },
+  {
+    "path": "site/images/公众号推文 WeChat Official Account article/3.启幕大促 Launch Specials.jpg",
+    "sha256": "3c61708b1672a805b1f1013646b5ec5c5c3836a8d3aa5631800bb13eb1bc2a6d",
+    "sharedWith": "public/images/公众号推文 WeChat Official Account article/3.启幕大促 Launch Specials.jpg"
+  },
+  {
+    "path": "site/images/公众号推文 WeChat Official Account article/4.全运会接待回顾 National Games Reception Review.jpg",
+    "sha256": "812614e0a87855a12759354b2092bca7e2354a719d97dca0e6d9facc2c5652e9",
+    "sharedWith": "public/images/公众号推文 WeChat Official Account article/4.全运会接待回顾 National Games Reception Review.jpg"
+  },
+  {
+    "path": "site/images/公众号推文 WeChat Official Account article/5.岁末家宴 New Year's Eve Dinner.jpg",
+    "sha256": "84c068de09a0ee714cd6b43d1aca8a900b906e11f56a81eae31f20ad06de2b66",
+    "sharedWith": "public/images/公众号推文 WeChat Official Account article/5.岁末家宴 New Year's Eve Dinner.jpg"
+  },
+  {
+    "path": "site/images/公众号推文 WeChat Official Account article/6.春季大促 Spring Sale.jpg",
+    "sha256": "e72af3579998d65500af76fbd4da571d29cf648d308dfa47f27237b821db9af0",
+    "sharedWith": "public/images/公众号推文 WeChat Official Account article/6.春季大促 Spring Sale.jpg"
+  },
+  {
+    "path": "site/images/公众号推文 WeChat Official Account article/7.春馔 Spring Dishes.jpg",
+    "sha256": "40bbea0f52f6def67841635e83ae30392b831d6813457141c49a4ef3ce685f7c",
+    "sharedWith": "public/images/公众号推文 WeChat Official Account article/7.春馔 Spring Dishes.jpg"
+  },
+  {
+    "path": "site/index.html",
+    "sha256": "44c87e8b2d84cd190c75761b5b98ada01b316b4323ecfe5ea67c248dd230a36f",
+    "sharedWith": "archive/continuum-5-build/index.template.html"
+  },
+  {
+    "path": "site/prototype-directions/ai-video.html",
+    "sha256": "a35676ed5def31c52422ea89a93731d3bedca0147189a45c12b2193ff0877f34",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/assets/vertical-film-sheet.jpg",
+    "sha256": "7b69802f175e13557d65c141ae4f97e8ca9b862ab29beb31497cf95597d70e50",
+    "sharedWith": "experiments/ai-video/assets/vertical-film-sheet.jpg"
+  },
+  {
+    "path": "site/prototype-directions/index.html",
+    "sha256": "48a195d4d42384bb3eb9d1f20ebcf3d869d4e6e61b103b92c9507c058aa47d5a",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/prototype.css",
+    "sha256": "6332fcd8c74f50fd31fa33ee9adff322856811aa024c801fcd74bf99358e446a",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/prototype.js",
+    "sha256": "7de652055d0808b3e111afebc9f805dd6cda3f5fe2821da8e58862767763565f",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/reel-motion.js",
+    "sha256": "3b8bc582eb32bfaf6d546f4b6eabc3232bb4a0fd31479766f77d2697e11d6644",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/video-reel.config.js",
+    "sha256": "2592a21ae05648d75193f2ff8fa6d9b27681c8d2ef62223bcf2f379426d114a6",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/video-reel.css",
+    "sha256": "cb14b8064fcd857acfb26d7dd3e9587ba826d07c2c22bc496c3c2f210303a6b0",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/video-reel.js",
+    "sha256": "8cf7b5787f4486e27634fb3399dd961e67623fe1d514471d4403f58dcdb8a403",
+    "retained": true
+  },
+  {
+    "path": "site/prototype-directions/VIDEO-REEL.md",
+    "sha256": "6885abc03632d968d3d100fa453fcb96c639dacc5b0e8de5c07895c6fe4f23f9",
+    "retained": true
+  },
+  {
+    "path": "site/styles.css",
+    "sha256": "edc930a2c880b14132776fc52eac673150f43da5837a294d0ad4bce75179ba52",
+    "retained": true
+  }
+]

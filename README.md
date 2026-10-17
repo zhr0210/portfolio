@@ -2,6 +2,8 @@
 
 主站采用 React 19 + Vite + TypeScript，保留 Continuum 5.0 的视觉、七件完整作品、矢量字体开场、滚动叙事和玻璃详情页。GSAP 管理空间切换，全景采用与现有设计一致的定制 WebGL 镜头投影，并提供 Canvas 与图文列表兼容路径。
 
+项目已统一到 `G:\zuopingji\Portfolio\`：这里就是 Git 仓库和 npm 工作目录，不再进入 `Editorial Vanguard/code/`。主站、独立实验、历史参考、创作工程和验收资料的归属及备份恢复见 [目录说明](docs/PROJECT_STRUCTURE.md)。
+
 ## 本地运行
 
 需要 Node.js 22.12+，推荐当前 LTS。首次安装后运行：
@@ -58,7 +60,9 @@ TypeScript 严格检查新增入口、调参文件和全景生命周期。继承
 
 `experiments/cinematic-portfolio/` 是 AFTERIMAGE「余像」独立设计预览，保留原 Hero 与全景，重设五个叙事章节和附属界面。运行 `npm run dev:design`（4190），整站入口 `/`，单章入口 `/chapters.html?chapter=profile`。独立构建 `npm run build:design` 输出 `dist-design-preview/`，不并入主站 `dist/`，详见实验目录 README。
 
-`experiments/mavic-unfold/` 是基于用户提供 Mavic 3 模型的独立展开动画预览，参考 DJI 视频 3:45–3:55 的机械镜头。运行 `npm run dev:drone`（4193），独立构建 `npm run build:drone` 输出 `dist-mavic-preview/`。GLB 含 0–10 秒动画与相机；打包贴图的 Blender 工程保存在本机忽略目录 `output/drone-reference/Mavic-3-Unfold.blend`。详见实验目录 README。
+`experiments/mavic-unfold/` 是基于用户提供 Mavic 3 模型的独立展开动画预览，参考 DJI 视频 3:45–3:55 的机械镜头。运行 `npm run dev:drone`（4193），独立构建 `npm run build:drone` 输出 `dist-mavic-preview/`。GLB 含 0–10 秒动画与相机；打包贴图的 Blender 工程保存在本机忽略目录 `working-files/drone-reference/Mavic-3-Unfold.blend`。详见实验目录 README。
+
+旧 `AI-Video-Prototype/` 的独有内容已归入 `archive/ai-video-prototype/`；共享文件通过 SHA-256 清单指向现有副本。完整旧目录和 `code.7z` 保存在项目外 `G:\zuopingji\Portfolio-before-consolidation-20261017`。本机创作工程见 `working-files/`，历次验收资料见 `output/`；两者均不上传 GitHub 或网站。
 
 其他完整本地副本：
 

@@ -5,5 +5,7 @@
 - `legacy-parameters/`：2026-09-29 合入前版本的 WorkDetail / Works 配置原件。新版入口为 `src/config/site.ts`，详见 `docs/CUSTOMIZATION.md`。
 - `continuum-5-build/`：Continuum 5.0 的 Python 打包器、模块表、页面模板与浏览器 React 运行时。
 - `continuum-5-styles/`：清理前样式与移除的选择器记录；移除的规则对应当前主站源码中不存在的旧界面，动态布局与响应式规则保留并经过浏览器检查。
+- `ai-video-prototype/`：原外层 AI 视频原型的 12 个独有文件，另有 59 个共享文件的 SHA-256 与位置清单。它不是完整可运行副本；完整原目录保存在整合前备份。
+- `project-history/`：原包装目录的维护约定和忽略规则。`workbuddy/` 内旧部署记录仅留在本机，不提交；其中的部署状态不能作为当前网站状态。
 
 完整旧站在 Git 提交 `145625d` 或 `G:\zuopingji\Portfolio-before-vite-20260930`。更早备份位置见主 README。

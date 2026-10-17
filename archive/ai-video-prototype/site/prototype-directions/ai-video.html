@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kilian Zhou — FILM / 视频作品</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="video-reel.css?rev=10" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #0c0d0c;
+      }
+      body {
+        overflow: hidden;
+      }
+      #ai-node-study {
+        width: 100%;
+        height: 100dvh;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="ai-node-study"></main>
+    <script type="module">
+      import { VideoReel } from './video-reel.js?rev=10';
+      const reel = new VideoReel(document.getElementById('ai-node-study'), { standalone: true, returnUrl: 'http://127.0.0.1:4173/' });
+      reel.setActive(true);
+      window.reel = reel;
+    </script>
+  </body>
+</html>

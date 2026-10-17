@@ -14,7 +14,7 @@
 
 - `assets/mavic-3-unfold.glb`：完整模型、全尺寸内嵌贴图、12 个机械转轴和一个 10 秒采样动画，包含动画相机。
 - `assets/mavic-3-unfold.metadata.json`：源 GLB SHA-256、几何数量、时间段、灯组与明确的复刻范围。
-- 本机 `output/drone-reference/Mavic-3-Unfold.blend`：独立 Blender 5.2 工程，贴图已打包，包含动画、时间轴标记、Cycles 灯光、1920×1080 相机。直接打开后可空格播放；无需连接 Blender 插件。源 ZIP 与现有 Blender 场景均不覆盖。
+- 本机 `working-files/drone-reference/Mavic-3-Unfold.blend`：独立 Blender 5.2 工程，贴图已打包，包含动画、时间轴标记、Cycles 灯光、1920×1080 相机。直接打开后可空格播放；无需连接 Blender 插件。源 ZIP 与现有 Blender 场景均不覆盖。
 - 本机 `output/drone-reference/frame-000.png`、`frame-180.png`、`frame-210.png`、`frame-240.png`、`frame-300.png`：离线检查帧，不加入网站或 Git。
 
 源模型 147 个网格、110,092 顶点、127,011 三角面。动画版保留全部几何、不减面、无损原尺寸贴图；两个跨机臂的螺钉网格按刚性转轴分开后合并同组，最终 148 个网格，避免 UV 接缝拆分成数百次绘制。机身材质使用 0.28 的 base color 乘数校准石墨灰，原贴图像素、金属度、粗糙度和法线保留。网页以 Three.js 面光源重建灯组并校准环境反射；实时渲染与 Blender Cycles 的光照不完全相同。
@@ -25,7 +25,7 @@
 & 'F:\blender\blender.exe' --background --disable-autoexec --python 'experiments\mavic-unfold\tools\build-unfold.py' -- --source 'C:\Users\kilian\Downloads\dji-mavic-3.zip'
 ```
 
-脚本定位所有输出为项目绝对路径，不依赖 Blender 的默认工作目录。生成工程和检查帧只保存在被忽略的本机输出目录，网页 GLB 和生成元数据在实验资产目录。
+脚本定位所有输出为项目绝对路径，不依赖 Blender 的默认工作目录。工程和中间 GLB 保存在被忽略的 `working-files/drone-reference/`，检查帧保存在 `output/drone-reference/`；网页 GLB 和生成元数据在实验资产目录。
 
 ## 构建与验证
 

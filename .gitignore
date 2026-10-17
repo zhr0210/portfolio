@@ -11,7 +11,9 @@ __pycache__/
 .wrangler/
 *.log
 .playwright-cli/
-output/playwright/
-output/ai-generation/
-output/drone-reference/
+/output/*
+!/output/README.md
+/working-files/*
+!/working-files/README.md
+/archive/project-history/workbuddy/
 .DS_Store

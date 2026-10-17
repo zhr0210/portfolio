@@ -18,6 +18,7 @@ from mathutils import Matrix, Quaternion, Vector
 ROOT = Path(__file__).resolve().parents[3]
 ASSETS = ROOT / 'experiments/mavic-unfold/assets'
 OUTPUT = ROOT / 'output/drone-reference'
+WORKING = ROOT / 'working-files/drone-reference'
 FPS = 30
 END = 300
 
@@ -55,6 +56,7 @@ def main():
     parser.add_argument('--source', required=True, type=Path)
     args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
     OUTPUT.mkdir(parents=True, exist_ok=True)
+    WORKING.mkdir(parents=True, exist_ok=True)
     ASSETS.mkdir(parents=True, exist_ok=True)
     source = zipfile.ZipFile(args.source).read('source/DJI-Mavic_3.glb')
     size = struct.unpack_from('<I', source, 12)[0]
@@ -68,7 +70,7 @@ def main():
         node['name'] = f'Part_{node["mesh"]:03}' if 'mesh' in node else f'Node_{i:03}'
     encoded = json.dumps(document, separators=(',', ':')).encode()
     encoded += b' ' * (-len(encoded) % 4)
-    named = OUTPUT / 'named.glb'
+    named = WORKING / 'named.glb'
     named.write_bytes(struct.pack('<III', 0x46546C67, 2, 28 + len(encoded) + len(binary))
                      + struct.pack('<II', len(encoded), 0x4E4F534A) + encoded
                      + struct.pack('<II', len(binary), 0x004E4942) + binary)
@@ -241,7 +243,7 @@ def main():
     scene['Model'] = 'User supplied DJI Mavic 3, not Mavic 3 Pro; original geometry and full-size textures retained.'
     scene['Timing'] = '0–4.8 s hold folded instead of live-action footage; 5.05–8.6 s unfold; final pose held.'
     bpy.ops.file.pack_all()
-    bpy.ops.wm.save_as_mainfile(filepath=str(OUTPUT / 'Mavic-3-Unfold.blend'))
+    bpy.ops.wm.save_as_mainfile(filepath=str(WORKING / 'Mavic-3-Unfold.blend'))
     bpy.ops.export_scene.gltf(filepath=str(ASSETS / 'mavic-3-unfold.glb'), export_format='GLB',
         export_cameras=True, export_lights=False, export_animations=True, export_animation_mode='SCENE',
         export_nla_strips_merged_animation_name='Mavic3_Unfold_10s', export_frame_range=True,
