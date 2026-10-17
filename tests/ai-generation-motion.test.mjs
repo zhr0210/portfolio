@@ -47,7 +47,7 @@ test('Completed generation stays a moving film until returning near live film th
   assert.ok(sample(reset + 1e-6).offset < -1.499);
   assert.equal(sample(reset).completed, false);
   assert.equal(sample(segment.entry).progress, 0);
-  assert.ok(Math.abs(sample(segment.entry + 0.7).progress - 0.5) < 1e-10);
+  assert.ok(Math.abs(sample(segment.entry + config.scrollSpan / 2).progress - 0.5) < 1e-10);
   assert.equal(sample(segment.end).completed, true);
   assert.equal(sample(previous.entry).completed, false);
   assert.equal(sample(segment.end + 2).completed, true); // End/navigation may skip the interval.
@@ -63,15 +63,19 @@ test('Three live films lead into one generation sequence and two consecutive AI 
     timeline.map((s) => s.generate),
     [false, false, false, true, false, false],
   );
-  for (const [i, expected] of [0, 1.8, 3.6, 5.4, 7.8, 8.8].entries())
+  for (const [i, expected] of [0, 1.8, 3.6, 4.95, 7.05, 8.05].entries())
     assert.ok(Math.abs(timeline[i].entry - expected) < 1e-10);
-  for (const s of timeline.slice(0, 3)) assert.equal(s.travelSpan, 1.8);
+  for (const s of timeline.slice(0, 2)) assert.equal(s.travelSpan, 1.8);
+  assert.equal(timeline[2].travelSpan, 1.35);
   const generation = timeline[3];
   assert.equal(generationProgress(generation.entry - 0.1, generation), 0);
-  assert.ok(Math.abs(generationProgress(generation.entry + 0.7, generation) - 0.5) < 1e-10);
+  assert.ok(
+    Math.abs(generationProgress(generation.entry + config.scrollSpan / 2, generation) - 0.5) <
+      1e-10,
+  );
   assert.equal(generationProgress(generation.end, generation), 1);
   assert.equal(generationProgress(100, generation), 1);
-  assert.ok(Math.abs(generation.end - generation.entry - 1.4) < 1e-10);
+  assert.ok(Math.abs(generation.end - generation.entry - 1.1) < 1e-10);
   assert.equal(timeline[4].entry, timeline[4].end);
   assert.equal(timeline[5].entry, timeline[5].end);
 });

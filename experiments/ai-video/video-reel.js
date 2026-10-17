@@ -690,7 +690,13 @@ export class VideoReel {
     }
     const dy = d.lastY - e.clientY;
     d.lastY = e.clientY;
-    this.input(dy / Math.max(1100, this.root.clientHeight * 1.5));
+    this.input(
+      dy /
+        Math.max(
+          reelConfig.touchTravel.minimum,
+          this.root.clientHeight * reelConfig.touchTravel.viewportHeights,
+        ),
+    );
   }
   pointerEnd(e) {
     if (this.drag?.id !== e.pointerId) return;

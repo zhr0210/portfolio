@@ -16,7 +16,7 @@ for (const [W, H] of [
     assert.ok(g.frame.x >= 0 && g.frame.x + g.frame.w <= W);
     assert.ok(g.frame.y >= 0 && g.frame.y + g.frame.h <= H);
     assert.ok(g.frame.h <= H * 0.4);
-    assert.ok(g.travel - g.frame.h >= H * 0.3 - 1e-9);
+    assert.ok(g.travel - g.frame.h >= H * 0.24 - 1e-9);
   });
 }
 
@@ -31,7 +31,7 @@ test('The original live film enters and exits once and reverses continuously', (
     title: { top: g.frame.y - 70, height: 60 },
     parameters: { top: g.frame.y + g.frame.h + 20, height: 48 },
   };
-  const leaving = scenePose(1.06, 0, g, reelConfig);
+  const leaving = scenePose((g.frame.y + g.frame.h) / g.travel + 0.06, 0, g, reelConfig);
   assert.ok(g.frame.y + leaving.y + g.frame.h < 0);
   assert.equal(
     sceneInView(leaving, g, captions),

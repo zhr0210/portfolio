@@ -1,22 +1,25 @@
 // 在这里修改作品、标题、参数和滑动行程。真实视频填写 video 路径。
 export const reelConfig = {
-  wheelTravel: 2100,
+  wheelTravel: 1575,
+  touchTravel: { minimum: 825, viewportHeights: 1.125 },
   smoothing: 0.19,
   // 恢复原版中等尺寸：展示区占窗口高度的 40%，窄屏到达安全边距时居中裁切。
   videoHeight: 0.4,
   videoEdge: 24,
   mobileVideoEdge: 16,
   minimumVerticalMargin: 76,
-  // 两部视频之间的空隙稍加长：窗口高度的 30%，短屏至少 170px。
-  sceneGap: 0.3,
-  minimumSceneGap: 170,
+  // 收紧影片之间的实际留白，保持标题和参数所需空间。
+  sceneGap: 0.24,
+  minimumSceneGap: 140,
   titleParallax: 0.1,
   metadataParallax: 0.08,
   // 三条实拍共享设备动画；每条保留同样的画面间距并提供更长的滚动行程。
   liveScrollSpan: 1.8,
+  // 只收紧第三条实拍到首条 AI 的交接，保留前两条实拍与设备的原坐标。
+  liveToAiScrollSpan: 1.35,
   // AI 生成段独立于实拍时间轴。比例决定画面阶段，停止滚动即停止计算。
   aiGeneration: {
-    scrollSpan: 1.4,
+    scrollSpan: 1.1,
     // 完成后锁定；回到上一条实拍中心后 20% 行程内，才允许重新生成。
     rearmNearPrevious: 0.2,
     seed: 2917,
