@@ -491,7 +491,7 @@ export class VideoReel {
         p.y = outro.y + fallbackArrival;
         p.titleY =
           outro.titleY +
-          fallbackArrival -
+          fallbackArrival +
           (1 - state.labelOpacity) * f.h * reelConfig.titleParallax;
         p.metadataY =
           outro.metadataY +

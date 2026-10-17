@@ -30,8 +30,9 @@ export function scenePose(position, index, g, config) {
     r,
     y,
     opacity: 1,
-    titleY: y - Math.abs(y) * config.titleParallax,
-    metadataY: y + Math.abs(y) * config.metadataParallax,
+    // Signed offsets keep both captions drifting in the same direction through center.
+    titleY: y * (1 + config.titleParallax),
+    metadataY: y * (1 + config.metadataParallax),
   };
 }
 

@@ -12,7 +12,7 @@ for (const [W, H] of [
   test('The live film retains height-led framing and caption parallax: ' + W + '×' + H, () => {
     const g = reelLayout(W, H, reelConfig, filmCrop[2] / filmCrop[3]);
     const p = scenePose(0.35, 0, g, reelConfig);
-    assert.ok(p.titleY < p.y && p.metadataY > p.y);
+    assert.ok(p.titleY < p.y && p.metadataY < p.y);
     assert.ok(g.frame.x >= 0 && g.frame.x + g.frame.w <= W);
     assert.ok(g.frame.y >= 0 && g.frame.y + g.frame.h <= H);
     assert.ok(g.frame.h <= H * 0.4);
@@ -25,6 +25,14 @@ test('The original live film enters and exits once and reverses continuously', (
   const samples = [0.1, 0.3, 0.6, 0.3, 0.1].map((p) => scenePose(p, 0, g, reelConfig));
   assert.deepEqual(samples[0], samples[4]);
   assert.deepEqual(samples[1], samples[3]);
+  const crossing = [-0.6, -0.3, 0, 0.3, 0.6].map((p) => scenePose(p, 0, g, reelConfig));
+  for (const key of ['titleY', 'metadataY']) {
+    const drift = crossing.map((p) => p[key] - p.y);
+    for (let i = 1; i < drift.length; i++) {
+      assert.ok(drift[i] < drift[i - 1], key + ' must not reverse its relative drift at center');
+      assert.ok(Math.abs(drift[i] - drift[i - 1] - (drift[1] - drift[0])) < 1e-9);
+    }
+  }
   for (const position of [-0.9, 0, 0.35, 0.9, 1.06, 2.4])
     assert.equal(scenePose(position, 0, g, reelConfig).opacity, 1);
   const captions = {
@@ -36,7 +44,7 @@ test('The original live film enters and exits once and reverses continuously', (
   assert.equal(
     sceneInView(leaving, g, captions),
     true,
-    'Keep slower caption parallax after the film leaves',
+    'Keep visible caption edges after the film leaves',
   );
   assert.equal(sceneInView(scenePose(1.4, 0, g, reelConfig), g, captions), false);
   assert.equal(sceneInView(scenePose(0.9, 0, g, reelConfig), g, captions), true);
