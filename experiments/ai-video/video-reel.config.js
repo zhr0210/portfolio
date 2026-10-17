@@ -13,6 +13,14 @@ export const reelConfig = {
   minimumSceneGap: 140,
   titleParallax: 0.1,
   metadataParallax: 0.08,
+  mediaParallax: {
+    travel: 0.18,
+    maxPixels: 96,
+    fillScale: 1.36,
+    fillBlur: 14,
+    fillTravel: 0.3,
+    fillMaxSize: 640,
+  },
   // 三条实拍共享设备动画；每条保留同样的画面间距并提供更长的滚动行程。
   liveScrollSpan: 1.8,
   // 只收紧第三条实拍到首条 AI 的交接，保留前两条实拍与设备的原坐标。

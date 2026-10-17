@@ -81,6 +81,7 @@
 }
 .reel-frame {
   position: absolute;
+  isolation: isolate;
   overflow: hidden;
   background: #080d06;
   will-change: transform;
@@ -94,12 +95,21 @@
   height: 100%;
   background-repeat: no-repeat;
   object-fit: cover;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 var(--media-feather, 0px),
+    #000 calc(100% - var(--media-feather, 0px)),
+    transparent
+  );
 }
 .reel-poster {
+  z-index: 1;
   transform: translateY(var(--media-drift, 0px)) scale(1.12);
   transition: opacity 0.45s ease;
 }
 .reel-frame video {
+  z-index: 2;
   opacity: 0;
   transform: translateY(var(--media-drift, 0px)) scale(1.12);
   transition: opacity 0.45s ease;
@@ -109,6 +119,22 @@
 }
 .reel-frame.has-video .reel-poster {
   opacity: 0;
+}
+.reel-media-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transform: translateY(var(--fill-drift, 0px)) scale(var(--fill-scale, 1.36));
+  filter: blur(var(--fill-blur, 14px));
+}
+.reel-fill-poster,
+.reel-fill-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
 }
 .reel-title,
 .reel-parameters {

@@ -11,6 +11,7 @@ import { createDeviceLayer } from './device-layer.js';
 import { devicePose } from './device-motion.js';
 import { createDroneLayer } from './drone-layer.js';
 import { selectPlaybackScene } from './reel-playback.js';
+import { createVideoFill } from './video-fill.js';
 import { createAIGenerationLayer } from './ai-generation.js';
 import {
   reelTimeline,
@@ -147,7 +148,7 @@ export class VideoReel {
     el.className = `reel-scene reel-${work.type}`;
     el.setAttribute('aria-label', `${work.title} · ${work.type === 'live' ? '实拍' : 'AI'}视频`);
     el.innerHTML =
-      '<div class="reel-side-elements"></div><div class="reel-frame"><div class="reel-poster" role="img"></div><video muted playsinline loop preload="auto"></video></div><div class="reel-title"><span></span><h1></h1></div><div class="reel-parameters"></div>';
+      '<div class="reel-side-elements"></div><div class="reel-frame"><div class="reel-media-fill" aria-hidden="true"><div class="reel-fill-poster"></div><canvas class="reel-fill-canvas" hidden></canvas></div><div class="reel-poster" role="img"></div><video muted playsinline loop preload="auto"></video></div><div class="reel-title"><span></span><h1></h1></div><div class="reel-parameters"></div>';
     const frame = el.querySelector('.reel-frame'),
       poster = el.querySelector('.reel-poster'),
       video = el.querySelector('video');
@@ -170,6 +171,10 @@ export class VideoReel {
       frame,
       poster,
       video,
+      fillPoster: el.querySelector('.reel-fill-poster'),
+      fill: createVideoFill(video, el.querySelector('.reel-fill-canvas'), {
+        maxSize: reelConfig.mediaParallax.fillMaxSize,
+      }),
       title: el.querySelector('.reel-title'),
       params,
       side,
@@ -285,12 +290,14 @@ export class VideoReel {
   }
   layoutPoster(scene, W, H) {
     const asset = scene.posterAsset;
-    if (asset.crop) {
-      crop(scene.poster, asset.crop, W, H);
-    } else {
-      scene.poster.style.backgroundImage = `url("${asset.src}")`;
-      scene.poster.style.backgroundSize = 'cover';
-      scene.poster.style.backgroundPosition = 'center';
+    for (const poster of [scene.poster, scene.fillPoster]) {
+      if (asset.crop) {
+        crop(poster, asset.crop, W, H);
+      } else {
+        poster.style.backgroundImage = `url("${asset.src}")`;
+        poster.style.backgroundSize = 'cover';
+        poster.style.backgroundPosition = 'center';
+      }
     }
   }
   setPoster(scene, asset, owned = false) {
@@ -356,6 +363,11 @@ export class VideoReel {
       g.travel = travel;
       const f = g.frame;
       box(scene.frame, f);
+      scene.frame.style.setProperty('--fill-scale', reelConfig.mediaParallax.fillScale);
+      scene.frame.style.setProperty(
+        '--fill-blur',
+        Math.min(reelConfig.mediaParallax.fillBlur, f.h * 0.04) + 'px',
+      );
       this.layoutPoster(scene, f.w, f.h);
       scene.title.style.left = Math.max(18, f.x - W * (g.mobile ? 0.025 : 0.042)) + 'px';
       scene.title.style.top = Math.max(12, f.y - (g.mobile ? 64 : Math.max(64, H * 0.073))) + 'px';
@@ -511,7 +523,10 @@ export class VideoReel {
       } else {
         scene.frame.style.opacity = p.opacity;
       }
-      if (scene.el.hidden) continue;
+      if (scene.el.hidden) {
+        scene.fill.update({ active: false });
+        continue;
+      }
       move(scene.frame, 0, p.y);
       move(scene.title, 0, p.titleY);
       scene.title.style.opacity = p.opacity;
@@ -519,9 +534,19 @@ export class VideoReel {
       move(scene.params, 0, p.metadataY);
       scene.params.style.opacity = p.opacity;
       scene.params.setAttribute('aria-hidden', String(p.opacity < 0.01));
+      const drift = this.reduced.matches
+        ? 0
+        : clamp(-p.r, -1, 1) *
+          Math.min(reelConfig.mediaParallax.maxPixels, f.h * reelConfig.mediaParallax.travel);
+      scene.frame.style.setProperty('--media-drift', drift + 'px');
+      // Only soften a few pixels at an exposed edge; the clear image stays above the fill.
       scene.frame.style.setProperty(
-        '--media-drift',
-        clamp(-p.r, -1, 1) * Math.min(26, f.h * 0.055) + 'px',
+        '--media-feather',
+        Math.min(8, Math.max(0, Math.abs(drift) - f.h * 0.06)) + 'px',
+      );
+      scene.frame.style.setProperty(
+        '--fill-drift',
+        drift * reelConfig.mediaParallax.fillTravel + 'px',
       );
       const hasVideo =
         !!scene.source &&
@@ -529,6 +554,11 @@ export class VideoReel {
         scene.video.readyState >= 2 &&
         (!scene.generation || eligible);
       scene.frame.classList.toggle('has-video', hasVideo);
+      scene.fill.update({
+        active: this.active && !document.hidden && hasVideo && !this.reduced.matches,
+        width: f.w,
+        height: f.h,
+      });
       scene.video.setAttribute('aria-hidden', String(!hasVideo));
       if (!scene.generation) scene.poster.setAttribute('aria-hidden', String(hasVideo));
       else if (hasVideo) scene.poster.setAttribute('aria-hidden', 'true');
@@ -834,6 +864,7 @@ export class VideoReel {
       s.devices?.dispose();
       s.drone?.dispose();
       s.generation?.dispose();
+      s.fill.dispose();
       s.posterVersion++;
       if (s.posterURL) URL.revokeObjectURL(s.posterURL);
       s.video.removeAttribute('src');
